@@ -1,3 +1,13 @@
+2005.03.30
+
+* Added storage and schema placeholders for the data API.
+* Added an api.py file for consistancy of interface for developers and users
+of pymon.
+* Removed some old files that are no longer useful.
+* Added directories for future interfaces and adaptors. These things have come
+up in mail list discussions, and will most likely be used. Preferably sooner
+than later.
+
 2005.03.29
 
 * Fixed a bug in pymon.protocols.
