@@ -1,6 +1,6 @@
 from twisted.internet import protocol
 
-from adytum.app.pymon.storage import sqlobject 
+from adytum.app.pymon.storage import sql
 
 def isInRange(datum, incl_range):
 
@@ -84,7 +84,7 @@ class PyMonHTTPClient(protocol.Protocol):
             'serviceStatus': status,
             'serviceMessage': msg,
         }
-        sqlobject.updateDatabase(data)
+        sql.updateDatabase(data)
 
 class PyMonPing(PyMonProcess):
 
