@@ -1,0 +1,23 @@
+<config>
+    <!-- SERVICE CONFIGS -->
+    <service>
+
+        <!-- ping configs -->
+        <ping>
+            <defaults>
+                <ping_count>4</ping_count>
+                <service_name>connectivity</service_name>
+                <message_template>There was a %s%% ping return from host %s</message_template>
+                <ping_binary>/bin/ping</ping_binary>
+                <command>ping</command>
+                <ok_threshold>67,100</ok_threshold>
+                <warn_threshold>26,66</warn_threshold>
+                <error_threshold>0,25</error_threshold>
+            </defaults>
+            <host name="shell1.adytum.us">
+                <service_type>ping</service_type>
+                <notify>oubiwann@myrealbox.com</notify>
+            </host>
+        </ping>
+    </service>
+</config>
