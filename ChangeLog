@@ -1,7 +1,12 @@
 2005.04.06
 
-* Added sandbox/config_api for experimenting with configuation adaptors.
-* Added a bunch of files for experimenting with adaptation.
+* sandbox: Added sandbox/config_api for experimenting with configuation
+adaptors.
+* sandbox: Added a bunch of files for experimenting with adaptation.
+* sandbox: Added an interface stub for IConfig.
+* Updated web site news.
+* Updated menus on the web site to point to trunk instead of the old twisted
+branch.
 
 2005.03.31 
 
