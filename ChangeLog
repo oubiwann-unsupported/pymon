@@ -1,3 +1,14 @@
+2005.03.29
+
+* Fixed a bug in pymon.protocols.
+PyMonHTTPClientFactory.clientConnectionLost() had the wrong sig.
+
+2005.03.27
+
+* Changed reactor.connectTCP method.
+* Added setHTTPConfigs method to __init__.
+* Changed PyMonHTTPClientFactory to use protocol.ClientFactory.
+
 2005.03.10
 
 * Updated site news.

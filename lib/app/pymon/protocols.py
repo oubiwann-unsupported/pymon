@@ -113,7 +113,7 @@ class PyMonHTTPClientFactory(protocol.ClientFactory):
     def clientConnectionFailed(self, connector, reason):
         print 'Connection failed. Reason:', reason
 
-    def clientConnectionLost(self, status):
+    def clientConnectionLost(self, connector, reason):
 
         from adytum.net.http.request import HeaderParser
         
