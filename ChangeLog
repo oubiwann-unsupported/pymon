@@ -1,0 +1,51 @@
+2004.05.12
+  o created pickle-specific methods and renamed methods that are used for
+dealing with pickle files
+  o edited the svn commit shell script to clear out pyc files and remove the
+tmp files 
+  o the _getLastRun method made a call to loadRunData which called
+_loadPickleFile, but then didn't return anything. Fixing this fixed all the
+issues I was having with save state info.
+
+2004.05.11
+  o added support for giving friendly(er) names to data files
+  o pulled out references to remote_* in Internet/Site.py
+  o successfully tested site monitoring with Internet/Site 
+  o added a 'close' connection to the httpconn so that I could pickle the data
+(can't pickle a network connection)
+
+2004.05.09
+  o moved subject template for email notifications out of System/Monitoring.py
+and into Monitor.py so that each service can customize it
+  o The problem with remote process monitoring notifications was due to the
+fact that two rounds were being done at the same time: OK -> ERROR (round 1) +
+ERROR -> ERROR (round two) = no change between final state of round 1 and 2
+and thus no message got sent.
+  o Fixed a bug in process_monitor script: two calls to processMonitor for
+remote host services monitoring
+  o Set the external storage back to binary pickles
+  o Created a bunch of methods for accessing summary data and creating files
+that contain summary data.
+  o Correcteed the messages that were getting saved to summary data
+  o Changed the sort order for the summary data
+  o Moved System/Hosts to Internet/Ping
+  o Added Internet/Site and began stubbing out code for site monitoring.
+
+2004.05.02
+  o moved email message templates into *Monitor methods so they could be
+easily tailored to each service being monitored
+  o added message for ping monitoring
+  o moved *Monitor methods out of Monitoring class and into Monitor class
+  o moved Monitoring class into System package
+
+2004.04.28
+  o added minimal support for ping-monitoring hosts
+  o separated more code into general monitoring and type of monitoring 
+  o added a 'debug' property to Monitor.py and System/Host.py and removed
+print statements that were cluttering output
+  o fixed database naming for ping monitoring
+  o fixed a bug (type) in database naming for service monitorings without a
+remote host set
+  o removed the binary parameter from the read/write methods and created a new
+property 'binary_pickle' that is checked before reading or writing pickles
+files
