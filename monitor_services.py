@@ -3,7 +3,7 @@ import Monitor
 #################################
 # Zope and Apache notifications #
 #################################
-mon = Monitor.Monitor(debug=True)
+mon = Monitor.Monitor(debug=False)
 # get currently running processes
 mon.getProcessList()
 # warning and error message thresholds. any process counts lower

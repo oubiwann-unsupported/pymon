@@ -117,7 +117,8 @@ class Monitoring(HostsUp, Processes, Mail, Web):
     self.data_filename = self._makeFileDataFileName()
     self.last_run = self._getLastRun()
     try:
-      print self.last_run.states
+      if self.debug:
+        print self.last_run.states
       self.last_state = self.last_run.states
     except:
       print "Could not assign last state."
