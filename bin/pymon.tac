@@ -19,7 +19,7 @@ def runMonitors():
     # fire each page monitor configureation off on the reactor
 
     # fire each HTTP return status configuration off on the reactor
-    [ reactor.connectTCP(x[0],int(x[1]),x[2]) for x in monitors.getHTTPMonitors() ]
+    [ reactor.connectTCP(*x) for x in monitors.getHTTPMonitors() ]
 
 sched = task.LoopingCall(runMonitors)
 sched.start(INTERVAL)

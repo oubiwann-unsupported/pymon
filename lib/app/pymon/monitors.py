@@ -50,7 +50,7 @@ def getHTTPMonitors():
             port = defaults['port']
 
         # setup the protocol that has all the callbacks
-        data = (host, port, client)
+        data = (host, int(port), client)
 
         # add to the processes that will be spawned in the reactor
         http.append(data)

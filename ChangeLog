@@ -7,6 +7,9 @@ PyMonHTTPClientFactory.clientConnectionLost() had the wrong sig.
 * Changed PyMonHTTPClient to parse http response instead of PyMonHTTPClientFactory
 * Changed PyMonHTTPClient to use cfg as the initialization param
 * Changed PyMonHTTPClient to make a list out of http status codes from the dictionary
+* Put the extended call syntax back in pymon.tac, for the sake of code
+elegance.
+* Enforced int() on the port number in pymon.monitors.getHTTPMonitors().
 
 2005.03.27
 
