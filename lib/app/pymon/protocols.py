@@ -116,7 +116,8 @@ class PyMonHTTPClientFactory(protocol.ClientFactory):
     def clientConnectionLost(self, connector, reason):
 
         from adytum.net.http.request import HeaderParser
-        
+       
+        raise "Here is the self.data from PyMonHTTPClientFactory: %s" % str(self.data) 
         parse = HeaderParser(self.data)
         status = parse.getReturnStatusInteger()
 

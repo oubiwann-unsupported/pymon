@@ -2,6 +2,8 @@
 
 * Fixed a bug in pymon.protocols.
 PyMonHTTPClientFactory.clientConnectionLost() had the wrong sig.
+* Added Exception handling to the http header parser.
+* Started debugging a problem with PyMonHTTPClientFactory.
 
 2005.03.27
 
