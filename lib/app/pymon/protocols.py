@@ -44,13 +44,47 @@ class PyMonProcess(protocol.ProcessProtocol):
 class PyMonHTTPClient(protocol.Protocol):
     '''
     '''
+    def __init__(self, cfg):
+       self.cfg = cfg
+       self.data = ''
+
     def connectionMade(self):
         #self.transport.write("GET /\r\n")
         self.transport.write("HEAD / HTTP/1.0 \r\n\r\n")
-        self.data = []
 
     def dataReceived(self, data):
-        self.data.append(data)
+        self.data = data
+
+    def connectionLost(self, reason):
+        from adytum.net.http.request import HeaderParser
+         
+        parse = HeaderParser(self.data)
+        status = parse.getReturnStatusInteger()
+
+        uid = self.cfg['data']['__name__']
+        host = self.cfg['data']['destination host']
+        msg = self.cfg['defaults']['message template'] % (host, status)
+       
+        if status in self.cfg['defaults']['ok threshold'].split(','):
+            #raise str(self.cfg['constants'])
+            status = self.cfg['constants']['states']['ok']
+        elif status in self.cfg['defaults']['warn threshold'].split(','):
+            status = self.cfg['constants']['states']['warn']
+        elif status in self.cfg['defaults']['error threshold'].split(','):
+            status = self.cfg['constants']['states']['error']
+        else:
+            status = -1
+
+        # prepare data for insert/update
+        data = {
+            'uniqueID': uid,
+            'serviceHost': host,
+            'serviceType': self.cfg['data']['service type'],
+            'serviceName': self.cfg['defaults']['service name'],
+            'serviceStatus': status,
+            'serviceMessage': msg,
+        }
+        updateDatabase(data)
 
 class PyMonPing(PyMonProcess):
 
@@ -108,41 +142,7 @@ class PyMonHTTPClientFactory(protocol.ClientFactory):
 
     def buildProtocol(self, addr):
         print 'Connected.'
-        return PyMonHTTPClient()
+        return PyMonHTTPClient(self.cfg)
 
     def clientConnectionFailed(self, connector, reason):
         print 'Connection failed. Reason:', reason
-
-    def clientConnectionLost(self, connector, reason):
-
-        from adytum.net.http.request import HeaderParser
-       
-        raise "Here is the self.data from PyMonHTTPClientFactory: %s" % str(self.data) 
-        parse = HeaderParser(self.data)
-        status = parse.getReturnStatusInteger()
-
-        uid = self.cfg['data']['__name__']
-        host = self.cfg['data']['destination host']
-        msg = self.cfg['defaults']['message template'] % (host, status)
-        
-        if status in self.cfg['defaults']['ok threshold']:
-            #raise str(self.cfg['constants'])
-            status = self.cfg['constants']['states']['ok']
-        elif status in self.cfg['defaults']['warn threshold']:
-            status = self.cfg['constants']['states']['warn']
-        elif status in self.cfg['defaults']['error threshold']:
-            status = self.cfg['constants']['states']['error']
-        else:
-            status = -1
-
-        # prepare data for insert/update
-        data = {
-            'uniqueID': uid,
-            'serviceHost': host,
-            'serviceType': self.cfg['data']['service type'],
-            'serviceName': self.cfg['defaults']['service name'],
-            'serviceStatus': status,
-            'serviceMessage': msg,
-        }
-        print data
-        updateDatabase(data)
