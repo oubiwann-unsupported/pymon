@@ -1,0 +1,47 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US"
+      lang="en-US"
+      metal:use-macro="here/refresh_template/macros/master">
+
+<body>
+
+<div metal:fill-slot="main">    
+    
+    <p>&nbsp;</p>
+    <a href="detailed_view">Detailed View</a><br/>
+    <table cellpadding="0" cellspacing="1" border="0" width="100%"><tr><td bgcolor="#000000">
+    <table cellpadding="2" cellspacing="1" width="100%">
+    <tr bgcolor="#ffffff">
+      <td>Current State</td><td>Host</td><td>Service Type</td><td>Service</td><td>Previous State</td><td>Messsage</td><td>Date Last Checked</td>
+    </tr>
+    <tal:block tal:repeat="state here/pymon_states">
+      <tal:block tal:define="
+        host          python:state[1];
+        service_type  python:state[2];
+        service       python:state[3];
+        hex           python:state[5];
+        current_state python:state[6];
+        last_state    python:state[7];
+        messg         python:state[8];
+        last_checked  python:state[9];
+      ">
+        <tr tal:attributes="bgcolor hex">
+        <td tal:content="current_state"/>
+        <td tal:content="host"/>
+        <td tal:content="service_type"/>
+        <td tal:content="service"/>
+        <td tal:content="last_state"/>
+        <td tal:content="messg"/>
+        <td tal:content="last_checked"/>
+        </tr>
+      </tal:block>
+    </tal:block>
+    </table>
+    </table>
+    <a href="detailed_view">Detailed View</a><br/>
+</div>
+  </body>
+</html>
+

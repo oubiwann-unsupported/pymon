@@ -1,0 +1,5 @@
+Python 2.3.4
+Twisted 1.3.0
+SQLite 2.8+
+PySQLite 1.0+
+SQLObject 0.6

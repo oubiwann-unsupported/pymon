@@ -1,3 +1,94 @@
+2005.03.10
+
+* Updated site news.
+* Updated site menu links.
+
+2005.03.09
+
+* Updated the setup.py script to install the adytum.net.http package.
+
+2005.03.08
+
+* Rearranged the configuration ini files and python classes.
+* Wrote a HTTP configuration and monitor.
+* Started writing a protocol to handle HTTP status data for HTTP monitor.
+
+2004.10.14
+
+* Uploaded new site look and feel, logo, and menus to sf.net.
+* Updated the project details on sf.net.
+
+2004.10.13
+
+* Allan Bailey gave his project space on sourceforge.net.
+* Archived original site into svn for the sake of history.
+* Created new logo for sf.net site.
+
+2004.10.11
+
+* Updated pymon.tac with comments.
+* Moved the old app.pymon.monitor file.
+* Created a new app.pymon.monitor for the twisted version of pymon.
+* Renamed app.pymon.monitor to app.pymon.monitors.
+* Removed all the stuff from pymon.tac that was added to app.pymon.monitors.
+* Setup app.pymon.protocols.PyMonPing() to set a data dict containing current
+service status info.
+* Added more entries to the default ping configurations in config.ini.
+* Put data inserting and updating capabilities in
+app.pymon.protocols.PyMonPing for now, but I will take this out as soon as
+it's been generalized. Data inserts and updates are working like a charm, and
+previous/current states are being accurately reported.
+* Separating the data insert/update code was actually very easy, so I went
+ahead and did it (app.pymon.datamanager). However, I still need to add last*
+timestamps.
+* Added logic for "Recovering" state, tested and seems to be working
+properly... better, in fact, than the PyMonitor that's in production right
+now.
+* Added comments to .ini file.
+* Began adding support for local process checks.
+* Updated README with more notes about adding monitors.
+
+2004.10.10
+
+* Cleaned up the .tac file code a little, as well as the protocols.
+* Added a data dir.
+* Added database setup configuration to .ini
+* Reworked adytum.app.pymon.datamodel, including the addition of doctests.
+Doctests were crazy... I wanted to use a test db if the doctest was running
+the code, and use the real database otherwise. Checking for __name__ didn't
+work, since doctest re-imports the module, so I had to do some checks against
+the stack. I don't know much about that stuff, so the check is very fragile.
+
+2004.10.09
+
+* Removed empty dirs.
+* Added conf, contrib dirs.
+* Added place-holder for twisted deamon in bin dir.
+* Added protocols and data model from sandbox.
+* Added Zope-specific files in contrib dir.
+* Added setup.py file.
+* Created a daemontools service direcctory, and removed log dir, since we will
+be using stdout, letting daemontools perform the logging.
+* Added INSTALL and DEPENDANCIES files.
+* Updated README.
+* Began creating a configuration methodology.
+* Added a constants file in adytum.app.pymon.
+* Added doctests for first ping methods in config.
+* Completely rewrote adytum.net.ping by deleting everything that was in there
+and writing a Parser class for ping output.
+* Added tons mode doc tests that helped my fing bugs in the ping.Parser class.
+* Updated protocols and tac file with fixes and improvements.
+
+2004.10.08
+
+* Have begun reorganization of packages, modules, and library files for use in
+the next version of PyMonitor.
+* Moved monitoring-specific code into lib/app/pymon directory and renamed
+files to conform with the adytum conventions.
+* Moved general PyMonitor files into the adytum.os and adytum.net packages.
+* Re-organized top-level files.
+* Updated site content -- news and main page.
+
 2004.05.13
   o fixed the issue with last check/ok/warn/err dates only reporting the last
 check time

@@ -1,0 +1,7 @@
+#!/bin/sh
+INSTALL_DIR=/usr/local/pymon
+TWIST=/usr/local/bin/twistd
+SERVER=bin/pymon.tac
+
+cd $INSTALL_DIR
+exec $TWIST -noy $SERVER
