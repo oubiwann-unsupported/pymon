@@ -7,6 +7,9 @@ of pymon.
 * Added directories for future interfaces and adaptors. These things have come
 up in mail list discussions, and will most likely be used. Preferably sooner
 than later.
+* Moved updateDatabase() from pymon.datamanager to where it should be, in
+a data store specific file: pymon.storage.sqlobject.
+* Updated pymon.protocols to refer to the new location of updateDatabase.
 
 2005.03.29
 
