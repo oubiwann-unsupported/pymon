@@ -15,9 +15,6 @@ o clean up tmp data files older than 10 minutes/monitoring interval
 
 o clean up multiple inheritance
 
-o Persistant storage doesn't seem to be working well... last WARN/ERR times don't seem true
-
-o If the data files are new, there is no "old" data from previous runs, and therefore, calls such as the following generate errors:
-  last_state = old_data.last_state[service] (in System/Monitoring.py)
-
 o clean up all the class attributes laying around
+
+o the changes to fix the timestamps for previous states may have introduced a bug: recovering states may not be being set properly now. emails are being sent out properly, but the web status page doesn't seem to display them properly. This would be related to the data property in _getPickledStatesSummary.

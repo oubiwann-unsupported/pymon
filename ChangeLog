@@ -1,3 +1,8 @@
+2004.05.13
+  o fixed the issue with last check/ok/warn/err dates only reporting the last
+check time
+  o removed the deepcopy and used copy instead (was getting recursion errors)
+
 2004.05.12
   o created pickle-specific methods and renamed methods that are used for
 dealing with pickle files

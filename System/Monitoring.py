@@ -27,10 +27,10 @@ class Monitoring(HostsUp, Processes, Mail, Web):
     self.pickle_sufix = 'pickle'
     self.remote_host = 'localhost'
     self.remote_port = 0
-    self.last_check = ''
-    self.last_ok = ''
-    self.last_warn = ''
-    self.last_err = ''
+    self.last_check = {}
+    self.last_ok = {}
+    self.last_warn = {}
+    self.last_err = {}
     self.state_counts = []
     self.state_list = []
     self.monitor_type = ''
@@ -78,14 +78,13 @@ class Monitoring(HostsUp, Processes, Mail, Web):
       self.counts[service] = count
       if count < err_lvl:
         self.states[service] = self.state_defs['ERROR']
-        # need to change this to self.last_err[service]
-        self.last_err = self.getTimeStamp()
+        self.last_err[service] = self.getTimeStamp()
       elif count < warn_lvl:
         self.states[service] = self.state_defs['WARN']
-        self.last_warn = self.getTimeStamp()
+        self.last_warn[service] = self.getTimeStamp()
       else:
         self.states[service] = self.state_defs['OK']
-        self.last_ok = self.getTimeStamp()
+        self.last_ok[service] = self.getTimeStamp()
       i += 1
 
     return self.states
@@ -118,30 +117,46 @@ class Monitoring(HostsUp, Processes, Mail, Web):
     self.data_filename = self._makeFileDataFileName()
     self.last_run = self._getLastRun()
     try:
+      print self.last_run.states
       self.last_state = self.last_run.states
-      self.last_check = self.last_run.last_check
-      self.last_ok = self.last_run.last_ok
-      self.last_warn = self.last_run.last_warn
-      self.last_err = self.last_run.last_err
-      if self.debug:
-        print "Last State: %s" % self.last_state
-        print "Last Check: %s" % self.last_check
-        print "Last OK: %s" % self.last_ok
-        print "Last Warn: %s" % self.last_warn
-        print "Last Error: %s" % self.last_err
-
     except:
-      print "Could not assign last state into variables."
+      print "Could not assign last state."
     self.getStateData()
 
     for service, state in self.states.iteritems():
+      # populate last check
+      try:
+        self.last_check[service] = self.last_run.last_check[service]
+      except:
+        self.last_check[service] = 'No history'
+      # populate last ok
+      try:
+        self.last_ok[service] = self.last_run.last_ok[service]
+      except:
+        self.last_ok[service] = 'No history'
+      # populate last warn
+      try:
+        self.last_warn[service] = self.last_run.last_warn[service]
+      except:
+        self.last_warn[service] = 'No history'
+      # populate last err
+      try:
+        self.last_err[service] = self.last_run.last_err[service]
+      except:
+        self.last_err[service] = 'No history'
       if self.debug:
-        print "Service: %s" % service
-        print "State: %s" % state
-
+        try:
+          print 'service: [%s]' % service
+          print "Last State: %s" % self.last_state[service]
+          print "Last Check: %s" % self.last_check[service]
+          print "Last OK: %s" % self.last_ok[service]
+          print "Last Warn: %s" % self.last_warn[service]
+          print "Last Error: %s" % self.last_err[service]
+          print "Service: %s" % service
+          print "State: %s" % state
+        except:
+          print "Couldn't print previous states."
       state = self.state_defs_lookup.get(state)
-      if self.debug:
-        print"This state: %s" % state
       try:
         last_state = self.state_defs_lookup.get(self.last_state[service])
         if self.debug:
@@ -189,7 +204,10 @@ class Monitoring(HostsUp, Processes, Mail, Web):
       self.msgs[service] = msg
       sendit = 0
       i += 1
-    self.last_check = self.getTimeStamp()
+      self.last_check[service] = self.getTimeStamp()
+    # we run getStateData here again to make sure that the
+    # last ok/warn/err times get set.
+    self.getStateData()
     self.saveRunData(self.data_filename)
 
   def _makeFileDataFileName(self):
@@ -250,7 +268,7 @@ class Monitoring(HostsUp, Processes, Mail, Web):
     '''
     import copy
 
-    data = copy.deepcopy(self)
+    data = copy.copy(self)
     if self.debug:
       print "Debugging state save. State: %s" % data.states
     self._savePickleFile(filename, data)
@@ -286,32 +304,35 @@ class Monitoring(HostsUp, Processes, Mail, Web):
         print "Retrieving data from '%s'" % file
       old_data = self.loadRunData(file)
       for service, state in old_data.states.iteritems():
-        last_state = old_data.last_state[service]
-        color = float(state)/float(last_state)
-        if state == 1: hex = '#cc0000'
-        elif state == 2: hex = '#cccc00'
-        elif state == 3: hex = '#0000cc'
-        elif state == 4: hex = '#00cc00'
-        else: hex = "#cccccc"
+        try:
+          last_state = old_data.last_state[service]
+          color = float(state)/float(last_state)
+          if state == 1: hex = '#cc0000'
+          elif state == 2: hex = '#cccc00'
+          elif state == 3: hex = '#0000cc'
+          elif state == 4: hex = '#00cc00'
+          else: hex = "#cccccc"
 
-        last_state = self.state_defs_lookup.get(last_state)
-        current_state = self.state_defs_lookup.get(state)
-        data = (state, 
-                old_data.remote_host, 
-                old_data.monitor_type.lower(), 
-                service.lower(), 
-                color, 
-                hex, 
-                current_state, 
-                last_state, 
-                old_data.msgs[service], 
-                old_data.last_check, 
-                old_data.last_ok, 
-                old_data.last_warn, 
-                old_data.last_err)
-        if self.debug:
-          print data
-        all_states.append(data)
+          last_state = self.state_defs_lookup.get(last_state)
+          current_state = self.state_defs_lookup.get(state)
+          data = (state, 
+                  old_data.remote_host, 
+                  old_data.monitor_type.lower(), 
+                  service.lower(), 
+                  color, 
+                  hex, 
+                  current_state, 
+                  last_state, 
+                  old_data.msgs[service], 
+                  old_data.last_check[service], 
+                  old_data.last_ok[service], 
+                  old_data.last_warn[service], 
+                  old_data.last_err[service])
+          if self.debug:
+            print data
+          all_states.append(data)
+        except:
+          print "Couldn't process old_data; no last state."
     all_states.sort()
     if self.debug:
       for data in all_states:
