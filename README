@@ -1,9 +1,0 @@
-Requirements
-  Python 2.3.3
-  hping (http://www.hping.org/download.html)
-Install
-  unpack tarball or checkout from Subversion
-  edit process_monitor.py script in PyMonitor directory
-  create a crontab entry like this:
-    * * * * *   /usr/local/bin/python /scripts/python/PyMonitor/monitor_services.py > /dev/null 2>&1
-
