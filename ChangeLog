@@ -4,6 +4,9 @@
 PyMonHTTPClientFactory.clientConnectionLost() had the wrong sig.
 * Added Exception handling to the http header parser.
 * Started debugging a problem with PyMonHTTPClientFactory.
+* Changed PyMonHTTPClient to parse http response instead of PyMonHTTPClientFactory
+* Changed PyMonHTTPClient to use cfg as the initialization param
+* Changed PyMonHTTPClient to make a list out of http status codes from the dictionary
 
 2005.03.27
 
