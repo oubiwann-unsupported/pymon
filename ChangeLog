@@ -7,6 +7,10 @@ adaptors.
 * Updated web site news.
 * Updated menus on the web site to point to trunk instead of the old twisted
 branch.
+* Updated web site to mention data storage options.
+* Updated old news about maillist.
+* sandbox: added a place for Ravi to experiment with pyparsing and creating an
+interactive shell for pymon.
 
 2005.03.31 
 
