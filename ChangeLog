@@ -1,6 +1,8 @@
 2005.04.10
 
 * sandbox: Working more with the config API.
+* sandbox: More experimentation with dictionary configuration. May set aside
+the config API for now...
 
 2005.04.07
 

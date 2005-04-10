@@ -20,6 +20,14 @@ class Config(object):
             if type(val).__name__ == 'dict':
                 subobj = Config(val)
                 setattr(self, key, subobj)
+            elif type(val).__name__ == 'list':
+                l = []
+                for element in val:
+                    if type(element).__name__ == 'dict':
+                        l.append(Config(element))
+                    else:
+                        l.append(element)
+                setattr(self, key, l)
             else:
                 setattr(self, key, val)
 

@@ -1,5 +1,5 @@
 import cElementTree as ElementTree
-from twisted.python.components import implements
+from zope.interface import implements
 from interfaces.config import *
 
 '''
@@ -12,14 +12,16 @@ from interfaces.config import *
 class PingDefaults(object):
 
     implements(IPingDefaults)
-    
 
 class Service(object):
 
     implements(IService)
 
+    def __init__(self, service):
+        self.service = service
+
     def getDefaults(self):
-        pass
+        return 
 
     def getHosts(self):
         pass
@@ -27,7 +29,7 @@ class Service(object):
     def getServiceType(self):
         pass
 
-class Config(object):
+class XmlConfig(object):
 
     implements(IConfig)
 
@@ -37,10 +39,15 @@ class Config(object):
         self.root = tree.getroot()
 
     def getServices(self):
-        return self.root.findall('services/service')
+        return self.root.getiterator('service')
 
     def getService(self, service_type):
-        return [ x for x in root.findall('services/service') if x.get('type') == service_type ]
+        for service in self.root.findall('services/service'):
+            if service.get('type') == service_type:
+                yield Service(service)
 
     def getSystem(self):
         return self.root.find('system')
+
+class IniConfig(object):
+    pass
