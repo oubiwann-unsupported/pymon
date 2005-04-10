@@ -1,9 +1,6 @@
 <config>
-    <!-- SERVICE CONFIGS -->
-    <service>
-
-        <!-- ping configs -->
-        <ping>
+    <services>
+        <service type="ping">
             <defaults>
                 <ping_count>4</ping_count>
                 <service_name>connectivity</service_name>
@@ -14,10 +11,35 @@
                 <warn_threshold>26,66</warn_threshold>
                 <error_threshold>0,25</error_threshold>
             </defaults>
-            <host name="shell1.adytum.us">
-                <service_type>ping</service_type>
-                <notify>oubiwann@myrealbox.com</notify>
-            </host>
-        </ping>
-    </service>
+            <hosts>
+                <host name="shell1.adytum.us">
+                    <escalation enabled="false">
+                        <group level="0">
+                            <email>oubiwann@myrealbox.com</email>
+                            <email>oubiwann@yahoo.com</email>
+                        </group>
+                        <group level="1">
+                            <email></email>
+                        </group>
+                    </escalation>
+                    <scheduled_downtime></scheduled_downtime>
+                </host>
+            </hosts>
+        </service>
+        <service type="http">
+            <defaults/>
+            <hosts>
+                <host/>
+            </hosts>
+        </service>
+    </services>
+    <system>
+        <database type="zodb"> 
+            <directory>data/zodb</directory>
+            <host>localhost</host>
+            <port></port>
+            <user></user>
+            <password></password>
+        </database>
+    </system>
 </config>
