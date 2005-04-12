@@ -16,6 +16,7 @@ sys.path.append('/usr/local/ZopeX3-3.0.0/lib/python/')
 
 import ZODB
 from ZODB import FileStorage, DB
+from ZEO import ClientStorage
 from persistent import Persistent
 from BTrees.OOBTree import OOBTree
 from persistent.list import PersistentList as PList
@@ -35,14 +36,19 @@ def close_zodb(DataBase):
     DataBase[3].close()
     return True
 
-def open_zodb(Path):
+def open_zodb(Path, zeo=False):
     """Open ZODB.
 
     Returns a tuple consisting of:(root,connection,db,storage)
     The same tuple must be passed to close_zodb() in order to close the DB.
     """
     # Connect to DB
-    storage     = FileStorage.FileStorage(Path)
+    if zeo:
+        server = Path.split(':')
+        server[1] = int(server[1])
+        storage = ClientStorage.ClientStorage(tuple(server))
+    else:
+        storage = FileStorage.FileStorage(Path)
     db          = DB(storage)
     connection  = db.open()
     root        = connection.root()
@@ -82,6 +88,9 @@ class ZODBFrame(wx.Frame):
         self.mnuOpen = wx.MenuItem(self.mnuFile, wx.ID_OPEN, "&Open\tCtrl-O",
                                    "", wx.ITEM_NORMAL)
         self.mnuFile.AppendItem(self.mnuOpen)
+        self.mnuOpenZEO = wx.MenuItem(self.mnuFile, wx.ID_OK, "&Open ZEO Instance...\tCtrl-U",
+            "", wx.ITEM_NORMAL)
+        self.mnuFile.AppendItem(self.mnuOpenZEO)
         self.mnuFile.Append(wx.ID_CLOSE, "&Close", "", wx.ITEM_NORMAL)
         self.mnuFile.AppendSeparator()
         self.mnuFile.Append(wx.ID_EXIT, "E&xit", "", wx.ITEM_NORMAL)
@@ -138,6 +147,7 @@ class ZODBFrame(wx.Frame):
         self.Bind(wx.EVT_CLOSE, self.onExit)
         self.Bind(wx.EVT_MENU, self.onExit, id=wx.ID_EXIT)
         self.Bind(wx.EVT_MENU, self.doOpen, id=wx.ID_OPEN)
+        self.Bind(wx.EVT_MENU, self.doOpenUrl, id=wx.ID_OK)
         self.Bind(wx.EVT_MENU, self.doClose, id=wx.ID_CLOSE)
         self.Bind(wx.EVT_MENU_RANGE, self.doFileHistory, id=wx.ID_FILE1,
                   id2=wx.ID_FILE9)
@@ -216,14 +226,18 @@ class ZODBFrame(wx.Frame):
             self.db_layout_tree.SetItemImage(c, self.file_idx,
                                                  wx.TreeItemIcon_Normal)
 
-    def createTree(self, filename):
+    def createTree(self, filename='', server='', zeo=False):
         """Create a new tree structure for when we open a file"""
         self.doClose()
 
-        self.db = open_zodb(filename)
+        if zeo:
+            self.db = open_zodb(server, zeo=True)
+            self.root = self.db_layout_tree.AddRoot(server)
+        else:
+            self.db = open_zodb(filename)
+            self.root = self.db_layout_tree.AddRoot(os.path.basename(filename))
         self.db_layout_tree.SetImageList(self.il)
 
-        self.root = self.db_layout_tree.AddRoot(os.path.basename(filename))
         self.db_layout_tree.SetPyData(self.root, self.db[0])
         self.db_layout_tree.SetItemImage(self.root, self.folder_idx,
                                          wx.TreeItemIcon_Normal)
@@ -272,6 +286,13 @@ class ZODBFrame(wx.Frame):
             filename = dlg.GetPath()
             self.createTree(filename)
             self.file_history.AddFileToHistory(filename)
+        dlg.Destroy()
+
+    def doOpenUrl(self, *event):
+        """Access a ZEO instance from a url"""
+        dlg = wx.TextEntryDialog(self, message="Enter the server and port for the ZEO instance (hostname_or_ip:port)")
+        if dlg.ShowModal() == wx.ID_OK:
+            self.createTree(zeo=True, server=dlg.GetValue())
         dlg.Destroy()
 
     def onExit(self, event):

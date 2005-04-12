@@ -1,4 +1,5 @@
 from ZODB import FileStorage, DB
+from ZEO import ClientStorage
 from BTrees.OOBTree import OOBTree
 import sys
 sys.path.append('/usr/local/ZopeX3-3.0.0/lib/python/')
@@ -42,8 +43,15 @@ class ServiceTransitions(Persistent):
 
 
 if __name__ == '__main__':
+
+    ZEO=True
     # setup the data store
-    storage = FileStorage.FileStorage('data/zodb/pymondb.fs')
+    if ZEO:
+        server = 'localhost'
+        port = 999
+        storage = ClientStorage.ClientStorage((server, port))
+    else:
+        storage = FileStorage.FileStorage('data/zodb/pymondb.fs')
     db = DB(storage)
     conn = db.open()
     dbroot = conn.root()

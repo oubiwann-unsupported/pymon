@@ -1,3 +1,15 @@
+2005.04.12
+
+* sandbox: Added ZEO support to wxZODBVieer. There is now a menu option to
+"Open ZEO Instance... Ctrl-U".
+* sandbox: Added ZEO support to zodbschema.py.
+* sandbox: Added runzeo, zeoconfig, and zpasswd.
+
+2005.04.11
+
+* sandbox: Added zodb schema creation script as well as the ZODB viewer script
+from ASPN.
+
 2005.04.10
 
 * sandbox: Working more with the config API.
