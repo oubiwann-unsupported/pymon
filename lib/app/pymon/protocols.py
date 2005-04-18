@@ -1,6 +1,11 @@
 from twisted.internet import protocol
 
-from adytum.app.pymon.storage import sql
+# the following was removed to put an end to the need for configuation
+# imports; removing these imports requires that configuration data be
+# passed to the object.
+#from adytum.app.pymon.storage import sql
+from adytum.app.pymon import utilities
+
 
 def isInRange(datum, incl_range):
 
@@ -14,6 +19,8 @@ def getStatus(datum, cfg):
 
 class PyMonProcess(protocol.ProcessProtocol):
 
+    # XXX Need to pass database configuration info so that 
+    # data updates can be made appropriately.
     def __init__(self):
         self.data = ''
         self.pid = ''
@@ -64,6 +71,7 @@ class PyMonHTTPClient(protocol.Protocol):
         uid = self.cfg['data']['__name__']
         host = self.cfg['data']['destination host']
         msg = self.cfg['defaults']['message template'] % (host, status)
+        print msg
        
         if status in self.cfg['defaults']['ok threshold'].split(','):
             #raise str(self.cfg['constants'])
@@ -84,7 +92,7 @@ class PyMonHTTPClient(protocol.Protocol):
             'serviceStatus': status,
             'serviceMessage': msg,
         }
-        sql.updateDatabase(data)
+        utilities.updateDatabase(data)
 
 class PyMonPing(PyMonProcess):
 
@@ -104,6 +112,7 @@ class PyMonPing(PyMonProcess):
         uid = self.cfg['data']['__name__']
         host = self.cfg['data']['destination host']
         msg = self.cfg['defaults']['message template'] % (gain, host)
+        print msg
         
         if isInRange(gain, self.cfg['defaults']['ok threshold']):
             #raise str(self.cfg['constants'])
@@ -125,7 +134,7 @@ class PyMonPing(PyMonProcess):
             'serviceMessage': msg,
         }
         #print data
-        updateDatabase(data)
+        utilities.updateDatabase(data)
 
 
 class PyMonHTTPClientFactory(protocol.ClientFactory):

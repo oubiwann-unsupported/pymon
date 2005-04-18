@@ -223,3 +223,4 @@
 2005-04-12T01:43:17 INFO(0) ZD:8534 set current directory: '/Users/oubiwann/lab/pymon/sandbox/zodb'
 2005-04-12T01:43:17 INFO(0) ZD:8534 daemon manager started
 2005-04-12T01:43:17 INFO(0) ZD:8534 spawned process pid=8535
+2005-04-13T16:13:15 PANIC(300) ZD:8534 daemon manager killed by SIGTERM

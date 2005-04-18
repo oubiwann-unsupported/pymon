@@ -1,5 +1,17 @@
+import os
 from ConfigParser import ConfigParser
-from constants import INSTALL_DIR, TYPE
+
+from adytum.config.base import DictConfig
+from adytum.config.xml import XmlConfig
+
+from adytum.app.pymon.api import constants
+
+class PyMonIniConfig(DictConfig):
+    '''
+
+    '''
+    def __init__(self, filename):
+        pass
 
 class Configuration(object):
     '''
@@ -48,8 +60,8 @@ class Configuration(object):
     def getTypes(self, service_type):
         types = []
         for section in self.inidata.sections():
-            if self.inidata.has_option(section, TYPE):
-                if self.inidata.get(section, TYPE) == service_type:
+            if self.inidata.has_option(section, constants.TYPE):
+                if self.inidata.get(section, constants.TYPE) == service_type:
                     types.append(section)
         return types
 
@@ -90,7 +102,19 @@ class Configuration(object):
         "This property provides access to all the sections that are of 'http' type.")
 
 
-pymon = Configuration('%s/conf/pymon.ini' % INSTALL_DIR)
+pymon = Configuration('%s/conf/pymon.ini' % constants.INSTALL_DIR)
+
+# get config file:
+CONFIG_FILE = os.path.join(constants.INSTALL_DIR, 
+    constants.CONFIG_DIR, '%s')
+if os.path.isfile(CONFIG_FILE % constants.CONFIG_INI):
+    pymoncfg = PyMonIniConfig(CONFIG_FILE % constants.CONFIG_INI)
+else:
+    pymoncfg = XmlConfig(CONFIG_FILE % constants.CONFIG_XML)
+
+# XXX temporary - override  configuration object
+pymoncfg = XmlConfig(CONFIG_FILE % constants.CONFIG_XML)
+    
 
 def _test():
     import doctest, config

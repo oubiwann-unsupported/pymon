@@ -4,9 +4,9 @@ from sqlobject import SQLObject
 from sqlobject import IntCol, StringCol, DateCol
 from sqlobject.sqlite import builder
 
-from adytum.app.pymon.config import pymon as cfg
+from adytum.app.pymon.api import config
 
-states = cfg.getStateDefs()
+states = config.pymon.getStateDefs()
 lookup = dict(zip(states.values(), states.keys()))
 
 #################
@@ -19,14 +19,14 @@ stack = [ x[3] for x in inspect.stack() ]
 # through trial and error
 if '_test' in stack or len(stack) == 1:
     # get test db info
-    proto = cfg.sections['test database']['type']
-    dbpath = cfg.sections['test database']['location']
-    dbname = cfg.sections['test database']['name']
+    proto = config.pymon.sections['test database']['type']
+    dbpath = config.pymon.sections['test database']['location']
+    dbname = config.pymon.sections['test database']['name']
 else:
     # get real db data
-    proto = cfg.sections['database']['type']
-    dbpath = cfg.sections['database']['location']
-    dbname = cfg.sections['database']['name']
+    proto = config.pymon.sections['database']['type']
+    dbpath = config.pymon.sections['database']['location']
+    dbname = config.pymon.sections['database']['name']
 
 
 

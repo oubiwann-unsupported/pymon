@@ -7,6 +7,20 @@ from interfaces.config import *
 >>> tree = et.parse('simple.xml')
 >>> root = tree.getroot()
 >>> root.findall('services/service')
+
+def processChildren(elements):
+    for element in elements:
+        print element.tag
+        if element.tag == 'service':
+            print 'Service type: %s' % element.attrib['type']
+        try:
+            processChildren(element.getchildren())
+        except:
+            pass
+        # what to do if it's a service
+        # what to do if it's a system setting
+        # what to do if it's a constant
+
 '''
 
 class PingDefaults(object):

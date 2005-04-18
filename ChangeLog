@@ -1,3 +1,23 @@
+2005.04.17
+
+* Moved lib/app/pymon/monnitors.py to plugins/monitors.py.
+* Added more values to pymon.constants.
+* Changed setup.py to pull values in form lib/app/pymon/constants.py.
+* Modified the INSTALL instructions.
+* Added new XML/Ini-file configuration support to pymon.config.
+* Stubbed pymon.config.PyMonIniConfig()
+* Added imports to pymon.api so that all imports in all the code can now go
+through this file.
+* Changed bin/pymon.tac to use the api imports.
+* Added pymon.utilities.getService() to acquire the appropriate storage
+service based on a passed configuration value.
+* Changed bin/pymon.tac to use pymon.utilities.getService().
+* Removed the sql.updateDatabase() dependancy from pymon.protocols and instead
+moved it into pymon.utilities. Added XXX notes for future changes regarding
+this.
+* Added UI interface placeholder in the libs.
+* Fixed the updateDatabase() call in protocols.PyMonPing.
+
 2005.04.12
 
 * sandbox: Added ZEO support to wxZODBVieer. There is now a menu option to

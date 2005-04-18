@@ -1,13 +1,14 @@
 from twisted.internet import reactor
 from twisted.internet import task
 
-from sqlobject.sqlite import builder
+from adytum.app.pymon.api import config
+from adytum.app.pymon.api import utilities
 
-from adytum.app.pymon import monitors
-from adytum.app.pymon.datamodel import Service
+from plugins import monitors
 
 INTERVAL = 20
 #INTERVAL = 1
+Service = utilities.getService(config.pymoncfg.system.database.type)
 
 def runMonitors():
 
