@@ -10,10 +10,7 @@ usual place, and all the PyMonitor files you might need to change and/or
 configure, will be installed in /usr/local/pymon.
 
 Note: if you wish to install PyMonitor in a directory other than
-'/usr/local/pymon', you will have to make the following changes:
+'/usr/local/pymon', you will have to make changes to the following file:
 
-    1) Edit the INSTALL_DIR constant in ./lib/app/pymon/constants.py
-    2) Edit the INSTALL_DIR constant in ./service/run
+    ./lib/app/pymon/constants.py
 
-Also, if you have twisted installed in a non-standard directory, you will need
-to make the appropriate changes to ./service/run.

@@ -1,7 +1,11 @@
-#!/bin/sh
-INSTALL_DIR=/usr/local/pymon
-TWIST=/usr/local/bin/twistd
-SERVER=bin/pymon.tac
+#!/usr/bin/env python
 
-cd $INSTALL_DIR
-exec $TWIST -noy $SERVER
+import os
+from adytum.app.pymon.api import constants
+
+app = os.path.join(constants.INSTALL_DIR, constants.PYMON_APP)
+args = (constants.TWISTD, '-noy', app)
+cmd = (constants.TWISTD, args)
+
+#exec $TWIST -noy $SERVER
+os.execv(*cmd)

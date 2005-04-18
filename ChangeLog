@@ -17,6 +17,9 @@ moved it into pymon.utilities. Added XXX notes for future changes regarding
 this.
 * Added UI interface placeholder in the libs.
 * Fixed the updateDatabase() call in protocols.PyMonPing.
+* Replaced the shell script service/run with a python script that is able to
+get the app configs from adytum.app.pymon.constants; updated the INSTALL file
+to indicate one no longer needs to edit the service/run script.
 
 2005.04.12
 
