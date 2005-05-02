@@ -20,13 +20,18 @@ class ShellParser:
     def parse(self, cmd):
         # grammar stuff
         integer = Word(nums)
-        ip_address = Combine(integer + "." + integer + "." + integer + "." + integer)
+        ip_address = Combine(integer + "." + 
+            integer + "." + integer + "." + 
+            integer)
         cmd_start = CaselessLiteral("show")
         cmd_type = CaselessLiteral("status")
         monitor = Word(alphas, alphanums)
 
         # parsing stuff
-        cmd_pattern =  cmd_start.setResultsName("cmd_action") + ip_address.setResultsName("ip_addr") + monitor.setResultsName("monitor") + cmd_type.setResultsName("cmd_type")
+        cmd_pattern =  cmd_start.setResultsName("cmd_action") \
+            + ip_address.setResultsName("ip_addr") \
+            + monitor.setResultsName("monitor") \
+            + cmd_type.setResultsName("cmd_type")
         for srvr, startloc, endloc in cmd_pattern.scanString(cmd):
             self.ip_addr = srvr.ip_addr
             self.monitor = srvr.monitor
