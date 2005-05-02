@@ -6,17 +6,6 @@ from twisted.internet import protocol
 #from adytum.app.pymon.storage import sql
 from adytum.app.pymon import utilities
 
-
-def isInRange(datum, incl_range):
-
-    mn, mx = incl_range.split(',')
-    if int(mn) <= int(datum) <= int(mx):
-        return True
-    return False
-
-def getStatus(datum, cfg):
-    pass
-
 class PyMonProcess(protocol.ProcessProtocol):
 
     # XXX Need to pass database configuration info so that 
@@ -31,7 +20,7 @@ class PyMonProcess(protocol.ProcessProtocol):
         self.transport.closeStdin() 
 
     def outReceived(self, data):
-        print "recieved data from process %d (%d bytes)" % (self.pid, len(data))
+        print "received data from process %d (%d bytes)" % (self.pid, len(data))
         self.data = self.data + data
 
     def errReceived(self, data):
@@ -114,12 +103,12 @@ class PyMonPing(PyMonProcess):
         msg = self.cfg['defaults']['message template'] % (gain, host)
         print msg
         
-        if isInRange(gain, self.cfg['defaults']['ok threshold']):
+        if utilities.isInRange(gain, self.cfg['defaults']['ok threshold']):
             #raise str(self.cfg['constants'])
             status = self.cfg['constants']['states']['ok']
-        elif isInRange(gain, self.cfg['defaults']['warn threshold']):
+        elif utilities.isInRange(gain, self.cfg['defaults']['warn threshold']):
             status = self.cfg['constants']['states']['warn']
-        elif isInRange(gain, self.cfg['defaults']['error threshold']):
+        elif utilities.isInRange(gain, self.cfg['defaults']['error threshold']):
             status = self.cfg['constants']['states']['error']
         else:
             status = -1

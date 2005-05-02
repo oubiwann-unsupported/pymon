@@ -1,3 +1,10 @@
+2005.05.01
+
+* Pulled protocols.isInRange out and put it in pymon.utilities.
+* Started making changes to plugins.monnitors to use the new config objects.
+* Finished putting the stuff from pymon.ini into pymon.xml.
+* Added services.enabled to pymon.xml.
+
 2005.04.17
 
 * Moved lib/app/pymon/monnitors.py to plugins/monitors.py.

@@ -4,7 +4,7 @@ from ConfigParser import ConfigParser
 from adytum.config.base import DictConfig
 from adytum.config.xml import XmlConfig
 
-from adytum.app.pymon.api import constants
+from adytum.app.pymon import constants
 
 class PyMonIniConfig(DictConfig):
     '''

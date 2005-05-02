@@ -11,3 +11,14 @@ def getService(db_type):
 
 def updateDatabase(data):
     pass
+
+def isInRange(datum, incl_range):
+
+    mn, mx = incl_range.split(',')
+    if int(mn) <= int(datum) <= int(mx):
+        return True
+    return False
+
+def getStatus(datum, cfg):
+    pass
+

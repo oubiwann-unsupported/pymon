@@ -1,5 +1,9 @@
 <config>
     <services>
+        <enabled>
+            <type>ping</type>
+            <type>http</type>
+        </enabled>
         <service type="ping">
             <defaults>
                 <ping_count>4</ping_count>
@@ -26,13 +30,28 @@
                     </escalation>
                     <scheduled_downtime></scheduled_downtime>
                 </host>
+                <host name="shell2.adytum.us" />
+                <host name="svn.adytum.us" />
             </hosts>
         </service>
         <service type="http">
-            <defaults/>
+            <defaults>
+                <service_name>HTTP Status</service_name>
+                <http_port>80</http_port>
+                <ok_threshold>100, 101, 200, 201, 202, 203, 300, 302, 303, 304, 305</ok_threshold>
+                <warn_threshold>204, 205, 206, 301, 401, 402, 403, 405, 406, 407, 411, 412, 413, 414, 415, 416</warn_threshold>
+                <error_threshold>400, 404, 408, 409, 410, 417, 500, 501, 502, 503, 504, 505</error_threshold>
+            </defaults>
             <hosts>
-                <host/>
+                <host name="localhost" />
+                <host name="adytum.us" />
+                <host name="www.divorce-md.com" />
+                <host name="accuratemachinery.com" />
             </hosts>
+        </service>
+        <service type="local process">
+            <defaults>
+            </defaults>
         </service>
     </services>
     <system>
@@ -45,6 +64,11 @@
         </database>
     </system>
     <constants>
-
+        <states>
+            <ok>1</ok>
+            <recovering>2</recovering>
+            <warn>3</warn>
+            <error>4</error>
+        </states>
     </constants>
 </config>

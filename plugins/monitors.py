@@ -1,17 +1,48 @@
 from adytum.app.pymon import protocols
 from adytum.app.pymon.config import pymon as cfg
+from adytum.app.pymon import api
 
-constants = {'states': cfg.getStateDefs()}
+pymoncfg = api.config.pymoncfg
+
+states = pymoncfg.constants.states
 
 def getPingMonitors():
-
+    '''
+    # original:
     pings = []
     defaults = cfg.sections['defaults :: ping']
 
     for section in cfg.pings:
         # ping config options setup
         pingdata = cfg.sections[section]
-        pingcfg = {'defaults':defaults, 'constants':constants, 'data':pingdata}
+        pingcfg = {'defaults': service.defaults, 'constants': states, 'data': pingdata}
+
+        # get the info in order to make the next ping
+        host = cfg.inidata.get(section, 'destination host')
+        count = cfg.inidata.get('defaults :: ping', 'ping count')
+        command = defaults['command']
+        params = '-c %s' % count
+        binary = defaults['ping binary']
+
+        # setup the protocol we need that has all the callbacks
+        process = protocols.PyMonPing(pingcfg)
+        options = [command, params, host]
+        #options = ['ping', '-c %s' % count, '%s' % host]
+        data = (process, binary, options)
+    
+        # add to the pings that will be spawned in the reactor
+        pings.append(data)
+
+    return pings
+    '''
+
+    pings = []
+    service = pymoncfg.services.service(type='ping')
+
+    for host in service.hosts.host:
+        # ping config options setup
+        pingdata = cfg.sections[section]
+        pingcfg = {'defaults': service.defaults, 'constants': states, 'data': pingdata}
 
         # get the info in order to make the next ping
         host = cfg.inidata.get(section, 'destination host')
@@ -39,7 +70,7 @@ def getHTTPMonitors():
     for section in cfg.http:
         # http config options setup
         httpdata = cfg.sections[section]
-        httpcfg = {'defaults': defaults, 'constants': constants, 'data': httpdata}
+        httpcfg = {'defaults': defaults, 'constants': states, 'data': httpdata}
 
         # get the info to make the next http check
         client = protocols.PyMonHTTPClientFactory(httpcfg)
