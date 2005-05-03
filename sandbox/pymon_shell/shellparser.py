@@ -12,16 +12,24 @@ class ShellParser:
     '''
 
     def __init__(self):
-        self.ip_addr = "";
-        self.monitor = "";
-        self.cmd_action = "";
-        self.cmd_type = "";
+        """init method"""
 
     def parse(self, cmd):
+        white_chars = " "
+        self.cmd = cmd
+        cmd_list = cmd.split(white_chars)
+        self.cmd_type = cmd_list[-1]
+
+    [ dispatch.generic() ]
+    def command(self):
+        """generic method for cmd"""
+
+    [ command.when("self.cmd_type == 'status'") ]
+    def commandStatus(self):
         # grammar stuff
         integer = Word(nums)
-        ip_address = Combine(integer + "." + 
-            integer + "." + integer + "." + 
+        ip_address = Combine(integer + "." +
+            integer + "." + integer + "." +
             integer)
         cmd_start = CaselessLiteral("show")
         cmd_type = CaselessLiteral("status")
@@ -32,19 +40,14 @@ class ShellParser:
             + ip_address.setResultsName("ip_addr") \
             + monitor.setResultsName("monitor") \
             + cmd_type.setResultsName("cmd_type")
-        for srvr, startloc, endloc in cmd_pattern.scanString(cmd):
-            self.ip_addr = srvr.ip_addr
-            self.monitor = srvr.monitor
-            self.cmd_action = srvr.cmd_action
-            self.cmd_type = srvr.cmd_type
+        for srvr, startloc, endloc in cmd_pattern.scanString(self.cmd):
+            ip_addr = srvr.ip_addr
+            monitor = srvr.monitor
+            cmd_action = srvr.cmd_action
+            cmd_type = srvr.cmd_type
+        return str((ip_addr, monitor, cmd_action, cmd_type))
 
-    [ dispatch.generic() ]
-    def command(self):
-        """generic method for cmd"""
-
-    [ command.when("self.cmd_type == 'status'") ]
-    def commandStatus(self):
-        return self.ip_addr, self.monitor, self.cmd_action, self.cmd_type
+sp = ShellParser()
 
 def _test():
     import doctest, shellparser
