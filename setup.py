@@ -39,6 +39,7 @@ setup(name="PyMonitor",
         'adytum.net',
         'adytum.net.http',
         'adytum.os',
+        'adytum.workflow',
     ],
     package_dir = {'adytum': 'lib'},
     data_files=[

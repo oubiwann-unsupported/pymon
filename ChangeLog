@@ -1,3 +1,8 @@
+2005.05.07
+
+* Added support for workflow with the adytum.workflow module (based on the
+itools workflow module).
+
 2005.05.01
 
 * Pulled protocols.isInRange out and put it in pymon.utilities.
