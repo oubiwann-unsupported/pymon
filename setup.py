@@ -4,7 +4,14 @@ import os
 import sys
 import glob
 import pwd, grp
-from distutils.core import setup
+try:
+    # if you want to build python egg dist files,
+    # you'll need the latest version of setuptools
+    # You can get it in the nondist/sandbox/setuptools
+    # directory in a python cvs checkout.
+    from setuptools import setup
+except:
+    from distutils.core import setup
 from lib.app.pymon.constants import INSTALL_DIR, USER, GROUP, \
     CONFIG_DIR, CONFIG_INI, CONFIG_XML, PLUGINS_DIR
 
@@ -20,10 +27,16 @@ plugins = glob.glob('%s/*.py' % PLUGINS_DIR)
 
 setup(name="PyMonitor",
     version="1.1",
-    description="Python Monitoring Application",
+    description="Python Enterprise Monitoring Application",
     author="Duncan McGreggor",
     author_email="duncan@adytumsolutions.com",
-    url="http://adytum.us",
+    url="http://pymon.sf.net",
+    license="BSD",
+    long_description='''pymon is an open source network and process
+        monitoring solution implemented in python. The interface and
+        conifiguration is designed to be easily and rapidly deployed,
+        saving on time and overhead often associated with other 
+        monitoring solutions.''',
     packages=[
         'adytum',
         'adytum.app',

@@ -2,6 +2,11 @@
 
 * Added support for workflow with the adytum.workflow module (based on the
 itools workflow module).
+* Added support for python egg distribution.
+* Added additioanl details to setup.py.
+* Updated the news (web content).
+* Implemented a first draft of a pymon workflow using the new supporting
+library for workflow (specifically, the Singleton version).
 
 2005.05.01
 
