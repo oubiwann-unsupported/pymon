@@ -12,23 +12,22 @@ from adytum.workflow.singleton import SingletonWorkflowAware \
     as WorkflowAware
 
 # Instantiate and setup workflow states
-pywf = base.Workflow()
-pywf.addState('Normal', description='App is in normal operation with no alerts')
-pywf.addState('Warn', description='App is in WARN state')
-pywf.addState('Error', description='App is in ERROR state')
-pywf.addState('Escalate', description='App is escalating')
-pywf.setInitState('Normal')
+state_wf = base.Workflow()
+state_wf.addState('Normal', description='pymon is in normal operation with no alerts')
+state_wf.addState('Warn', description='pymon is in WARN state')
+state_wf.addState('Error', description='pymon is in ERROR state')
+state_wf.addState('Escalate', description='pymon is escalating')
+state_wf.setInitState('Normal')
 
 # Setup workflow transitions
-pywf.addTrans('Warning', ['Normal', 'Warn', 'Error'], 'Warn',
-    description='The app has gone from OK to WARN')
-pywf.addTrans('Erring', ['Normal', 'Warn', 'Error'], 'Error',
-    description='The app has gone to state ERROR')
-pywf.addTrans('Recovering', ['Warn', 'Error'], 'Recover',
-    description='The app has resumed normal operation, but the previous state was either WARN or ERROR')
-pywf.addTrans('Escalating', ['Warn', 'Error', 'Escalate'], 'Escalate',
-    description='The app has received too many counts of a certain kind')
-
+state_wf.addTrans('Warning', ['Normal', 'Warn', 'Error'], 'Warn',
+    description='pymon has gone from OK to WARN')
+state_wf.addTrans('Erring', ['Normal', 'Warn', 'Error'], 'Error',
+    description='pymon has gone to state ERROR')
+state_wf.addTrans('Recovering', ['Warn', 'Error'], 'Recover',
+    description='pymon has resumed normal operation, but the previous state was either WARN or ERROR')
+state_wf.addTrans('Escalating', ['Warn', 'Error', 'Escalate'], 'Escalate',
+    description='pymon has received too many counts of a certain kind')
 
 # define a workflow-aware for mangaging state
 class PyMonState(WorkflowAware):
@@ -67,6 +66,6 @@ class PyMonState(WorkflowAware):
         print '* Issue unaddressed: escalating...'
 
 # this is what should get imported by the pymon application:
-pymon_state = PyMonState(workflow=pywf)
+pymon_state = PyMonState(workflow=state_wf)
 
 

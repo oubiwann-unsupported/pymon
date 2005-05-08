@@ -3,6 +3,9 @@
 * Added a PyMonState instantiation in pymon.workflow as that which should be
 imported from the module.
 * Added a placeholder for the license.
+* Fixed the descriptions in pymon.workflow.
+* Changed the wf instance name from pywf to state_wf, to allow for potential
+future pymon workflows that don't necessarily apply to state.
 
 2005.05.07
 
