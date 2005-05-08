@@ -1,18 +1,11 @@
 '''
 pymon Workflow
 
-For any given workflow instance, in pymon, we will want it to be a
-Singleton. The state of the system will be stored in base.State
-which in turn is used in base.Workflow. The last thing we want is
-multiple instances of workflow with different state information.
-
-However, for each service that is being monitored, it's own workflow
+For each service that is being monitored, it's own workflow
 should exist, one that shares no session data with any other service,
 as each service is completely independent.
 '''
 from adytum.workflow.base import Workflow, WorkflowAware
-from adytum.workflow.singleton import SingletonWorkflow, \
-    SingletonWorkflowAware
 
 # Instantiate and setup workflow states
 state_wf = base.Workflow()
