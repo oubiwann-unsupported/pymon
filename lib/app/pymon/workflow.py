@@ -66,3 +66,7 @@ class PyMonState(WorkflowAware):
     def onTransEscalating(self):
         print '* Issue unaddressed: escalating...'
 
+# this is what should get imported by the pymon application:
+pymon_state = PyMonState(workflow=pywf)
+
+

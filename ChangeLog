@@ -1,3 +1,8 @@
+2005.05.08
+
+* Added a PyMonState instantiation in pymon.workflow as that which should be
+imported from the module.
+
 2005.05.07
 
 * Added support for workflow with the adytum.workflow module (based on the
