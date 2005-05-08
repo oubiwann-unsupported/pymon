@@ -5,11 +5,14 @@ For any given workflow instance, in pymon, we will want it to be a
 Singleton. The state of the system will be stored in base.State
 which in turn is used in base.Workflow. The last thing we want is
 multiple instances of workflow with different state information.
+
+However, for each service that is being monitored, it's own workflow
+should exist, one that shares no session data with any other service,
+as each service is completely independent.
 '''
-from adytum.workflow.singleton import SingletonWorkflow \
-    as Workflow
-from adytum.workflow.singleton import SingletonWorkflowAware \
-    as WorkflowAware
+from adytum.workflow.base import Workflow, WorkflowAware
+from adytum.workflow.singleton import SingletonWorkflow, \
+    SingletonWorkflowAware
 
 # Instantiate and setup workflow states
 state_wf = base.Workflow()
@@ -30,8 +33,9 @@ state_wf.addTrans('Escalating', ['Warn', 'Error', 'Escalate'], 'Escalate',
     description='pymon has received too many counts of a certain kind')
 
 # define a workflow-aware for mangaging state
-class PyMonState(WorkflowAware):
-
+class ServiceState(WorkflowAware):
+    '''
+    '''
     def __init__(self, workflow=None):
         self.enterWorkflow(workflow, None, "Just Created")
 
@@ -66,6 +70,6 @@ class PyMonState(WorkflowAware):
         print '* Issue unaddressed: escalating...'
 
 # this is what should get imported by the pymon application:
-pymon_state = PyMonState(workflow=state_wf)
+service_state = ServiceState(workflow=state_wf)
 
 
