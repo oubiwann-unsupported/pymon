@@ -2,6 +2,7 @@
 
 * Added a PyMonState instantiation in pymon.workflow as that which should be
 imported from the module.
+* Added a placeholder for the license.
 
 2005.05.07
 
