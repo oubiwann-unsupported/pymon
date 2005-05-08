@@ -7,6 +7,9 @@ imported from the module.
 * Changed the wf instance name from pywf to state_wf, to allow for potential
 future pymon workflows that don't necessarily apply to state.
 * Reorganized workflow.
+* Site update: added license statement to the main page.
+* Pasted license content into placeholder, with a note about exceptions to the
+license.
 
 2005.05.07
 
@@ -14,7 +17,7 @@ future pymon workflows that don't necessarily apply to state.
 itools workflow module).
 * Added support for python egg distribution.
 * Added additioanl details to setup.py.
-* Updated the news (web content).
+* Site update: added news item about workflow.
 * Implemented a first draft of a pymon workflow using the new supporting
 library for workflow (specifically, the Singleton version).
 
