@@ -8,7 +8,7 @@ as each service is completely independent.
 from adytum.workflow.base import Workflow, WorkflowAware
 
 # Instantiate and setup workflow states
-state_wf = base.Workflow()
+state_wf = Workflow()
 state_wf.addState('Normal', description='pymon is in normal operation with no alerts')
 state_wf.addState('Warn', description='pymon is in WARN state')
 state_wf.addState('Error', description='pymon is in ERROR state')

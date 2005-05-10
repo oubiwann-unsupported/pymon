@@ -4,10 +4,11 @@ from adytum.app.pymon import api
 
 pymoncfg = api.config.pymoncfg
 
-states = pymoncfg.constants.states
+#states = pymoncfg.constants.states
+#constants = {'states': cfg.getStateDefs()}
+states = {'states': cfg.getStateDefs()}
 
 def getPingMonitors():
-    '''
     # original:
     pings = []
     defaults = cfg.sections['defaults :: ping']
@@ -15,7 +16,7 @@ def getPingMonitors():
     for section in cfg.pings:
         # ping config options setup
         pingdata = cfg.sections[section]
-        pingcfg = {'defaults': service.defaults, 'constants': states, 'data': pingdata}
+        pingcfg = {'defaults': defaults, 'constants': states, 'data': pingdata}
 
         # get the info in order to make the next ping
         host = cfg.inidata.get(section, 'destination host')
@@ -34,8 +35,8 @@ def getPingMonitors():
         pings.append(data)
 
     return pings
-    '''
 
+    '''
     pings = []
     service = pymoncfg.services.service(type='ping')
 
@@ -61,6 +62,7 @@ def getPingMonitors():
         pings.append(data)
 
     return pings
+    '''
 
 def getHTTPMonitors():
 

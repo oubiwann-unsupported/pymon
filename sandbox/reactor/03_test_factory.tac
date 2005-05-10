@@ -1,3 +1,4 @@
+from twisted.application import service, internet
 from twisted.internet import reactor
 from twisted.internet import task
 from twisted.internet.protocol import ProcessProtocol
@@ -20,26 +21,28 @@ class Process(ProcessProtocol):
     def outConnectionLost(self): pass
     def errConnectionLost(self): pass
 
-def getProcesses(count):
+class TextEchoClient(Process):
+    def processEnded(self, status_object):
+        self.data
+
+def getProcessMonitors(count):
     processes = []
     for i in range(0, count+1):
-        command = '/usr/bin/time' 
         command = '/bin/echo'
-        params = 'sleep 10'
         params = 'data: yes'
-        binary = 'time'
         binary = 'echo'
-        process = Process()
+        process = TextEchoClient()
         options = [command, params]
         processes.append((process, binary, options))
+    #print processes
     return processes
 
 INTERVAL = 20
 
 def runTest():
+  [ reactor.spawnProcess(*x) for x in getProcessMonitors(30) ]
 
-  [ reactor.spawnProcess(*x) for x in getProcesses(30) ]
-
-sched = task.LoopingCall(runTest)
-sched.start(INTERVAL)
-reactor.run()
+application = service.Application("pymon")
+pymonServices = service.IServiceCollection(application)
+server = internet.TimerService(INTERVAL, runTest)
+server.setServiceParent(pymonServices)
