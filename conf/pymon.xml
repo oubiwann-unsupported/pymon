@@ -55,12 +55,15 @@
         </service>
     </services>
     <system>
-        <database type="sql" name="zodb"> 
+        <database>
+            <dbtype>mysql</dbtype>
             <directory>data/zodb</directory>
             <host>localhost</host>
             <port></port>
             <user></user>
             <password></password>
+            <classification>sql</classification>
+            <dbname>pymon_testdb</dbname>
         </database>
     </system>
     <constants>

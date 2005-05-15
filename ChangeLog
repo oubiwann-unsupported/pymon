@@ -1,3 +1,9 @@
+2005.05.15
+
+* Changed setup.py to reflect the new location of the singleton class
+in the adytum library.
+* Modified the db configuration in the XML file.
+
 2005.05.09
 
 * Sandbox: added a true .tac app + service to the reactor sandbox.
