@@ -15,7 +15,7 @@ state_wf.setInitState('Normal')
 
 state_wf.addTrans('Warning', ['Warn', 'Normal'], 'Warn',
     description='pymon has gone from OK to WARN')
-state_wf.addTrans('Recovering', ['Warn', 'Normal'], 'Normal',
+state_wf.addTrans('Recovering', 'Warn', 'Normal',
     description='pymon has resumed normal operation')
 
 class ServiceState(WorkflowAware):
@@ -58,7 +58,7 @@ class Process(ProcessProtocol):
 ##################
 # client section #
 ##################
-class TextEchoClient(Process, ClientState):
+class TextEchoClient(Process):
     def __init__(self, name=None):
         self.name = name
         self.history = None
