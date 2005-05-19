@@ -6,23 +6,6 @@ from adytum.workflow.base import Workflow, WorkflowAware
 from random import random
 
 ####################
-# database section #
-####################
-class StateDataRow(object):
-    def __init__(self, id):
-        self.id = id
-        self.last_data = None
-        self.last_state = None
-    def setLastData(self, data):
-        self.last_data = data
-    def setLastState(self, state):
-        self.last_state = state
-    def getLastData(self):
-        return self.last_data
-    def getLastState(self):
-        return self.last_state
-
-####################
 # workflow section #
 ####################
 state_wf = Workflow()
@@ -30,9 +13,9 @@ state_wf.addState('Normal', description='pymon is in normal operation with no al
 state_wf.addState('Warn', description='pymon is in WARN state')
 state_wf.setInitState('Normal')
 
-state_wf.addTrans('Warning', 'Normal', 'Warn',
+state_wf.addTrans('Warning', ['Warn', 'Normal'], 'Warn',
     description='pymon has gone from OK to WARN')
-state_wf.addTrans('Recovering', 'Warn', 'Normal',
+state_wf.addTrans('Recovering', ['Warn', 'Normal'], 'Normal',
     description='pymon has resumed normal operation')
 
 class ServiceState(WorkflowAware):
@@ -47,7 +30,7 @@ class ServiceState(WorkflowAware):
     def onLeaveWarn(self):
         print 'workflow: - Leaving warning state...'
     def onTransRecovering(self):
-        print 'workflow: * Transitioning in recovering state...'
+        print 'workflow: * Recovering...'
 
 ####################
 # protocol section #
@@ -75,36 +58,43 @@ class Process(ProcessProtocol):
 ##################
 # client section #
 ##################
-class TextEchoClient(Process):
+class TextEchoClient(Process, ClientState):
     def __init__(self, name=None):
         self.name = name
-        self.history = StateDataRow(id=name)
-        self.workflow = ServiceState()
+        self.history = None
+        self.uid = ('pymon instance 1', 'host2.adytum.us', self.name)
         Process.__init__(self)
+    def setHistory(self, state_data):
+        self.state_data = state_data
+        # the first time through, this will populate the value
+        # corresponding to index self.uid with a fresh workflow 
+        # instance; if the index exists, the one in state_data 
+        # will be used
+        self.workflow = self.state_data.setdefault(self.uid, ServiceState())
+    def updateHistory(self, state):
+        pass
     def parseData(self):
         (tag, data) = self.data.split(':')
         if tag == 'data':
             return data.strip()
     def processEnded(self, status_object):
         parsed_data = self.parseData()
+        last_state = self.workflow.getStatename()
         print "client: name = %s" % self.name
-        print "client: data row id = %s" % self.history.id
-        print "client: last data = %s" % self.history.getLastData()
+        print "client (workflow): last state = %s" % last_state
         print "client: parsed data = %s" % parsed_data
-        print "client (workflow): last state = %s" % self.workflow.getLastStatename()
-        print "client (workflow): this state = %s" % self.workflow.getStatename()
-        try:
-            self.workflow.doTrans('Warn')
-        except: pass
-        try:
+        if parsed_data in ['no', 'maybe'] and last_state != 'Warn':
+            self.workflow.doTrans('Warning')
+        elif parsed_data == 'yes' and last_state != 'Normal':
             self.workflow.doTrans('Recovering')
-        except: pass
-        self.history.setLastData(parsed_data)
+        print "client (workflow): this state = %s" % self.workflow.getStatename()
+        print ""
+        self.state_data[self.uid] = self.workflow
 
 ####################
 # monitors section #
 ####################
-def getProcessMonitors(count):
+def getProcessMonitors(count, state_data):
     processes = []
     random_data = ['data: yes', 'data: no', 'data: maybe']
     for i in range(0, count):
@@ -112,19 +102,32 @@ def getProcessMonitors(count):
         params = random_data[int(random()*10) % 3]
         binary = 'echo'
         process = TextEchoClient(name='echo %s' % i)
+        process.setHistory(state_data)
         options = [command, params]
         processes.append((process, binary, options))
     return processes
 
-INTERVAL = 20
+INTERVAL = 10
 
 ################
 # main section #
 ################
+# each state will have its own unique id based on pymon instance
+# name, monnitored host name, and service name
+#
+# state_data[(pymon_name, host_name, service_name)] = state
+state_data = {}
+
 def runMonitors():
-  [ reactor.spawnProcess(*x) for x in getProcessMonitors(4) ]
+    [ reactor.spawnProcess(*x) for x in getProcessMonitors(2, state_data) ]
+
+def backupStateData():
+    pass
 
 application = service.Application("pymon")
 pymonServices = service.IServiceCollection(application)
-server = internet.TimerService(INTERVAL, runMonitors)
-server.setServiceParent(pymonServices)
+
+monitor = internet.TimerService(INTERVAL, runMonitors)
+monitor.setServiceParent(pymonServices)
+backup = internet.TimerService(INTERVAL, backupStateData)
+backup.setServiceParent(pymonServices)
