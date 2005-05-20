@@ -1,8 +1,6 @@
 from adytum.app.pymon import protocols
 from adytum.app.pymon.config import pymon as cfg
-from adytum.app.pymon import api
-
-pymoncfg = api.config.pymoncfg
+from adytum.app.pymon.config import pymoncfg
 
 #states = pymoncfg.constants.states
 #constants = {'states': cfg.getStateDefs()}
@@ -12,11 +10,12 @@ def getPingMonitors():
     # original:
     pings = []
     defaults = cfg.sections['defaults :: ping']
+    mailcfg = cfg.sections['system :: mail']
 
     for section in cfg.pings:
         # ping config options setup
         pingdata = cfg.sections[section]
-        pingcfg = {'defaults': defaults, 'constants': states, 'data': pingdata}
+        pingcfg = {'defaults': defaults, 'constants': states, 'data': pingdata, 'mail': mailcfg}
 
         # get the info in order to make the next ping
         host = cfg.inidata.get(section, 'destination host')

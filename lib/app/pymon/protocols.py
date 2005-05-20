@@ -108,10 +108,24 @@ class PyMonPing(PyMonProcess):
             status = self.cfg['constants']['states']['ok']
         elif utilities.isInRange(gain, self.cfg['defaults']['warn threshold']):
             status = self.cfg['constants']['states']['warn']
+            subj = 'pymon WARNING: %s : %s%% loss' % (host, loss)
         elif utilities.isInRange(gain, self.cfg['defaults']['error threshold']):
             status = self.cfg['constants']['states']['error']
+            subj = 'pymon ERROR: %s : %s%% loss' % (host, loss)
         else:
             status = -1
+
+        if status in [self.cfg['constants']['states']['warn'], self.cfg['constants']['states']['error']]:
+            from adytum.app.pymon.message import LocalMail
+            for address in self.cfg['data']['notify'].split(','):
+                email = LocalMail()
+                email.setSendmailBinary(self.cfg['mail']['sendmail'])
+                email.setSubject(subj)
+                email.setTo(address)
+                email.setFrom(self.cfg['mail']['from'])
+                email.setData(msg)
+                email.send()
+                print "Sent ping notice email message to %s" % address
 
         # prepare data for insert/update
         data = {

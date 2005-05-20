@@ -1,6 +1,6 @@
 INSTALL_DIR     = '/usr/local/pymon'
-USER            = 'oubiwann'
-GROUP           = 'oubiwann'
+USER            = 'pymon'
+GROUP           = 'pymon'
 TYPE            = 'service type'
 CONFIG_DIR      = 'conf'
 CONFIG_INI      = 'pymon.ini'

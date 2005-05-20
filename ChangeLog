@@ -1,3 +1,15 @@
+2005.05.20
+
+* Created a MANIFEST file for building source distros.
+* Added dependancy checks in setup.py.
+* Commented out entire pymon.storage.sql file.
+* Ran into problems with api.py files, so stopped importing them for now.
+* Added temp import fix to pymon.tac.
+* Added system section for mail notifications to pymon.ini.
+* Added pymon.message.py for email notifications.
+* Added support for emailing messages in protocols.PyMonPing.
+* Updated installation instructions.
+
 2005.05.15
 
 * Changed setup.py to reflect the new location of the singleton class

@@ -15,18 +15,30 @@ except:
 from lib.app.pymon.constants import INSTALL_DIR, USER, GROUP, \
     CONFIG_DIR, CONFIG_INI, CONFIG_XML, PLUGINS_DIR
 
-
+# Dependancy Checks
 try:
     uid = pwd.getpwnam(USER)[2]
     gid = grp.getgrnam(GROUP)[2]
 except KeyError:
-    print "\nNon-system user or group name given. Did you edit your config file?\n"
+    print """\nNon-system user or group name given. 
+Did you edit the ./lib/app/pymon/constants.py file?\n"""
+    sys.exit()
+try:
+    #import ElementTree
+    import cElementTree
+except:
+    print "\nYou will need ElementTree and cElementTree to run pymon.\n"
+    sys.exit()
+try:
+    from sqlobject import SQLObject
+except:
+    print "\nYou will need to have sqlobject installed to run pymon.\n"
     sys.exit()
 
 plugins = glob.glob('%s/*.py' % PLUGINS_DIR)
 
 setup(name="PyMonitor",
-    version="1.1",
+    version="0.2.1",
     description="Python Enterprise Monitoring Application",
     author="Duncan McGreggor",
     author_email="duncan@adytumsolutions.com",

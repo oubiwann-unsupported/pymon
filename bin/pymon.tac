@@ -2,9 +2,11 @@ from twisted.application import service, internet
 from twisted.internet import reactor
 from twisted.internet import task
 
-from adytum.app.pymon.api import config
-from adytum.app.pymon.api import utilities
+from adytum.app.pymon import config
+from adytum.app.pymon import utilities
 
+import sys
+sys.path.append('.')
 from plugins import monitors
 
 INTERVAL = 20
