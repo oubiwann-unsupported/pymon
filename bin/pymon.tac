@@ -2,8 +2,11 @@ from twisted.application import service, internet
 from twisted.internet import reactor
 from twisted.internet import task
 
+from nevow import appserver
+
 from adytum.app.pymon import config
 from adytum.app.pymon import utilities
+from adytum.app.pymon.ui.web import pages
 
 import sys
 sys.path.append('.')
@@ -31,3 +34,8 @@ application = service.Application("pymon")
 pymonServices = service.IServiceCollection(application)
 server = internet.TimerService(INTERVAL, runMonitors)
 server.setServiceParent(pymonServices)
+
+webroot = appserver.NevowSite(pages.TestPage())
+webserver = internet.TCPServer(8080, webroot)
+webserver.setServiceParent(pymonServices)
+

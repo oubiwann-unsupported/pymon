@@ -1,3 +1,8 @@
+2005.05.22
+
+* Added initial support for Nevow and now have port 8080 open on pymon,
+displaying a test page.
+
 2005.05.20
 
 * Created a MANIFEST file for building source distros.
