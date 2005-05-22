@@ -2,6 +2,15 @@
 
 * Added initial support for Nevow and now have port 8080 open on pymon,
 displaying a test page.
+* Created a static directory in pymon root, with a web subdirectory to be
+used by Nevow for html templates, styles, etc.
+* Added static subdirectories to pymon.ui.web.Root for accessing images,
+icons, styles, etc.
+* Copied contrib/Zope/ZPT files to static web for use in Nevow. These are
+still ZPT and haven't been converted yet. This will have to wait until the
+refactor branch is merged, since it will require the new state machine.
+* Created appropriate Nevow page classes for main web ui page and sub pages.
+* Created a basic site.css file.
 
 2005.05.20
 

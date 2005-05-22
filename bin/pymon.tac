@@ -14,6 +14,7 @@ from plugins import monitors
 
 INTERVAL = 20
 #INTERVAL = 1
+state = {}
 
 # XXX this isn't being used right now, and may not ever...
 #Service = utilities.getService(config.pymoncfg.system.database.type)
@@ -35,7 +36,7 @@ pymonServices = service.IServiceCollection(application)
 server = internet.TimerService(INTERVAL, runMonitors)
 server.setServiceParent(pymonServices)
 
-webroot = appserver.NevowSite(pages.TestPage())
+webroot = appserver.NevowSite(pages.Root(state))
 webserver = internet.TCPServer(8080, webroot)
 webserver.setServiceParent(pymonServices)
 
