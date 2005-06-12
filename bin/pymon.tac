@@ -1,42 +1,45 @@
-from twisted.application import service, internet
-from twisted.internet import reactor
-from twisted.internet import task
+import pwd, grp
 
-from nevow import appserver
+from twisted.application import service
 
-from adytum.app.pymon import config
-from adytum.app.pymon import utilities
-from adytum.app.pymon.ui.web import pages
+from adytum.app.pymon.application import State, History
+from adytum.app.pymon.registry import globalRegistry
+from adytum.app.pymon.config import pymoncfg
+from adytum.app.pymon import engines
+from adytum.app.pymon import servers
 
-import sys
-sys.path.append('.')
-from plugins import monitors
+# config has to be done first, as everything else depends upon it.
+globalRegistry.add('config', pymoncfg)
+state       = State()
+history     = History()
+factories   = {}
+globalRegistry.add(pymoncfg.global_names.state, state)
+globalRegistry.add(pymoncfg.global_names.history, history)
+globalRegistry.add(pymoncfg.global_names.factories, factories)
 
-INTERVAL = 20
-#INTERVAL = 1
-state = {}
+# create application and application service container
+user        = pwd.getpwnam(pymoncfg.system.uid)[2]
+group       = grp.getgrnam(pymoncfg.system.gid)[2]
+appname     = pymoncfg.system.instance_name
+application = service.Application(appname, uid=user, gid=group)
+pymonsvc    = service.IServiceCollection(application)
 
-# XXX this isn't being used right now, and may not ever...
-#Service = utilities.getService(config.pymoncfg.system.database.type)
+# add all the services that are going to be monitored. This is where you
+# add service engine; choose the right one for your architecture, for 
+# instance:
+#
+#   engines.runProcessOptimizedEngine()
+#
+# See adytum.app.pymon.engines for details
+engines.runTwistedFactoryEngine(pymonsvc)
 
-def runMonitors():
+# Add a local perspective broker server for running processes
+servers.addProcessServer(pymonsvc)
 
-    # fire each ping monitor configuration off on the reactor
-    [ reactor.spawnProcess(*x) for x in monitors.getPingMonitors() ]
+# Add a Nevow web server to pymon for the HTTP interface
+servers.addWebServer(pymonsvc)
 
-    # fire each process monitor configuration off on the reactor
-
-    # fire each page monitor configuration off on the reactor
-
-    # fire each HTTP return status configuration off on the reactor
-    #[ reactor.connectTCP(*x) for x in monitors.getHTTPMonitors() ]
-
-application = service.Application("pymon")
-pymonServices = service.IServiceCollection(application)
-server = internet.TimerService(INTERVAL, runMonitors)
-server.setServiceParent(pymonServices)
-
-webroot = appserver.NevowSite(pages.Root(state))
-webserver = internet.TCPServer(8080, webroot)
-webserver.setServiceParent(pymonServices)
-
+# Schedule regular backups of state data to disk
+# XXX examine twisted.application's use of persisted data through restarts;
+# maybe use theirs instead.
+servers.addBackupServer(pymonsvc)

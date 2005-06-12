@@ -3,8 +3,9 @@ from ConfigParser import ConfigParser
 
 from adytum.config.base import DictConfig
 from adytum.config.xml import XmlConfig
+from registry import globalRegistry
 
-from adytum.app.pymon import constants
+import constants
 
 class PyMonIniConfig(DictConfig):
     '''
@@ -114,6 +115,10 @@ else:
 
 # XXX temporary - override  configuration object
 pymoncfg = XmlConfig(CONFIG_FILE % constants.CONFIG_XML)
+    
+
+def getPingConfigForHost(hostname):
+    pass
     
 
 def _test():

@@ -13,6 +13,7 @@ state_wf.addState('Normal', description='pymon is in normal operation with no al
 state_wf.addState('Warn', description='pymon is in WARN state')
 state_wf.addState('Error', description='pymon is in ERROR state')
 state_wf.addState('Escalate', description='pymon is escalating')
+state_wf.addState('Alert Hold', description='pymon is holding at current state')
 state_wf.setInitState('Normal')
 
 # Setup workflow transitions
@@ -20,7 +21,7 @@ state_wf.addTrans('Warning', ['Normal', 'Warn', 'Error'], 'Warn',
     description='pymon has gone from OK to WARN')
 state_wf.addTrans('Erring', ['Normal', 'Warn', 'Error'], 'Error',
     description='pymon has gone to state ERROR')
-state_wf.addTrans('Recovering', ['Warn', 'Error'], 'Recover',
+state_wf.addTrans('Recovering', ['Warn', 'Error'], 'Normal',
     description='pymon has resumed normal operation, but the previous state was either WARN or ERROR')
 state_wf.addTrans('Escalating', ['Warn', 'Error', 'Escalate'], 'Escalate',
     description='pymon has received too many counts of a certain kind')

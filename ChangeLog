@@ -1,3 +1,123 @@
+2005.06.09
+
+* Stubbed out some examples in the pymon.engines files.
+* Added a little more comment about engines in the .tac file.
+* Cleaned up the formatting of the .tac file.
+* Added another variable to the global names in the example-pymon.xml.
+* Removed ClientMixin config settings and put them in the factory __ini__()
+method (monitors.MonitorMixin) where they belong.
+* Enabled email alerts.
+* Did more work on getting http status checks running.
+* Added placeholders for dns, mysql, ftp and smtp clients.
+
+2005.06.08
+
+* Moved the servers out of the .tac file and put them in a newly added
+pymon.servers class file.
+* Moved class-level properties in ping.ClientMixin to properties set during
+__init__.
+* Added a connectionMade() method to ping.PingClient that calls super classes'
+connectionMade()/__init__() methods.
+* Bug fix: fixed bad class syntax in http.*.
+* Bug fix: monitors.MonitorMixin wasn't being called in some classes and was
+being called wrong in another one (missing part of the signature).
+* Removed some old bin dir files.
+* Removed unsed lib files.
+* Due to an oversight, the ui.web.pages file never got added to subversion.
+Added it.
+* Added build and test scripts to ensure that oversights like that mentioned
+above don't happen again.
+
+2005.06.07
+
+* Moved monitor (twisted factory) creation out of the main tac file and into
+an "engines" file, since the way the factories are created will affect the
+application as a whole, and for different tunings, different ways of creating
+the factories will be used.
+* Started to stub out the code for HTTP status checks and HTTP text checks.
+
+2005.06.05
+
+* Started making changes to the config file for DNS dig checks.
+
+2005.06.04
+
+* Created an agents.py file for the perspective broker process server.
+* Added an agents section to the example-pymon.xml system section.
+* Added a local agent ProcessServer to the pymon.tac file for executing local
+binaries.
+* Got the new pymon.tac running with the refactored ping monitor/factory and
+client code (subclasses of pb.PBClientFactory and pb.Broker).
+* Changes to the example-pymon.xml config file.
+
+2005.05.30
+
+* Sandbox: added a test for local or remote process execution via
+twisted.spread.pb (perspective broker).
+* Sandbox: cleaned up code in previous/other *.tac files.
+* Sandbox: fixed factory code so that it is created in the right place
+(factories are state machines and don't get instantiated at each run).
+* Fixed setup.py file to point to the example-pymon.* files.
+* Sandbox: more fixes for some of the test code.
+* Sandbox: added state machine demo for pb client factory.
+
+2005.05.29
+
+* Sandbox: added a test for getting HTTP status information from a server.
+* Sandbox: added a test for running a process and returning output through 
+a local TCP client/server setup.
+
+2005.05.28
+
+* Started making changes to all the code that needs access to the unique id 
+of a service.
+* Added group and user id elements to the system section of the XML config
+file.
+* Changed the .tac file so that uses these ids to set the uid/gid of the
+twistd process.
+
+2005.05.27
+
+* Bug fix: example-pymon.xml had a bug: "enabled" was at the same level as
+"services", and since thee names were different, it was treating everything
+at that level like a dictionary instead of a list. I therefore had to take
+the "enabled" tag and subtags out of "services" and put them in their own
+level.
+* Changed the .tac file to reflect the above-mentioned change in
+XML/configuration.
+* Generalized service component nomenclature in configuration XML file
+(renamed "hosts" to "entires" and "host" to "entry").
+* Changed example-pymon.xml to reflect the use of URIs for the new unique
+identification scheme for services.
+* Added missing test.py test harness to branch.
+
+2005.05.23
+
+* Added global registry test code to the sandbox.
+* Added missing support for top-level module names in the test harness
+test.py.
+* Added pymon.registry and doctests to code base.
+* In pymon.application, added a State class (dict subclass) and a History
+class that is a subclass of both Queue and object. There is dual inheritance
+because you cannot create and/or set arbitrary attributes on Queue objects.
+* Added global varibale names to the configuration file to ease code
+maintenance where calls are made to the globalRegistry.
+* Added a backup service for writing state data to disk.
+* Added configuration for backups to config/pymon.xml.
+* Added support to application.State for writing backup data to disk.
+* Added functionality to application.State.__init__() that checks for the
+state data backup/restore file on disk and if it exists, loads the state data
+and deletes the file.
+* Wrote doctests for application.State, included testing backup() and 
+restore().
+* Moved monitors back into the main lib, out of the plugins dir.
+* Created monitors.AbstractFactory.
+* Created monitors.PingMonitor.
+* Added support for loading sample configuration into the test harness so that
+modules that require configuration information can be tested.
+* Removed the runMonitor() from pymon.tac.
+* Updated doctests in application.State.
+
 2005.05.22
 
 * Added initial support for Nevow and now have port 8080 open on pymon,
@@ -11,8 +131,38 @@ still ZPT and haven't been converted yet. This will have to wait until the
 refactor branch is merged, since it will require the new state machine.
 * Created appropriate Nevow page classes for main web ui page and sub pages.
 * Created a basic site.css file.
+* Added initial support for Nevow and now have port 8080 open on pymon,
+displaying a test page.
+* Created a static directory in pymon root, with a web subdirectory to be
+used by Nevow for html templates, styles, etc.
+* Added static subdirectories to pymon.ui.web.Root for accessing images,
+icons, styles, etc.
+* Copied contrib/Zope/ZPT files to static web for use in Nevow. These are
+still ZPT and haven't been converted yet. This will have to wait until the
+refactor branch is merged, since it will require the new state machine.
+* Created appropriate Nevow page classes for main web ui page and sub pages.
+* Created a basic site.css file.
+* Merged latest trunk changes back into the refactor branch.
+* Moved the trunk additions of email notification into the client code and out
+of the protocol code.
+* Site update: Updated the news on the pymon.sf.net website.
+* Updated the css and home.html of the pMI with the look and feel of the
+pymon.sf.net site. REALLY needs to be cleaned up. And prepared for Nevow.
+* Added a pymon favoicon.ico to the pMI.
 
 2005.05.20
+
+* Created a MANIFEST file for building source distros.
+* Added dependancy checks in setup.py.
+* Commented out entire pymon.storage.sql file.
+* Ran into problems with api.py files, so stopped importing them for now.
+* Added temp import fix to pymon.tac.
+* Added system section for mail notifications to pymon.ini.
+* Added pymon.message.py for email notifications.
+* Added support for emailing messages in protocols.PyMonPing.
+* Updated installation instructions.
+
+2005.05.19
 
 * Created a MANIFEST file for building source distros.
 * Added dependancy checks in setup.py.
@@ -264,58 +414,64 @@ files to conform with the adytum conventions.
 * Updated site content -- news and main page.
 
 2004.05.13
-  o fixed the issue with last check/ok/warn/err dates only reporting the last
+
+* fixed the issue with last check/ok/warn/err dates only reporting the last
 check time
-  o removed the deepcopy and used copy instead (was getting recursion errors)
+* removed the deepcopy and used copy instead (was getting recursion errors)
 
 2004.05.12
-  o created pickle-specific methods and renamed methods that are used for
+
+* created pickle-specific methods and renamed methods that are used for
 dealing with pickle files
-  o edited the svn commit shell script to clear out pyc files and remove the
+* edited the svn commit shell script to clear out pyc files and remove the
 tmp files 
-  o the _getLastRun method made a call to loadRunData which called
+* the _getLastRun method made a call to loadRunData which called
 _loadPickleFile, but then didn't return anything. Fixing this fixed all the
 issues I was having with save state info.
 
 2004.05.11
-  o added support for giving friendly(er) names to data files
-  o pulled out references to remote_* in Internet/Site.py
-  o successfully tested site monitoring with Internet/Site 
-  o added a 'close' connection to the httpconn so that I could pickle the data
+
+* added support for giving friendly(er) names to data files
+* pulled out references to remote_* in Internet/Site.py
+* successfully tested site monitoring with Internet/Site 
+* added a 'close' connection to the httpconn so that I could pickle the data
 (can't pickle a network connection)
 
 2004.05.09
-  o moved subject template for email notifications out of System/Monitoring.py
+
+* moved subject template for email notifications out of System/Monitoring.py
 and into Monitor.py so that each service can customize it
-  o The problem with remote process monitoring notifications was due to the
+* The problem with remote process monitoring notifications was due to the
 fact that two rounds were being done at the same time: OK -> ERROR (round 1) +
 ERROR -> ERROR (round two) = no change between final state of round 1 and 2
 and thus no message got sent.
-  o Fixed a bug in process_monitor script: two calls to processMonitor for
+* Fixed a bug in process_monitor script: two calls to processMonitor for
 remote host services monitoring
-  o Set the external storage back to binary pickles
-  o Created a bunch of methods for accessing summary data and creating files
+* Set the external storage back to binary pickles
+* Created a bunch of methods for accessing summary data and creating files
 that contain summary data.
-  o Correcteed the messages that were getting saved to summary data
-  o Changed the sort order for the summary data
-  o Moved System/Hosts to Internet/Ping
-  o Added Internet/Site and began stubbing out code for site monitoring.
+* Correcteed the messages that were getting saved to summary data
+* Changed the sort order for the summary data
+* Moved System/Hosts to Internet/Ping
+* Added Internet/Site and began stubbing out code for site monitoring.
 
 2004.05.02
-  o moved email message templates into *Monitor methods so they could be
+
+* moved email message templates into *Monitor methods so they could be
 easily tailored to each service being monitored
-  o added message for ping monitoring
-  o moved *Monitor methods out of Monitoring class and into Monitor class
-  o moved Monitoring class into System package
+* added message for ping monitoring
+* moved *Monitor methods out of Monitoring class and into Monitor class
+* moved Monitoring class into System package
 
 2004.04.28
-  o added minimal support for ping-monitoring hosts
-  o separated more code into general monitoring and type of monitoring 
-  o added a 'debug' property to Monitor.py and System/Host.py and removed
+
+* added minimal support for ping-monitoring hosts
+* separated more code into general monitoring and type of monitoring 
+* added a 'debug' property to Monitor.py and System/Host.py and removed
 print statements that were cluttering output
-  o fixed database naming for ping monitoring
-  o fixed a bug (type) in database naming for service monitorings without a
+* fixed database naming for ping monitoring
+* fixed a bug (type) in database naming for service monitorings without a
 remote host set
-  o removed the binary parameter from the read/write methods and created a new
+* removed the binary parameter from the read/write methods and created a new
 property 'binary_pickle' that is checked before reading or writing pickles
 files

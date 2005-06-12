@@ -1,3 +1,0 @@
-'''
-Define data schemas here.
-'''
