@@ -1,3 +1,8 @@
+2005.06.11
+
+* Merged pattern refactor branch back into trunk.
+* Manually added some files that the merge didn't do for some reason.
+
 2005.06.09
 
 * Stubbed out some examples in the pymon.engines files.
