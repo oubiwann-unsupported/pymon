@@ -1,4 +1,5 @@
-sudo rm -rf /System/Library/Frameworks/Python.framework/Versions/2.3/lib/python2.3/site-packages/adytum/app/pymon
+PYPREFIX=`python -c "import sys;print sys.prefix;"`
+sudo rm -rf ${PYPREFIX}/python2.3/site-packages/adytum/app/pymon
 sudo rm -rf build/
 chmod -R 777 data
 sudo python setup.py install

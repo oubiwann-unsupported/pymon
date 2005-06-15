@@ -1,6 +1,9 @@
 2005.06.14
 
 * Added script for updating all svn repos in lib.
+* Made the build.sh script more x-platform by getting the python prefix path
+(I was just being selfish and using the Mac OS X path).
+* Removed unused 'patterns' dir from setup.py.
 
 2005.06.13
 
