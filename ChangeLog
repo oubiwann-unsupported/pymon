@@ -1,3 +1,7 @@
+2005.06.14
+
+* Added script for updating all svn repos in lib.
+
 2005.06.13
 
 * Manually added ui.web.pages that the merge didn't do for some reason.
