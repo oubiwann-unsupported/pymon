@@ -1,3 +1,16 @@
+2005.06.18
+
+* Updated the internal pymon management web page for pymon (page actually
+loads when you go to localhost:8080 after starting pymon).
+* Added a missing spacer to the image dir.
+* Began the process of removing the constants file (added vars to setup.py and
+created conf/tempate-pymon.xml).
+* Sandbox: added test code for HTTP status.
+* Updated monitors to support HTTP status checks.
+* Updated clients.http to support HTTP status checks (still need to do
+threshold checks and email alerts).
+* Added line to build.sh to remove /usr/local/pymon.
+
 2005.06.14
 
 * Added script for updating all svn repos in lib.

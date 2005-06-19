@@ -2,7 +2,7 @@ import dispatch
 from zope.interface import implements
 from twisted.internet import reactor
 from twisted.spread import pb
-from twisted.web.client import HTTPClientFactory
+from twisted.web.client import HTTPClientFactory, PartialDownloadError
 from adytum.util.uri import Uri
 
 
@@ -94,19 +94,33 @@ class HttpStatusMonitor(HTTPClientFactory, MonitorMixin):
 
     def __init__(self, uid):
         MonitorMixin.__init__(self, uid)
-        page_url = 'http://%s' % self.service_cfg.uri
+        page_url = 'http://%s/' % self.service_cfg.uri
         # XXX write a getTimeout method
-        timeout = self.service_cfg.timeout
-        timeout = self.type_defaults.timeout
-        host = Uri(uid).getAuthority()
+        #timeout = self.service_cfg.timeout
+        #timeout = self.type_defaults.timeout
+        host = Uri(uid).getAuthority().getHost()
         agent = self.cfg.web.agent_string
         method = 'HEAD'
         # XXX write a method to get the http port from defaults or service config
-        port = self.service_cfg.port
-        port = self.type_defaults.port
+        #port = self.service_cfg.http_port
+        port = int(self.type_defaults.http_port)
         self.reactor_params = (host, port, self)
         HTTPClientFactory.__init__(self, page_url, method=method, 
-            agent=agent, timeout=timeout)
+            agent=agent)#, timeout=timeout)
+
+    def __call__(self):
+        MonitorMixin.__call__(self)
+        d = self.deferred
+        d.addCallback(self.printStatus)
+        d.addErrback(self.errorHandlerPartialPage)
+
+    def printStatus(self):
+        print 'Here is the return status: %s' % self.status
+
+    def errorHandlerPartialPage(self, failure):
+        failure.trap(PartialDownloadError)
+        print "Hmmm... got a partial page..."
+        print 'Here is the return status: %s' % self.status
 
 class PingMonitor(pb.PBClientFactory, MonitorMixin):
 

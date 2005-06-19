@@ -1,167 +1,161 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:nevow="http://nevow.com/ns/nevow/0.4">
 <head>
-        <title>pymon Management Interface</title>
-        <link rel="stylesheet" href="/site.css">
-        <link rel="SHORTCUT ICON" href="/icons/favicon.ico">
-        <style type="text/css">@import url('/styles/site.css');</style>
-        <style type="text/css">@import url('/webform_css');</style>
-
+    <title>pymon Management Interface</title>
+    <link rel="SHORTCUT ICON" href="/icons/favicon.ico" />
+    <style type="text/css">@import url('/styles/site.css');</style>
 </head>
 <body bgcolor="#ffffff" text="#000000" link="#000099" alink="#0000ff" vlink="#000099">
-
-<table border="0" cellspacing="0" cellpadding="0" width="100%">
-
+    <table border="0" cellspacing="0" cellpadding="0" width="100%">
         <tbody>
-                <tr class="headerback">
-                        <td align="center" rowspan="2" width="126">
-<div class="logo">
-<img src="/images/logo.gif" border="0" border="0"/>
-</div>
-                        </td>
-                        <td>
-<!-- section beside logo -->
-                        </td>
-                </tr>
+        <tr class="headerback">
+            <td align="center" rowspan="2" width="126">
+            <div class="logo">
+            <img src="/images/logo.gif" border="0" />
+            </div>
+            </td>
+            <td>
+            <!-- section beside logo -->
+            </td>
+        </tr>
 
-                <tr class="headerback">
-                        <td align="right" valign="bottom">
-<!-- horiz menu -->
+        <tr class="headerback">
+            <td align="right" valign="bottom">
+            <!-- horiz menu -->
+            <a href="http://pymon.sf.net" class="small">Home</a> | 
+            <a href="http://projects.adytum.us/tracs/PyMonitor" class="small">Docs</a> | 
+            <a href="http://sourceforge.net/project/showfiles.php?group_id=26246" class="small">Download</a> | 
+            <a href="http://projects.adytum.us/tracs/PyMonitor/browser/trunk" class="small">Subversion</a>
+            </td>
+        </tr>
+        <tr class="border">
+            <td colspan="2">
+            <img src="/images/spacer.gif" width="1" height="1" border="0" alt="" />
+            </td>
+        </tr>
+        <tr class="datebar">
+            <td align="right" valign="top" colspan="2" class="quicksearch">
+            <!-- path bar -->
+            <span class="small">
+            Sunday May 22, 2005
+            </span>
+            </td>
+        </tr>
+        <tr class="border">
+            <td colspan="3">
+            <img src="/images/spacer.gif" width="1" height="1" border="0" alt="" />
+            </td>
 
-<a href="http://pymon.sf.net" class="small">Home</a> | <a href="http://projects.adytum.us/tracs/PyMonitor" class="small">Docs</a> | <a href="http://sourceforge.net/project/showfiles.php?group_id=26246" class="small">Download</a> | <a href="http://projects.adytum.us/tracs/PyMonitor/browser/trunk" class="small">Subversion</a>
-
-                        </td>
-                </tr>
-                <tr class="border">
-                        <td colspan="2">
-                                <img src="spacer.gif" width="1" height="1" border="0" alt="">
-                        </td>
-                </tr>
-                <tr class="datebar">
-
-                        <td align="right" valign="top" colspan="2" class="quicksearch">
-<!-- path bar -->
-<span class="small">
-Sunday May 22, 2005
-</span>
-                        </td>
-                </tr>
-                <tr class="border">
-                        <td colspan="3">
-                                <img src="spacer.gif" width="1" height="1" border="0" alt="">
-                        </td>
-
-                </tr>
+        </tr>
         </tbody>
-</table>
+    </table>
 
-<table border="0" cellpadding="0" cellspacing="0">
-	<tbody>
+    <table border="0" cellpadding="0" cellspacing="0">
 		<tr valign="top">
-			<td width="200" class="sidebar">
-                                <table width="100%" cellpadding="2" cellspacing="0" border="0">
-                                        <tbody>
+            <td width="200" class="sidebar">
+                <table width="100%" cellpadding="2" cellspacing="0" border="0">
+                <tbody>
+                    <tr valign="top">
+                        <td class="sidebar">
 
-                                                <tr valign="top">
-                                                        <td class="sidebar">
+                        <h3>Main</h3>
+                        <a href="http://pymon.sf.net">Home</a><br/>
+                        <a href="http://projects.adytum.us/tracs/PyMonitor">Docs</a><br/>
+                        <a href="http://sourceforge.net/project/showfiles.php?group_id=26246">Download</a><br/>
+                        <a href="http://projects.adytum.us/tracs/PyMonitor/browser/trunk">Subversion</a><br/>
+                        <a href="http://maillists.adytum.us/pipermail/pymon/">Maillist</a><br/>
+                        &nbsp;<hr/>
+                        <h3>Sponsors</h3>
+                        <a href="http://sf.net">SourceForge</a><br/><a href="http://adytumsolutions.com">AdytumSolutions</a><br/>
 
-<h3> Main</h3><a href="http://pymon.sf.net">Home</a><br/><a href="http://projects.adytum.us/tracs/PyMonitor">Docs</a><br/><a href="http://sourceforge.net/project/showfiles.php?group_id=26246">Download</a><br/><a href="http://projects.adytum.us/tracs/PyMonitor/browser/trunk">Subversion</a><br/><a href="http://maillists.adytum.us/pipermail/pymon/">Maillist</a><br/><a href="http://sourceforge.net/tracker/?func=add&group_id=26246&atid=386607">Report a Bug</a><br/>&nbsp;<hr>
-<h3> Sponsors</h3><a href="http://sf.net">SourceForge</a><br/><a href="http://adytumsolutions.com">AdytumSolutions</a><br/>
-
-                                                        </td>
-                                                </tr>
-                                        </tbody>
-                                </table>
-
-			</td>
+                        </td>
+                    </tr>
+                </tbody>
+                </table>
+            </td>
 			<td class="sidebarborder" width="1">
-				<img src="spacer.gif" width="1" height="1" border="0" alt="">
+				<img src="/images/spacer.gif" width="1" height="1" border="0" alt=""/>
 			</td>
-
 			<td>
-                                <table cellpadding="10" cellspacing="0" width="100%">
-                                        <tbody>
-                                                <tr>
-                                                        <td valign="top">
-<!-- main content -->
+                <table cellpadding="10" cellspacing="0" width="100%">
+                <tr>
+                <td valign="top">
+                    <!-- main content -->
+                    <h1>pymon Status</h1>
+                    <ul>
+                        <li><a href="">pymon Overview</a></li>
+                        <li><a href="">View HTTP info</a></li>
+                        <li><a href="">View Telnet/SSH info</a></li>
+                        <li><a href="">kernel status</a></li>
+                    </ul>
 
-        <h1>pymon Status</h1>
-        <ul>
-            <li><a href="">pymon Overview</a></li>
-            <li><a href="">View HTTP info</a></li>
-            <li><a href="">View Telnet/SSH info</a></li>
-            <li><a href="">kernel status</a></li>
-        </ul>
+                    <h1>Service States</h1>
+                    <ul>
+                        <li><a href="states">Overview</a></li>
+                        <li><a href="statesdetail">Detailed View</a></li>
+                    </ul>
 
-        <h1>Service States</h1>
-        <ul>
-            <li><a href="states">Overview</a></li>
-            <li><a href="statesdetail">Detailed View</a></li>
-        </ul>
-<h2> About pymon</h2><b> pymon is an open source network and process monitoring solution implemented in python. The interface and conifiguration is designed to be easily and rapidly deployed, saving on time and overhead often associated with other monitoring solutions.</b><br/><br/><p>
+                    <h2> About pymon</h2><b> pymon is an open source
+                    network and process monitoring solution implemented
+                    in python. The interface and conifiguration is
+                    designed to be easily and rapidly deployed, saving
+                    on time and overhead often associated with other
+                    monitoring solutions.</b><br/><br/><p/>
 
 
-<h2> Features</h2><ul><li>The perfect remote monitoring tool for systems administrators and IT managers alike
-<li>Standard python distutils setup and installation for rapid deployment
-<li>Simple ini file configuration for easy maintenance 
-<li>SQL Storage for easy access to state data by thrid-party tools
-<li>Asynchronous (twisted python) code for near-realtime capabilities
-<li>The ability to monitor thousands of simultaneous services, hosts, page content checks, responses to protocol requests, etc.
-</ul>
-
-<h2> Requirements</h2><ul><li><a href="http://python.org" target="new">Python</a> 2.3+
-
-<li><a href="http://twistedmatrix.com" target="new">Twisted</a> 2.0+
-</ul>
-<ul>Options:
-<li><a href="http://www.zope.org/Products/ZODB3.2" target="new">ZODB</a>
-<li><a href="http://divmod.org/projects/atop" target="new">Atop</a>
-<li><a href="http://pysqlite.sourceforge.net/" target="new">PySQLite</a>
-<li><a href="http://sqlobject.org/" target="new">SQLObject</a>
-</ul>
-
-<h2> License</h2>pymon is released under a <a href="http://www.opensource.org/licenses/bsd-license.php">BSD License</a>.
-
-<table border="0" cellspacing="0" cellpadding="0" width="100%">
-        <tbody>
-                <tr class="border">
-                        <td>
-                                <img src="spacer.gif" width="1" height="1" border="0" alt="">
-                        </td>
+                    <h2> Features</h2>
+                    <ul>
+                        <li>The perfect remote monitoring tool for
+                        systems administrators and IT managers
+                        alike</li>
+                        <li>Standard python distutils setup and
+                        installation for rapid deployment</li>
+                        <li>Simple ini file configuration for easy maintenance</li>
+                        <li>SQL Storage for easy access to state data by thrid-party tools</li>
+                        <li>Asynchronous (twisted python) code for near-realtime capabilities</li>
+                        <li>The ability to monitor thousands of
+                        simultaneous services, hosts, page content
+                        checks, responses to protocol requests, etc.</li>
+                    </ul>
+                    <h2> License</h2>pymon is released under a <a
+                    href="http://www.opensource.org/licenses/bsd-license.php">BSD License</a>.
+                </td>
                 </tr>
-                <tr class="footerback">
+                </table>
 
-                        <td align="right" valign="bottom">
-<!-- footer horiz menu -->
+            </td>
+        </tr>
+    </table>
 
-<a href="http://pymon.sf.net" class="small">Home</a> | <a href="http://projects.adytum.us/tracs/PyMonitor/browser/trunk" class="small">Docs</a> | <a href="http://sourceforge.net/project/showfiles.php?group_id=26246" class="small">Download</a> | <a href="http://projects.adytum.us/tracs/PyMonitor/browser/branches/twisted-002/" class="small">Subversion</a>
-
-                        </td>
-
-                </tr>
-                <tr class="border">
-                        <td>
-                                <img src="spacer.gif" width="1" height="1" border="0" alt="">
-                        </td>
-                </tr>
-        </tbody>
-</table>
-<table border="0" cellspacing="0" cellpadding="6" width="100%">
-        <tbody>
-
-                <tr valign="top" class="postfooter">
-                        <td>
-                                <small>Copyright &copy; 2004 <a href="http://adytumsolutions.com">AdytumSolutions, Inc</a>.
-                                        <br>
-                                        All rights reserved.</small>
-                        </td>
-                        <td align="right">
-                            &nbsp;
-                        </td>
-                </tr>
-        </tbody>
-</table>
+    <!-- footer -->
+    <table border="0" cellspacing="0" cellpadding="0" width="100%">
+        <tr class="border">
+            <td>
+            <img src="/images/spacer.gif" width="1" height="1" border="0" alt="" />
+            </td>
+        </tr>
+        <tr class="footerback">
+            <td align="right" valign="bottom">
+            <!-- footer horiz menu -->
+            <a href="http://pymon.sf.net" class="small">Home</a> | 
+            <a href="http://projects.adytum.us/tracs/PyMonitor/browser/trunk" class="small">Docs</a> | 
+            <a href="http://sourceforge.net/project/showfiles.php?group_id=26246" class="small">Download</a> | 
+            <a href="http://projects.adytum.us/tracs/PyMonitor/browser/branches/twisted-002/" class="small">Subversion</a>
+            </td>
+        </tr>
+        <tr class="border"><td class="border"><img class="border" src="/images/spacer.gif" width="1" height="1" border="0" alt="" /></td></tr>
+    </table>
+    <table border="0" cellspacing="0" cellpadding="6" width="100%">
+        <tr valign="top" class="postfooter">
+            <td>
+            <small>Copyright &copy; 2004 <a href="http://adytumsolutions.com">AdytumSolutions, Inc</a>.
+            <br/> All rights reserved.</small>
+            </td>
+            <td align="right"> &nbsp; </td>
+        </tr>
+    </table>
 
 </body>
-
 </html>

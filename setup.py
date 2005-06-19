@@ -1,5 +1,19 @@
 #!/usr/bin/env python
 
+# XXX do search/replace templating in in the example-pymonl.xml
+# file, and write it out to the final file. 
+# XXX delete constants.py file, after removing all references to it.
+INSTALL_DIR     = '/usr/local/pymon'
+USER            = 'pymon'
+GROUP           = 'pymon'
+TYPE            = 'service type'
+CONFIG_DIR      = 'conf'
+CONFIG_INI      = 'pymon.ini'
+CONFIG_XML      = 'pymon.xml'
+PLUGINS_DIR     = 'plugins'
+PYMON_APP       = 'bin/pymon.tac'
+TWISTD          = '/usr/local/bin/twistd'
+
 import os
 import sys
 import glob
