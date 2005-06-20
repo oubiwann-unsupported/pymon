@@ -27,6 +27,10 @@ class ClientMixin(object):
             self.factory.state['count'] = self.factory.state['count'] + 1
         else:
             self.factory.state['count'] = 1
-        state_index = 'last %s' % utils.getStateNameFromNumber(self.rules.status)
+        status = self.rules.status
+        if status == self.factory.statedefs.recovering:
+            status = self.factory.statedefs.ok 
+        status = utils.getStateNameFromNumber(status)
+        state_index = 'last %s' % status
         self.factory.state[state_index] = datetime.now().strftime("%Y.%m.%d %H:%M:%S")
 

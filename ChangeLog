@@ -16,6 +16,9 @@ ThresholdRules.
 that everyone can use it.
 * Split ThresholdRules into pymon.clients.rules.
 * Copied Ravi's ftp prototype tac into my sandbox and made some adjustments.
+* Added connectionMade() (and thus enabled rules processing) for
+pymon.clients.http.HttpStatusClient.
+* Finished HTTP status monitor.
 
 2005.06.18
 

@@ -2,6 +2,7 @@
     <enabled>
         <groups_or_services>services</groups_or_services>
         <services>
+            <service_type>http status</service_type>
             <service_type>ping</service_type>
         </services>
         <groups>
@@ -10,7 +11,6 @@
     <disabled>
         <groups_or_services>services</groups_or_services>
         <services>
-            <service_type>http status</service_type>
             <service_type>http text</service_type>
             <service_type>local process</service_type>
             <service_type>dns dig</service_type>
@@ -147,20 +147,31 @@
                 <threshold_type>listed</threshold_type>
                 <ok>
                     <threshold>100, 101, 200, 201, 202, 203, 300, 302, 303, 304, 305</threshold>
-                    <message></message>
+                    <message>pymon OK: %s : HTTP status %s</message>
                 </ok>
-                <recover>
+                <recovering>
                     <threshold>NA</threshold>
-                    <message></message>
-                </recover>
+                    <message>pymon RECOVERING: %s : HTTP status %s</message>
+                </recovering>
                 <warn>
                     <threshold>204, 205, 206, 301, 401, 402, 403, 405, 406, 407, 411, 412, 413, 414, 415, 416</threshold>
-                    <message></message>
+                    <message>pymon WARN: %s : HTTP status %s</message>
                 </warn>
                 <error>
                     <threshold>400, 404, 408, 409, 410, 417, 500, 501, 502, 503, 504, 505</threshold>
-                    <message></message>
+                    <message>pymon ERROR: %s : HTTP status %s</message>
                 </error>
+                <escalation enabled="false">
+                    <group level="0">
+                        <maillist>
+                            <email>oubiwann@myrealbox.com</email>
+                            <email>oubiwann@yahoo.com</email>
+                        </maillist>
+                    </group>
+                    <group level="1">
+                        <maillist></maillist>
+                    </group>
+                </escalation>
             </defaults>
             <entries>
                 <entry uri="localhost" enabled="True">

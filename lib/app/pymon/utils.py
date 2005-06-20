@@ -62,6 +62,16 @@ def getDefaultsFromUri(uri):
     remainder = uri.split('://')[1]
     return cfg.services.service(type=type).defaults
 
+def getMailList(uri):
+    defs = getDefaultsFromUri(uri)
+    service_cfg = getEntityFromUri(uri)
+    # XXX currently, this only supports the first escalation level
+    if service_cfg.escalation:
+        esc = service_cfg.escalation.group(level='0')
+    else:
+        esc = defs.escalation.group(level='0')
+    return esc.maillist.email
+
 def _test():
     import doctest, utils
     return doctest.testmod(utils)

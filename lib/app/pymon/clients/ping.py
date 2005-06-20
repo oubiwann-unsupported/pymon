@@ -33,7 +33,7 @@ class PingClient(pb.Broker, ClientMixin):
         print 'Service: %s' % self.factory.uid
         print self.rules.msg 
         print self.rules.subj
-        print 'Status = %s' % self.rules.status
+        print 'Status: %s' % self.rules.status
 
         # update state information
         self.updateState()

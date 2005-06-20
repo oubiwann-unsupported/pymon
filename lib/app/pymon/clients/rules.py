@@ -92,7 +92,7 @@ class ThresholdRules(object):
         # non-blocking. Dererreds anyone?
         # XXX modify this when support for escalation and different 
         # group levels is added to python
-        for address in cfg.escalation.group(level='0').maillist.email:
+        for address in utils.getMailList(self.factory.uid):
             email = LocalMail()
             email.setSendmailBinary(sendmail)
             email.setSubject(self.subj)
