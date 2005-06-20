@@ -10,19 +10,18 @@ INTERVAL = 10
 ##################
 class ftpClient(FTPClient):
 
-    def __init__(self):
-        FTPClient.__init__(FTPClient, self.factory.username,
+    def connectionMade(self):
+        FTPClient.__init__(self, self.factory.username,
                            self.factory.password, self.factory.passive)
         print "connection made"
-        response = FTPClient.pwd(self)
-        print response
-
-    def connectionMade(self):
-        FTPClient.quit(self)
+        self.quit()
         print "connection disconnected"
+
     def connectionLost(self, reason):
         print "Connection lost; status: %s" % reason 
 
+    def lineReceived(self, line):
+        print line
 
 ###################
 # MONITOR SECTION #
@@ -46,7 +45,6 @@ class Monitor(ClientFactory):
 
     def clientConnectionFailed(self, connector, reason):
         print "connection failed:", reason
-        reactor.stop()
 
 #######################
 # APPLICATION SECTION #
