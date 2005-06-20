@@ -9,10 +9,16 @@ from adytum.util.striphtml import StrippingParser
 
 INTERVAL = 10
 
+##################
+# CLIENT SECTION #
+##################
 class Client(HTTPPageGetter):
     def connectionLost(self, reason):
         print "Connection lost; status: %s" % self.factory.status
 
+###################
+# MONITOR SECTION #
+###################
 class Monitor(HTTPClientFactory):
 
     protocol = Client
@@ -43,8 +49,15 @@ class Monitor(HTTPClientFactory):
         print "There was an error..."
         print 'Here is status: %s' % self.status
 
+#######################
+# APPLICATION SECTION #
+#######################
 application = service.Application("pymon")
 pymonServices = service.IServiceCollection(application)
+
+##################
+# ENGINE SECTION #
+##################
 monitor = Monitor()
 server = internet.TimerService(INTERVAL, monitor)
 server.setServiceParent(pymonServices)
