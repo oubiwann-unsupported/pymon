@@ -14,6 +14,7 @@ ThresholdRules.
 * Removed email send from clients.ping and put it into ThresholdRules.
 * Moved state update code from clients.ping into clients.base.ClientMixin, so
 that everyone can use it.
+* Split ThresholdRules into pymon.clients.rules.
 
 2005.06.18
 
