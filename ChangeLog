@@ -15,6 +15,7 @@ ThresholdRules.
 * Moved state update code from clients.ping into clients.base.ClientMixin, so
 that everyone can use it.
 * Split ThresholdRules into pymon.clients.rules.
+* Copied Ravi's ftp prototype tac into my sandbox and made some adjustments.
 
 2005.06.18
 
