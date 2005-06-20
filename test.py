@@ -23,6 +23,7 @@ modules = [
     'application',
     #'clients.factory',
     'registry',
+    'utils',
 ]
 
 suite = unittest.TestSuite()

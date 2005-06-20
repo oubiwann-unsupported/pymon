@@ -14,13 +14,30 @@ def updateDatabase(data):
     pass
 
 def isInRange(datum, incl_range):
-    mn, mx = incl_range.split(',')
-    if int(mn) <= int(datum) <= int(mx):
+    minimum, maximum = incl_range.split(',')
+    if int(minimum) <= int(datum) <= int(maximum):
         return True
     return False
 
-def getStatus(datum, cfg):
-    pass
+def isInList(datum, list_string):
+    '''
+    >>> test_list = '200, 303, 304, 401'
+    >>> isInList(200, test_list)
+    True
+    >>> isInList('200', test_list)
+    True
+    >>> isInList('405', test_list)
+    False
+    '''
+    list = [ x.strip() for x in list_string.split(',') ]
+    if str(datum) in list:
+        return True
+    return False
+
+def getStateNameFromNumber(num):
+    cfg = globalRegistry.config
+    states = dict([ (val, key) for key, val in cfg.constants.states.items() ])
+    return states.get(num)
 
 def makeUri(scheme, uri_remainder):
     return (('%s://%s') % (scheme, uri_remainder)).replace(' ', '+')
@@ -44,3 +61,11 @@ def getDefaultsFromUri(uri):
     type = getTypeFromUri(uri)
     remainder = uri.split('://')[1]
     return cfg.services.service(type=type).defaults
+
+def _test():
+    import doctest, utils
+    return doctest.testmod(utils)
+
+if __name__ == '__main__':
+    _test()
+

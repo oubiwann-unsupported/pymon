@@ -68,15 +68,18 @@ class State(dict):
             from registry import globalRegistry
             try:
                 cfg = globalRegistry.config.system.backups.state_data
-                filename = os.path.join(cfg.directory, cfg.filename)
-                self.setBackupFilename(filename)
+                self.filename = os.path.join(cfg.directory, cfg.filename)
+                self.setBackupFilename(self.filename)
             except AttributeError:
                 self.setBackupFilename(None)
-            filename = self.getBackupFilename()
-            if filename:
-                if os.path.exists(filename):
+            self.filename = self.getBackupFilename()
+            if self.filename:
+                if os.path.exists(self.filename):
                     self.restore()
-                    os.unlink(filename)
+                    os.unlink(self.filename)
+        self.setdefault('last status', -1)
+        self.setdefault('current status', -1)
+
 
     def setBackupFilename(self, filename):
         self.backup_file = filename

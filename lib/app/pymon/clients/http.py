@@ -8,9 +8,9 @@ class HttpTextClient:
     def connectionLost(self, reason):
         pass
     
-class HttpStatusClient(HTTPPageGetter):
+class HttpStatusClient(HTTPPageGetter, ClientMixin):
     
     def connectionLost(self, reason):
         status = self.factory.status
-        host = self.factory.uid
+        host = self.getHost()
         print "Status: %s for %s" % (status, host)

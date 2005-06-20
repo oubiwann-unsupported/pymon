@@ -4,4 +4,4 @@ sudo rm -rf build/
 sudo rm -rf /usr/local/pymon
 chmod -R 777 data
 sudo python setup.py install
-sudo cp -p /usr/local/pymon/conf/example-pymon.xml /usr/local/pymon/conf/pymon.xml
+sudo cp -p conf/template-pymon.xml /usr/local/pymon/conf/pymon.xml

@@ -1,3 +1,20 @@
+2005.06.20
+
+* Moved state defaults out of their tempary home in pymon.clients.ping and
+into where they belong: pymon.application.State.__init__().
+* Added utils.isInList() function for checking thresholds that aren't ranges
+but lists of expected values.
+* Created pymon.clients.base.ThresholdRules which is instantiated by
+ClientMixin and used by each Client class during connectionLost (when data is
+returned).
+* Moved get*Threshold() methods out of ClientMixin and put them in
+ThresholdRules.
+* Removed status checking from clients.ping.
+* Added more state info to clients.ping.
+* Removed email send from clients.ping and put it into ThresholdRules.
+* Moved state update code from clients.ping into clients.base.ClientMixin, so
+that everyone can use it.
+
 2005.06.18
 
 * Updated the internal pymon management web page for pymon (page actually

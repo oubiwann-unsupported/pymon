@@ -1,31 +1,133 @@
+from datetime import datetime
+
+import dispatch
+
 from adytum.util.uri import Uri
+from adytum.app.pymon import utils
+
+
+class ThresholdRules(object):
+    # XXX need checks for state and separate checks for
+    # notification
+    # XXX generalize threshold checks here... how much of this
+    # really should be in workflow?
+    # XXX what about escalation? Which messages are sent? How are
+    # messages sent? When are they NOT sent? Who gets what?
+
+    def getOkThreshold(self):
+        if self.factory.service_cfg.ok.threshold:
+            return self.factory.service_cfg.ok.threshold
+        else:
+            return self.factory.type_defaults.ok.threshold
+
+    def getWarnThreshold(self):
+        if self.factory.service_cfg.warn.threshold:
+            return self.factory.service_cfg.warn.threshold
+        else:
+            return self.factory.type_defaults.warn.threshold
+
+    def getErrorThreshold(self):
+        if self.factory.service_cfg.error.threshold:
+            return self.factory.service_cfg.error.threshold
+        else:
+            return self.factory.type_defaults.error.threshold
+
+    def setType(self, type):
+        self.threshold_type = type
+
+    def check(self, datum):
+        if self.isIn(datum, self.getOkThreshold()):
+            status = self.factory.statedefs.ok
+            # The 'current status' index hasn't been updated yet, so 
+            # 'current status' is really 'last status', and 'last status'
+            # is really the run prior to last.
+            if self.factory.state.get('current status') not in (self.factory.statedefs.ok,
+                self.factory.statedefs.recovering):
+                status = self.factory.statedefs.recovering
+            self.status = status
+        elif self.isIn(datum, self.getWarnThreshold()):
+            self.status = self.factory.statedefs.warn
+        elif self.isIn(datum, self.getErrorThreshold()):
+            self.status = self.factory.statedefs.error
+        else:
+            self.status = self.factory.statedefs.unknown
+
+    [ dispatch.generic() ]
+    def isIn(self, datum, threshold):
+        '''
+        Generic method for testing threshold
+        '''
+
+    [ isIn.when("self.threshold_type == 'ranged'") ]
+    def rangedIsIn(self, datum, threshold):
+        return utils.isInRange(datum, threshold)
+
+    [ isIn.when("self.threshold_type == 'listed'") ]
+    def listedIsIn(self, datum, threshold):
+        return utils.isInList(datum, threshold)
+
+    [ isIn.when("self.threshold_type == 'exact'") ]
+    def isExactly(self, datum, threshold):
+        if str(datum) == threshold:
+            return True
+        return False
+
+    def isMessage(self):
+        if self.status == self.factory.statedefs.ok:
+            return False
+        return True
+
+    def setMsg(self, *args):
+        self.msg = self.factory.type_defaults.message_template % args
+
+    def setSubj(self, *args):
+        status = utils.getStateNameFromNumber(self.status)
+        self.subj = self.factory.type_defaults.get(status).get('message') % args
+
+    def sendIt(self):
+        from adytum.app.pymon.message import LocalMail
+
+        if self.status == self.factory.statedefs.recovering:
+            self.msg = self.msg + '\r\nRecovering from state %s.' % self.factory.state.get('current status')
+        cfg = self.factory.service_cfg
+        sendmail = self.factory.mailcfg.sendmail
+        frm = self.factory.mailcfg.from_address
+        # XXX we probably want to make the actual sending of emails
+        # non-blocking. Dererreds anyone?
+        # XXX modify this when support for escalation and different 
+        # group levels is added to python
+        for address in cfg.escalation.group(level='0').maillist.email:
+            email = LocalMail()
+            email.setSendmailBinary(sendmail)
+            email.setSubject(self.subj)
+            email.setTo(address)
+            email.setFrom(frm)
+            email.setData(self.msg)
+            email.send()
+            print self.factory.type_defaults.sent_message % address  
 
 class ClientMixin(object):
 
-    def getOkThreshold(self):
-        # XXX put this in connectionMade so that we can
-        # do self.entity = ent and refer to it in the 
-        # rest of the client
-        if self.factory.service_cfg.ok_threshold:
-            return self.factory.service_cfg.ok_threshold
-        else:
-            return self.factory.type_defaults.ok_threshold
-
-    def getWarnThreshold(self):
-        if self.factory.service_cfg.warn_threshold:
-            return self.factory.service_cfg.warn_threshold
-        else:
-            return self.factory.type_defaults.warn_threshold
-
-    def getErrorThreshold(self):
-        if self.factory.service_cfg.error_threshold:
-            return self.factory.service_cfg.error_threshold
-        else:
-            return self.factory.type_defaults.error_threshold
-    
-    def getMsg(self):
-        return self.factory.type_defaults.message_template
-
     def getHost(self):
         uri = Uri(self.factory.uid)
-        return uri.getAuthority().getHost()    
+        return uri.getAuthority().getHost()
+
+    def buildRules(self):
+        rules = ThresholdRules()
+        rules.setType(self.factory.type_defaults.threshold_type)
+        rules.factory = self.factory
+        self.rules = rules
+
+    def connectionMade(self):
+        self.buildRules()
+
+    def updateState(self):
+        self.factory.state['last status'] = self.factory.state.get('current status')
+        self.factory.state['current status'] = self.rules.status
+        if self.factory.state['last status'] == self.factory.state['current status']:
+            self.factory.state['count'] = self.factory.state['count'] + 1
+        else:
+            self.factory.state['count'] = 1
+        state_index = 'last %s' % utils.getStateNameFromNumber(self.rules.status)
+        self.factory.state[state_index] = datetime.now().strftime("%Y.%m.%d %H:%M:%S")
+

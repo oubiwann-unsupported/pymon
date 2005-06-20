@@ -1,11 +1,7 @@
-from twisted.application import service, internet
-from twisted.internet import reactor
-from twisted.internet import task
-from twisted.internet.protocol import ProcessProtocol
 from twisted.web.client import HTTPPageGetter, HTTPClientFactory, PartialDownloadError
 from twisted.web.error import Error
-
-from adytum.util.striphtml import StrippingParser
+from twisted.application import service, internet
+from twisted.internet import reactor
 
 INTERVAL = 10
 
