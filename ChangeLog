@@ -19,6 +19,7 @@ that everyone can use it.
 * Added connectionMade() (and thus enabled rules processing) for
 pymon.clients.http.HttpStatusClient.
 * Finished HTTP status monitor.
+* Added a prototype for HTTP page text check to my sandbox.
 
 2005.06.18
 
