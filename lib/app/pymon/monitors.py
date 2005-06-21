@@ -48,6 +48,12 @@ class AbstractFactory(object):
         monitor = HttpTextMonitor(self.uid)
         return monitor
 
+    [ makeMonitor.when("self.type == 'ftp'") ]
+    def makeFtpMonitorMonitor(self):
+        monitor = FtpMonitor(self.uid)
+        return monitor
+
+
 class MonitorMixin(object):
 
     def __init__(self, uid):
