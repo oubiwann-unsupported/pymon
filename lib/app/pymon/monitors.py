@@ -3,13 +3,14 @@ from zope.interface import implements
 from twisted.internet import reactor
 from twisted.spread import pb
 from twisted.web.client import HTTPClientFactory, PartialDownloadError
+from twisted.internet.protocol import ClientFactory
 from adytum.util.uri import Uri
 
 
 from registry import globalRegistry
 from application import State, History
 from workflow import service as workflow
-from clients import ping, http
+from clients import ping, http, ftp
 import utils
 
 class AbstractFactory(object):
@@ -169,3 +170,27 @@ class PingMonitor(pb.PBClientFactory, MonitorMixin):
         else:
             self._failAll(reason) 
 
+class FtpMonitor(ClientFactory, MonitorMixin):
+
+    protocol = ftp.FtpStatusClient
+
+    def __init__(self, uid):
+        MonitorMixin.__init__(self, uid)
+        self.host = Uri(uid).getAuthority().getHost()
+        self.port = int(self.service_cfg.port)
+        self.username = self.service_cfg.username
+        self.password = self.service_cfg.password
+        self.passive = self.service_cfg.passive
+        self.return_code = 0
+        self.reactor_params = (self.host, self.port, self)
+
+    def __call__(self):
+        MonitorMixin.__call__(self)
+
+
+    def clientConnectionLost(self, connector, reason):
+        print "Connection Lost:", reason
+
+    def clientConnectionFailed(self, connector, reason):
+        self.return_code = 100
+        print "Connection Failed:", reason
