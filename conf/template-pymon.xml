@@ -20,7 +20,7 @@
         <service type="ping">
             <defaults>
                 <count>4</count>
-                <interval>5</interval>
+                <interval>25</interval>
                 <service_name>connectivity</service_name>
                 <message_template>There was a %s%% ping return from host %s</message_template>
                 <binary>/sbin/ping</binary>
@@ -48,8 +48,8 @@
                     <escalation enabled="false">
                         <group level="0">
                             <maillist>
-                                <email>oubiwann@myrealbox.com</email>
-                                <email>oubiwann@yahoo.com</email>
+                                <email>jojo.idiot@circus_boy.com</email>
+                                <email>pretty@new_pet.com</email>
                             </maillist>
                         </group>
                         <group level="1">
@@ -66,8 +66,8 @@
                     <escalation enabled="false">
                         <group level="0">
                             <maillist>
-                                <email>oubiwann@myrealbox.com</email>
-                                <email>oubiwann@yahoo.com</email>
+                                <email>jojo.idiot@circus_boy.com</email>
+                                <email>pretty@new_pet.com</email>
                             </maillist>
                         </group>
                         <group level="1">
@@ -140,9 +140,9 @@
         <service type="http status">
             <defaults>
                 <service_name>HTTP Status</service_name>
-                <interval>5</interval>
+                <interval>30</interval>
                 <http_port>80</http_port>
-                <message_template>The web server resource '%s' returned HTTP status %s</message_template>
+                <message_template>The web server resource '%s' returned HTTP status %s (%s).</message_template>
                 <sent_message>Sent http status notice email message to %s</sent_message>
                 <threshold_type>listed</threshold_type>
                 <ok>
@@ -164,8 +164,8 @@
                 <escalation enabled="false">
                     <group level="0">
                         <maillist>
-                            <email>oubiwann@myrealbox.com</email>
-                            <email>oubiwann@yahoo.com</email>
+                            <email>jojo.idiot@circus_boy.com</email>
+                            <email>pretty@new_pet.com</email>
                         </maillist>
                     </group>
                     <group level="1">

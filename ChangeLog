@@ -20,6 +20,8 @@ that everyone can use it.
 pymon.clients.http.HttpStatusClient.
 * Finished HTTP status monitor.
 * Added a prototype for HTTP page text check to my sandbox.
+* Removed oubiwann addresses from config file.
+* Added exception handling for pymon.application.State.backup().
 
 2005.06.18
 

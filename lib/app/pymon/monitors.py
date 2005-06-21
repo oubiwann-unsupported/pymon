@@ -94,21 +94,21 @@ class HttpStatusMonitor(HTTPClientFactory, MonitorMixin):
 
     def __init__(self, uid):
         MonitorMixin.__init__(self, uid)
-        page_url = 'http://%s/' % self.service_cfg.uri
+        self.page_url = 'http://%s/' % self.service_cfg.uri
         # XXX write a getTimeout method
         #timeout = self.service_cfg.timeout
         #timeout = self.type_defaults.timeout
-        host = Uri(uid).getAuthority().getHost()
-        agent = self.cfg.web.agent_string
-        method = 'HEAD'
+        self.host = Uri(uid).getAuthority().getHost()
+        self.agent = self.cfg.web.agent_string
+        self.method = 'HEAD'
         # XXX write a method to get the http port from defaults or service config
         #port = self.service_cfg.http_port
         port = int(self.type_defaults.http_port)
-        self.reactor_params = (host, port, self)
-        HTTPClientFactory.__init__(self, page_url, method=method, 
-            agent=agent)#, timeout=timeout)
+        self.reactor_params = (self.host, port, self)
 
     def __call__(self):
+        HTTPClientFactory.__init__(self, self.page_url, method=self.method, 
+            agent=self.agent)#, timeout=timeout)
         MonitorMixin.__call__(self)
         d = self.deferred
         d.addCallback(self.printStatus)

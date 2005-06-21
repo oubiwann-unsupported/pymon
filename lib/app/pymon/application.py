@@ -90,7 +90,10 @@ class State(dict):
     def backup(self):
         if not self.getBackupFilename():
             raise StateBackupError, "The backup filename has not been set."
-        pickle.dump(self, open(self.backup_file,'w'))
+        try:
+            pickle.dump(self, open(self.backup_file,'w'))
+        except IOError:
+            print "Backup file does not exist; couldn't backup data."
 
     def restore(self):
         if not self.getBackupFilename():
