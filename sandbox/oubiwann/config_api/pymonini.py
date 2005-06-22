@@ -113,7 +113,7 @@ class IniConfig(dict):
         # check to see if it's a file-like object
         if isinstance(self.source, StringFile):
             # XXX this while-loop is a hack; for some reason
-            # ConfigParser only reason one line per every read
+            # ConfigParser only gets one line per every read
             while self.source.lines:
                 self.cfg.readfp(self.source)
                 self.source_type = 'StringFile'
@@ -139,7 +139,7 @@ class IniConfig(dict):
                     ini_file = StringFile()
                     ini_file.write(self.source)
                     # XXX this while-loop is a hack; for some reason
-                    # ConfigParser only reason one line per every read
+                    # ConfigParser only gets one line per every read
                     while ini_file.lines:
                         self.cfg.readfp(ini_file)
                     self.source_type = 'Raw string'
