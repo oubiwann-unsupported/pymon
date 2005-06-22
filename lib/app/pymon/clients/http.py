@@ -16,13 +16,12 @@ class HttpStatusClient(HTTPPageGetter, ClientMixin):
     
     def connectionLost(self, reason):
         status = self.factory.status
-        host = self.getHost()
 
         # push the returned data through the threshold checks
         checked_resource = self.factory.service_cfg.uri
         self.rules.check(status)
-        self.rules.setMsg(checked_resource, status)
-        self.rules.setSubj(checked_resource, checked_resource)
+        self.rules.setMsg(checked_resource, status, self.factory.message)
+        self.rules.setSubj(checked_resource, status)
         if self.rules.isMessage():
             self.rules.sendIt()
 
@@ -30,7 +29,7 @@ class HttpStatusClient(HTTPPageGetter, ClientMixin):
         print 'Service: %s' % self.factory.uid
         print self.rules.msg 
         print self.rules.subj
-        print "Status: %s for %s" % (status, host)
+        print "Status: %s for %s" % (status, self.getHost())
 
         # update state information
         self.updateState()

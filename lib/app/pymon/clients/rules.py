@@ -45,6 +45,8 @@ class ThresholdRules(object):
             self.status = self.factory.statedefs.warn
         elif self.isIn(datum, self.getErrorThreshold()):
             self.status = self.factory.statedefs.error
+        elif datum == self.factory.statedefs.failed:
+            self.status = self.factory.statedefs.failed
         else:
             self.status = self.factory.statedefs.unknown
 
@@ -78,7 +80,8 @@ class ThresholdRules(object):
 
     def setSubj(self, *args):
         status = utils.getStateNameFromNumber(self.status)
-        self.subj = self.factory.type_defaults.get(status).get('message') % args
+        msg = self.factory.type_defaults.get(status).get('message')
+        self.subj = msg % args
 
     def sendIt(self):
         from adytum.app.pymon.message import LocalMail

@@ -161,6 +161,10 @@
                     <threshold>400, 404, 408, 409, 410, 417, 500, 501, 502, 503, 504, 505</threshold>
                     <message>pymon ERROR: %s : HTTP status %s</message>
                 </error>
+                <failed>
+                    <threshold>connection failed</threshold>
+                    <message>pymon ERROR: Connection Failed for %s</message>
+                </failed>
                 <escalation enabled="false">
                     <group level="0">
                         <maillist>
@@ -184,6 +188,9 @@
                     <client>None</client>
                 </entry>
                 <entry uri="accuratemachinery.com" enabled="True">
+                    <client>None</client>
+                </entry>
+                 <entry uri="127.0.0.2" enabled="True">
                     <client>None</client>
                 </entry>
             </entries>
@@ -239,6 +246,7 @@
             <recovering>2</recovering>
             <warn>3</warn>
             <error>4</error>
+            <failed>5</failed>
         </states>
     </constants>
     <global_names>

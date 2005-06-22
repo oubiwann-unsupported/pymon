@@ -3,6 +3,8 @@ from twisted.application import service, internet
 from twisted.internet import defer, reactor
 from twisted.internet.protocol import ClientFactory 
 
+from adytum.app.pymon.clients import base
+
 INTERVAL = 60
 
 ##################
@@ -51,6 +53,7 @@ class Monitor(ClientFactory):
 
     def __init__(self):
         self.host = 'ftp.mozilla.org'
+        self.host = 'localhost'
         self.port = 21
         self.username = 'annonymous'
         self.password = 'pymon@adytum.us'
@@ -58,6 +61,11 @@ class Monitor(ClientFactory):
 
     def __call__(self):
         reactor.connectTCP(self.host, self.port, self)
+
+    def clientConnectionFailed(self, connector, reason):
+        self.protocol = base.NullClient()
+        self.protocol.factory = self
+        self.protocol.makeConnection()
     
 #######################
 # APPLICATION SECTION #

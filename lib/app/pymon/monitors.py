@@ -10,7 +10,7 @@ from adytum.util.uri import Uri
 from registry import globalRegistry
 from application import State, History
 from workflow import service as workflow
-from clients import ping, http, ftp
+from clients import base, ping, http, ftp
 import utils
 
 class AbstractFactory(object):
@@ -115,7 +115,7 @@ class HttpStatusMonitor(HTTPClientFactory, MonitorMixin):
 
     def __call__(self):
         HTTPClientFactory.__init__(self, self.page_url, method=self.method, 
-            agent=self.agent)#, timeout=timeout)
+            agent=self.agent, timeout=int(self.type_defaults.interval))
         MonitorMixin.__call__(self)
         d = self.deferred
         d.addCallback(self.printStatus)
@@ -128,6 +128,13 @@ class HttpStatusMonitor(HTTPClientFactory, MonitorMixin):
         failure.trap(PartialDownloadError)
         print "Hmmm... got a partial page..."
         print 'Here is the return status: %s' % self.status
+
+    def clientConnectionFailed(self, connector, reason):
+        self.message = reason.getErrorMessage()
+        self.status = 'NA'
+        self.protocol = base.NullClient()
+        self.protocol.factory = self
+        self.protocol.makeConnection()
 
 class PingMonitor(pb.PBClientFactory, MonitorMixin):
 

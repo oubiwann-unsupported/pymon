@@ -1,3 +1,14 @@
+2005.06.21
+
+* Added a new state in the config file called "failed" with a numerical value
+of 5.
+* Added a failed section to the defaults section for HTTP.
+* Added an elif clause to clients.rules.ThresholdRules to set the local status.
+* Created a new class in clients.base called NullClient that subclasses from
+twisted.internet.protocol.Protocol and ClientMixin.
+* Modified the HTTP Monitor class by adding clientConnectionRefused that sets
+self.protocol to NullClient() and performs required calls.
+
 2005.06.20
 
 * Moved state defaults out of their tempary home in pymon.clients.ping and
