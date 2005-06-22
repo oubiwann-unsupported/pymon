@@ -90,6 +90,7 @@ class IniConfig(dict):
     '''
     def __init__(self, ini_source): 
         self.source = ini_source
+        self.delimiter = '>'
         self.cfg = ConfigParser()
         self.parseSource()
         sections = self.cfg.sections()
@@ -147,7 +148,7 @@ class IniConfig(dict):
             raise 'Initilization Error: could not set source.'
 
     def splitHeader(self, header):
-        levels = [ level.strip() for level in  header.split('>') ]
+        levels = [ level.strip() for level in  header.split(self.delimiter) ]
         return levels
         
 
