@@ -206,4 +206,10 @@ class FtpMonitor(ClientFactory, MonitorMixin):
 
     def clientConnectionFailed(self, connector, reason):
         self.return_code = 100
-        print "Connection Failed:", reason
+        print "Connection Failed:", reason.getErrorMessage()
+        self.message = reason.getErrorMessage()
+        self.status = 'NA'
+        self.protocol = base.NullClient()
+        self.protocol.factory = self
+        self.protocol.makeConnection()
+
