@@ -3,6 +3,8 @@
 * Sandbox: added some code for testing alternative configruations.
 * Sandbox: added an Ini -> dic parser file.
 * Sandbox: added mysql.tac protype for making mysql connections
+* Modified the FTP Monitor class by setting self.protocol to NullClient()
+in clientConnectionFailed
 
 2005.06.21
 
