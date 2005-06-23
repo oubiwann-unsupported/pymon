@@ -2,6 +2,7 @@
 
 * Sandbox: added some code for testing alternative configruations.
 * Sandbox: added an Ini -> dic parser file.
+* Sandbox: added mysql.tac protype for making mysql connections
 
 2005.06.21
 
