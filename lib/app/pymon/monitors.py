@@ -1,4 +1,6 @@
 import dispatch
+from email.MIMEText import MIMEText
+
 from zope.interface import implements
 from twisted.internet import reactor
 from twisted.spread import pb
@@ -6,11 +8,10 @@ from twisted.web.client import HTTPClientFactory, PartialDownloadError
 from twisted.internet.protocol import ClientFactory
 from adytum.util.uri import Uri
 
-
 from registry import globalRegistry
 from application import State, History
 from workflow import service as workflow
-from clients import base, ping, http, ftp
+from clients import base, ping, http, ftp, smtp
 import utils
 
 class AbstractFactory(object):
@@ -53,6 +54,15 @@ class AbstractFactory(object):
         monitor = FtpMonitor(self.uid)
         return monitor
 
+    [ makeMonitor.when("self.type == 'smtp status'") ]
+    def makeSmtpStatusMonitor(self):
+        monitor = SmtpStatusMonitor(self.uid)
+        return monitor
+
+    [ makeMonitor.when("self.type == 'smtp mail'") ]
+    def makeSmtpMailMonitor(self):
+        monitor = SmtpMailMonitor(self.uid)
+        return monitor
 
 class MonitorMixin(object):
 
@@ -213,3 +223,70 @@ class FtpMonitor(ClientFactory, MonitorMixin):
         self.protocol.factory = self
         self.protocol.makeConnection()
 
+
+class SmtpStatusMonitor(ClientFactory, MonitorMixin):
+
+    protocol = smtp.SmtpStatusClient
+
+    def __init__(self, uid):
+        MonitorMixin.__init__(self, uid)
+        self.host = Uri(uid).getAuthority().getHost()
+        self.port = int(self.service_cfg.port)
+        self.identity = self.service_cfg.identity 
+        self.status = 0
+        self.reactor_params = (self.host, self.port, self)
+
+    def buildProtocol(self, addr):
+        p = self.protocol(identity=self.identity, logsize=10)
+        p.factory = self
+        return p
+
+    def __call__(self):
+        MonitorMixin.__call__(self)
+
+    def clientConnectionFailed(self, connector, reason):
+        print "Connection Failed: %s " % reason.getErrorMessage()
+        self.message = reason.getErrorMessage()
+        self.status = 'NA'
+        self.protocol = base.NullClient()
+        self.protocol.factory = self
+        self.protocol.makeConnection()
+
+
+class SmtpMailMonitor(ClientFactory, MonitorMixin):
+
+    protocol = smtp.SmtpMailClient
+
+    def __init__(self, uid):
+        MonitorMixin.__init__(self, uid)
+        self.host = Uri(uid).getAuthority().getHost()
+        self.port = int(self.service_cfg.port)
+        self.identity = self.service_cfg.identity
+        self.status = 0
+        self.mail_from = self.service_cfg.mail_from
+        self.mail_to = self.service_cfg.mail_to
+        self.reactor_params = (self.host, self.port, self)
+    
+        # Construct an email message with the appropriate headers
+        msg = MIMEText("Pymon SMTP server mail check email")
+        msg['Subject'] = "Pymon Test Email"
+        msg['From'] = self.mail_from
+        msg['To'] = self.mail_to
+    
+        self.mail_data = msg.as_string()
+
+    def buildProtocol(self, addr):
+        p = self.protocol(identity=self.identity, logsize=10)
+        p.factory = self
+        return p
+
+    def __call__(self):
+        MonitorMixin.__call__(self)
+
+    def clientConnectionFailed(self, connector, reason):
+        print "Connection Failed: %s " % reason.getErrorMessage()
+        self.message = reason.getErrorMessage()
+        self.status = 'NA'
+        self.protocol = base.NullClient()
+        self.protocol.factory = self
+        self.protocol.makeConnection()
