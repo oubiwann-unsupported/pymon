@@ -1,3 +1,7 @@
+2005.11.06
+
+* Nope. It didn't work. Had to merge lib/app/pymon from previous revision.
+
 2005.11.05
 
 * Changed setup.py so that it wouldn't violate the security/sandbox issues of
