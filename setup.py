@@ -26,7 +26,7 @@ try:
     from setuptools import setup
 except:
     from distutils.core import setup
-from lib.app.pymon.constants import INSTALL_DIR, USER, GROUP, \
+from lib.pymon.constants import INSTALL_DIR, USER, GROUP, \
     CONFIG_DIR, CONFIG_INI, CONFIG_XML, PLUGINS_DIR
 
 # Dependancy Checks
@@ -55,7 +55,7 @@ setup(name="PyMonitor",
     version="0.3.2",
     description="Python Enterprise Monitoring Application",
     author="Duncan McGreggor",
-    author_email="duncan@adytumsolutions.com",
+    author_email="duncan@adytum.us",
     url="http://pymon.sf.net",
     license="BSD",
     long_description='''pymon is an open source network and process
@@ -64,25 +64,17 @@ setup(name="PyMonitor",
         saving on time and overhead often associated with other 
         monitoring solutions.''',
     packages=[
-        'adytum',
-        'adytum.app',
-        'adytum.app.pymon',
-        'adytum.app.pymon.clients',
-        'adytum.app.pymon.storage',
-        'adytum.app.pymon.ui',
-        'adytum.app.pymon.ui.jabber',
-        'adytum.app.pymon.ui.irc',
-        'adytum.app.pymon.ui.shell',
-        'adytum.app.pymon.ui.web',
-        'adytum.app.pymon.workflow',
-        'adytum.config',
-        'adytum.net',
-        'adytum.net.http',
-        'adytum.os',
-        'adytum.util',
-        'adytum.workflow',
+        'pymon',
+        'pymon.clients',
+        'pymon.storage',
+        'pymon.ui',
+        'pymon.ui.jabber',
+        'pymon.ui.irc',
+        'pymon.ui.shell',
+        'pymon.ui.web',
+        'pymon.workflow',
     ],
-    package_dir = {'adytum': 'lib'},
+    package_dir = {'pymon': 'lib'},
     data_files=[
         ('%s/bin' % INSTALL_DIR, ['bin/pymon.tac']),
         ('%s/%s' % (INSTALL_DIR, CONFIG_DIR), ['conf/example-pymon.ini']),
@@ -96,9 +88,11 @@ setup(name="PyMonitor",
 )
 
 # Set the permissions on the install directory
+'''
 print "Changing ownership of %s to %s:%s (%s:%s)..." % (INSTALL_DIR, USER, GROUP, uid, gid)
 for fullpath, dirs, files in os.walk(INSTALL_DIR):
     #print fullpath, dirs, files
     os.chown(fullpath, uid, gid)
     for filename in files:
         os.chown(os.path.join(fullpath, filename), uid, gid)
+'''

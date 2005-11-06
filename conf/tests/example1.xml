@@ -1,0 +1,19 @@
+<schema prefix="adytum.app.pymon.zconfig">
+
+    <!-- concrete sectiontype declaration -->
+    <sectiontype name="monitor-status">
+        <multikey name="enable" attribute="enabled"/>
+        <multikey name="disable" attribute="disabled"/>
+    </sectiontype>
+
+    <!-- section declaration -->
+    <key name="check-by"
+        datatype=".checkBy"
+        default="services"
+        attribute="check_by" />
+
+    <section name="*"
+            type="monitor-status"
+            attribute="monitor_status"/>
+
+</schema>

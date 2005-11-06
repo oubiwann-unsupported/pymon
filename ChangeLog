@@ -1,3 +1,16 @@
+2005.11.05
+
+* Changed setup.py so that it wouldn't violate the security/sandbox issues of
+EasyInstall (commented out the chmod/chown).
+* Began converting to SConfig configuration by adding a schema.xml and
+example-pymon.conf to the conf dir.
+* Created a conf/tests directory for this process and for developer reference.
+* Created a conf/old directory for previous configuration files.
+* Added custom validators to pymon for zconfig (these are in
+adytum.app.pymon.zconfig).
+* Made changes to the source code in order to put pymon in its own name space.
+* Tried moving the pymon directory... don't think it worked.
+
 2005.06.22
 
 * Sandbox: added some code for testing alternative configruations.

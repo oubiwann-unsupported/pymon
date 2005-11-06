@@ -1,0 +1,31 @@
+<schema prefix="pymon.zconfig">
+
+    <!-- concrete sectiontype declarations -->
+    <sectiontype name="monitor-status">
+        <multikey name="enable" attribute="enabled"/>
+        <multikey name="disable" attribute="disabled"/>
+    </sectiontype>
+
+    <!-- section declarations -->
+    <key name="check-by" datatype=".checkBy" default="services"
+        attribute="check_by" />
+    <key name="uid" default="pymon" />
+    <key name="gid" default="pymon" />
+    <key name="prefix" required="yes" />
+    <key name="pymon-app" default="pymon.tac" 
+        attribute="pymon_app" />
+    <key name="twisted-daemon" default="pymon"
+        attribute="twisted_daemon" />
+    <key name="user-agent-string" 
+        default="pymon Enterprise Monitoring (http://pymon.sf.net)"
+        attribute="user_agent_string" />
+    <key name="web-port" default=""
+        attribute="web_port" />
+    <key name="xmlrpc-port" default=""
+        attribute="xmlrpc_port" />
+    
+    <section name="*"
+        type="monitor-status"
+        attribute="monitor_status"/>
+
+</schema>

@@ -4,6 +4,7 @@ from twisted.application import service
 
 from adytum.app.pymon.application import State, History
 from adytum.app.pymon.registry import globalRegistry
+import pdb;pdb.set_trace()
 from adytum.app.pymon.config import pymoncfg
 from adytum.app.pymon import engines
 from adytum.app.pymon import servers
