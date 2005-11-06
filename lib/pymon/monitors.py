@@ -1,11 +1,14 @@
-import dispatch
 from email.MIMEText import MIMEText
 
+import dispatch
+
 from zope.interface import implements
+
 from twisted.internet import reactor
 from twisted.spread import pb
 from twisted.web.client import HTTPClientFactory, PartialDownloadError
 from twisted.internet.protocol import ClientFactory
+
 from adytum.util.uri import Uri
 
 from registry import globalRegistry

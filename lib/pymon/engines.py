@@ -1,8 +1,8 @@
 from twisted.application import internet
 
-from adytum.app.pymon.registry import globalRegistry
-from adytum.app.pymon import utils
-from adytum.app.pymon import monitors
+from pymon.registry import globalRegistry
+from pymon import utils
+from pymon import monitors
 
 # XXX need to add support for service groups here...
 # XXX if factories are iterated through first and instantiated,

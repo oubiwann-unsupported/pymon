@@ -6,8 +6,8 @@ Singleton. The state of the system will be stored in base.State
 which in turn is used in base.Workflow. The last thing we want is
 multiple instances of workflow with different state information.
 '''
-from adytum.workflow.singleton import SingletonWorkflow, \
-    SingletonWorkflowAware
+from adytum.workflow.singleton import SingletonWorkflow
+from adytum.workflow.singleton import SingletonWorkflowAware
 
 # Instantiate and setup workflow states
 app_wf = base.SingletonWorkflow()

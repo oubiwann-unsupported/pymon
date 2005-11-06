@@ -3,7 +3,7 @@ from datetime import datetime
 from twisted.internet import protocol
 
 from adytum.util.uri import Uri
-from adytum.app.pymon import utils
+from pymon import utils
 
 from rules import ThresholdRules
 

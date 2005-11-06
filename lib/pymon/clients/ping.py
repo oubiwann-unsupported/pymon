@@ -1,7 +1,7 @@
 from twisted.spread import pb
 
-from adytum.app.pymon.registry import globalRegistry
-from adytum.app.pymon import utils
+from pymon.registry import globalRegistry
+from pymon import utils
 
 from base import ClientMixin
 

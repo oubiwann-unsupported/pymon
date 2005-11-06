@@ -1,6 +1,6 @@
 import dispatch
 
-from adytum.app.pymon import utils
+from pymon import utils
 
 class ThresholdRules(object):
     # XXX need checks for state and separate checks for
@@ -84,7 +84,7 @@ class ThresholdRules(object):
         self.subj = msg % args
 
     def sendIt(self):
-        from adytum.app.pymon.message import LocalMail
+        from pymon.message import LocalMail
 
         if self.status == self.factory.statedefs.recovering:
             self.msg = self.msg + '\r\nRecovering from state %s.' % self.factory.state.get('current status')

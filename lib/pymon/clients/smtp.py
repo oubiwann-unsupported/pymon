@@ -1,6 +1,8 @@
-from twisted.mail.smtp import SMTPClient
-from base import ClientMixin
 import StringIO
+
+from twisted.mail.smtp import SMTPClient
+
+from base import ClientMixin
 
 class SmtpMailClient(SMTPClient, ClientMixin):
 

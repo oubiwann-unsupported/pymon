@@ -1,4 +1,4 @@
-from adytum.app.pymon.registry import globalRegistry
+from pymon.registry import globalRegistry
 
 
 class LocalTools:
@@ -7,7 +7,7 @@ class LocalTools:
     return file(filename).readline()
 
 def getService(db_type):
-    from adytum.app.pymon.api import storage
+    from pymon.api import storage
     return eval('storage.%s.Service' % db_type)
 
 def updateDatabase(data):

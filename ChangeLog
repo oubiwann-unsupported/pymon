@@ -2,6 +2,8 @@
 
 * Nope. It didn't work. Had to merge lib/app/pymon from previous revision.
 * Tried moving pymon out of app.
+* That *did* work. pymon is now a top-level package with it's own namespace.
+* Re-did all the edits to the python files to reflect the namespace changes.
 
 2005.11.05
 

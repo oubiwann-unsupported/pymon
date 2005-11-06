@@ -1,6 +1,8 @@
 from twisted.application import internet
+
 from nevow import appserver
-from adytum.app.pymon.ui.web import pages
+
+from pymon.ui.web import pages
 
 import agents
 

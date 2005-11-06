@@ -1,10 +1,11 @@
 import os
+
 from ConfigParser import ConfigParser
 
 from adytum.config.base import DictConfig
 from adytum.config.xml import XmlConfig
-from registry import globalRegistry
 
+from registry import globalRegistry
 import constants
 
 class PyMonIniConfig(DictConfig):
