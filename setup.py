@@ -1,4 +1,5 @@
-#!/usr/bin/env python
+import ez_setup
+ez_setup.use_setuptools()
 
 # XXX do search/replace templating in in the example-pymonl.xml
 # file, and write it out to the final file. 
@@ -73,18 +74,43 @@ setup(name="PyMonitor",
         'pymon.ui.shell',
         'pymon.ui.web',
         'pymon.workflow',
+        'adytum',
+        'adytum.net',
+        'adytum.os',
+        'adytum.util',
+        'adytum.workflow',
     ],
-    package_dir = {'pymon': 'lib'},
+    package_dir = {
+        'pymon': 'lib/pymon',
+        'adytum': 'lib',
+    },
     data_files=[
-        ('%s/bin' % INSTALL_DIR, ['bin/pymon.tac']),
-        ('%s/%s' % (INSTALL_DIR, CONFIG_DIR), ['conf/example-pymon.ini']),
-        ('%s/%s' % (INSTALL_DIR, CONFIG_DIR), ['conf/example-pymon.xml']),
-        ('%s/data' % INSTALL_DIR, ['data/.placeholder']),
-        ('%s/%s' % (INSTALL_DIR, PLUGINS_DIR), plugins),
-        ('%s/service' % INSTALL_DIR, ['service/run']),
-        ('%s/service/log' % INSTALL_DIR, ['service/log/run']),
-        ('%s/service/log/main' % INSTALL_DIR, ['service/log/main/.placeholder']),
+        ('bin', ['bin/pymon.tac', 'bin/pymon']),
+        ('%s' % (CONFIG_DIR), ['conf/example-pymon.conf']),
+        ('%s' % (CONFIG_DIR), ['conf/schema.xml']),
+        ('data', ['data/.placeholder']),
+        ('%s' % (PLUGINS_DIR), plugins),
+        ('service', ['service/run']),
+        ('service/log', ['service/log/run']),
+        ('service/log/main', ['service/log/main/.placeholder']),
     ],
+    scripts = ['bin/pymon'],
+    classifiers = [f.strip() for f in """
+    License :: OSI-Approved Open Source :: BSD License
+    Development Status :: 3 - Alpha
+    Intended Audience :: by End-User Class :: System Administrators
+    Intended Audience :: Developers
+    Intended Audience :: by End-User Class :: Advanced End Users
+    Intended Audience :: by Industry or Sector :: Information Technology
+    Intended Audience :: by Industry or Sector :: Telecommunications Industry
+    Programming Language :: Python
+    Topic :: System :: Networking :: Monitoring
+    Topic :: System :: Systems Administration
+    Topic :: Internet :: WWW/HTTP :: Site Management
+    Topic :: Security
+    Operating System :: Grouping and Descriptive Categories :: All POSIX (Linux/BSD/UNIX-like OSes)
+    """.splitlines() if f.strip()],
+
 )
 
 # Set the permissions on the install directory

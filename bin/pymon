@@ -1,0 +1,61 @@
+#!/usr/bin/env python
+
+import pwd, grp
+
+from pkg_resources import Requirement, resource_filename
+
+from twisted.application import service, app
+from twisted.scripts.twistd import runApp, ServerOptions
+
+import ZConfig
+
+from pymon.application import State, History
+from pymon.registry import globalRegistry
+from pymon import engines
+from pymon import servers
+
+# config has to be done first, as everything else depends upon it.
+schema_filename = resource_filename(
+    Requirement.parse("PyMonitor"),"conf/schema.xml")
+config_filename = resource_filename(
+    Requirement.parse("PyMonitor"),"conf/example-pymon.conf")
+schema = ZConfig.loadSchema(schema_filename)
+cfg, nil = ZConfig.loadConfig(schema, config_filename)
+
+# perform registry operations
+globalRegistry.add('config', cfg)
+state       = State()
+history     = History()
+factories   = {}
+globalRegistry.add(cfg.global_names.state, state)
+globalRegistry.add(cfg.global_names.history, history)
+globalRegistry.add(cfg.global_names.factories, factories)
+
+# create application and application service container
+user        = pwd.getpwnam(cfg.uid)[2]
+group       = grp.getgrnam(cfg.gid)[2]
+appname     = pymoncfg.system.instance_name
+application = service.Application(appname, uid=user, gid=group)
+pymonsvc    = service.IServiceCollection(application)
+
+# add all the services that are going to be monitored. This is where you
+# add service engine; choose the right one for your architecture, for 
+# instance:
+#
+#   engines.runProcessOptimizedEngine()
+#
+# See pymon.engines for details
+engines.runTwistedFactoryEngine(pymonsvc)
+
+# Add a local perspective broker server for running processes
+servers.addProcessServer(pymonsvc)
+
+# Add a Nevow web server to pymon for the HTTP interface
+servers.addWebServer(pymonsvc)
+
+# Schedule regular backups of state data to disk
+# XXX examine twisted.application's use of persisted data through restarts;
+# maybe use theirs instead.
+servers.addBackupServer(pymonsvc)
+
+app.run(runApp, ServerOptions)

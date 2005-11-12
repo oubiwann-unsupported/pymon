@@ -1,3 +1,15 @@
+2005.11.12
+
+* In the great debacle of lib rearrangement, the zconfig.py file was deleted
+with no existing copy remaining anyway. I attempted to reconstruct it from
+scratch.
+
+2005.11.07
+
+* Started working on an executable pymon file, such that the entire pymon
+application could be run from a python egg.
+* Added more schemas to conf/test for integration into the ZConfig for pymon.
+
 2005.11.06
 
 * Nope. It didn't work. Had to merge lib/app/pymon from previous revision.

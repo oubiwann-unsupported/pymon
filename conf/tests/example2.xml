@@ -1,0 +1,87 @@
+<schema prefix="pymon.zconfig">
+
+    <!-- concrete sectiontype declarations -->
+    <sectiontype name="monitor-status">
+        <multikey name="enable" attribute="enabled"/>
+        <multikey name="disable" attribute="disabled"/>
+    </sectiontype>
+
+    <sectiontype name="database">
+        <key name="host" />
+        <key name="port" />
+        <key name="username" />
+        <key name="password" />
+        <key name="dbname" />
+        <key name="dbpath" />
+    </sectiontype>
+
+    <sectiontype name="backups">
+        <key name="interval" datatype="integer" default="500" />
+        <key name="directory" default="data" />
+        <key name="filename" default="backup.pkl" />
+    </sectiontype>
+
+    <sectiontype name="state-definitions">
+        <key name="unknown" datatype="integer" default="-1" />
+        <key name="ok" datatype="integer" default="1" />
+        <key name="recovering" datatype="integer" default="2" />
+        <key name="warn" datatype="integer" default="3" />
+        <key name="error" datatype="integer" default="4" />
+        <key name="failed" datatype="integer" default="5" />
+    </sectiontype>
+
+    <sectiontype name="global-names">
+        <key name="state" default="state" />
+        <key name="history" default="history" />
+        <key name="factories" default="factories" />
+    </sectiontype>
+
+    <!-- section declarations -->
+    <key name="check-by" datatype=".checkBy" default="services"
+        attribute="check_by" />
+    <key name="uid" datatype="string" default="pymon" />
+    <key name="gid" datatype="string" default="pymon" />
+    <key name="prefix" required="yes" />
+    <key name="pymon-app" default="pymon.tac" 
+        attribute="pymon_app" />
+    <key name="twisted-daemon" default="pymon"
+        attribute="twisted_daemon" />
+    <key name="user-agent-string" 
+        default="pymon Enterprise Monitoring (http://pymon.sf.net)"
+        attribute="user_agent_string" />
+    <key name="jabber-port" default="3292"
+        attribute="jabber_port" />
+    <key name="web-port" default="3293"
+        attribute="web_port" />
+    <key name="telnet-port" default="3294"
+        attribute="telnet_port" />
+    <key name="smtp-port" default="3295"
+        attribute="smtp_port" />
+    <key name="xmlrpc-port" default="3298"
+        attribute="xmlrpc_port" />
+    <key name="mail-from" required="yes"
+        attribute="mail_from" />
+    <key name="sendmail" default="/usr/sbin/sendmail" />
+
+    <section name="*"
+        type="monitor-status"
+        attribute="monitor_status" />
+
+    <section name="*"
+        type="database" 
+        attribute="database" />
+
+    <section name="*"
+        type="backups"
+        attribute="backups" />
+
+    <section name="*"
+        type="state-definitions"
+        attribute="state_definitions" />
+
+    <section name="*"
+        type="global-names"
+        attribute="global_names" />
+
+</schema>
+

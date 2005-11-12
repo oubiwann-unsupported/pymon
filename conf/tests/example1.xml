@@ -1,4 +1,4 @@
-<schema prefix="adytum.app.pymon.zconfig">
+<schema prefix="pymon.zconfig">
 
     <!-- concrete sectiontype declaration -->
     <sectiontype name="monitor-status">
