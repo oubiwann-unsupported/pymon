@@ -2,6 +2,9 @@
 Functions for use in the configuration of pymon using the ZConfig
 package.
 '''
+from datetime import datetime
+from sets import Set
+
 class ValidateCaseInsensitiveList(object):
     '''
     A class for defining legal list values.
@@ -27,6 +30,13 @@ def checkBy(value):
     validator = ValidateCaseInsensitiveList(legal_values)
     return validator.validate(value)
 
+def _int(value):
+    try:
+        return int(value)
+        
+    except ValueError:
+        raise ValueError, "Value must be coercable to an integer."
+
 def rangedValues(range_string):
     '''
     Validator human-readable, easily/commonly understood format 
@@ -37,5 +47,48 @@ def rangedValues(range_string):
         20-25, 27, 29, 31-33
     '''
     # XXX need to write a regular expression that really checks for this
-    return range_string
+    values = []
+    ranges = range_string.split(',')
+    for value in ranges:
+        if '-' in  value:
+            start, end = value.split('-')
+            start = _int(start.strip())
+            end = _int(end.strip())
+            values.extend(range(start, end+1))
+        else:
+            value = _int(value)
+            values.append(value)
+
+    # get rid of duplicates
+    values = list(Set(values))
+    values.sort()
+
+    return values
+
+def _parseDate(yyyymmdd_hhmmss_string):
+    date, time = yyyymmdd_hhmmss_string.split()
+    y, m, d = date.strip().split('.')
+    h, min, s = time.strip().split(':')
+    date_tuple = [ int(x) for x in (y,m,d,h,min,s) ]
+
+    return datetime(*date_tuple)
+
+def getDateRange(range_string):
+    '''
+    This string is converted to two datetime.datetime objects in a dict:
+        {'start': datetime,
+         'end': datetime}
+    The range_string itself must be of the form:
+        YYYY.MM.DD HH:MM:SS - YYYY.MM.DD HH:MM:SS
+    The range_string is split by "-" and stripped of trailing/leading 
+    spaces.
+    '''
+    date_start, date_end = range_string.split('-')
+    date_start = _parseDate(date_start.strip())
+    date_end = _parseDate(date_end.strip())
+
+    return {
+        'start': date_start, 
+        'end': date_end,
+    }
     

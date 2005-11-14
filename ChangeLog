@@ -1,3 +1,13 @@
+2005.11.13
+
+* Added date range custom datatype.
+* Added configuration and tests for scheduled outages per service.
+* Filled out the rangedValues() datatype/validator in pymon.zconfig so that it
+can parse things such as "10-21", "10, 12, 14", and "10, 24, 30, 44-49".
+* Added configuration scheme for HTTP status checks.
+* Added example configuration for HTTP status checks as well as doctests for
+the configuration.
+
 2005.11.12
 
 * In the great debacle of lib rearrangement, the zconfig.py file was deleted

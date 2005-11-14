@@ -74,6 +74,29 @@ No replace list...
 No replace list...
 ['bull@butchers-ass.com', 'thick@candy-shell.com']
 
+# load example 4
+>>> schema = ZConfig.loadSchema('example4.xml')
+>>> ex4, nil = ZConfig.loadConfig(schema, 'example4.conf')
+
+# test values
+>>> for ping in ex4.services.pings:
+...   try:
+...     ping.scheduled_downtime['start'].timetuple()
+...     ping.scheduled_downtime['end'].timetuple()
+...   except:
+...     print "No scheduled outages..."
+No scheduled outages...
+(2005, 12, 1, 3, 0, 0, 3, 335, -1)
+(2005, 12, 1, 4, 0, 0, 3, 335, -1)
+No scheduled outages...
+>>> ex4.services.http_status_defaults.ok_threshold
+[100, 101, 200, 201, 202, 203, 300, 302, 303, 304, 305]
+>>> ex4.services.http_statuses[1].ok_threshold
+[200]
+>>> ex4.services.http_statuses[1].warn_threshold
+[100, 101, 201, 202, 203, 204, 205, 206, 300, 301, 302, 303, 304, 305, 401, 402, 403, 405, 406, 407, 411, 412, 413, 414, 415, 416]
+>>> ex4.services.http_statuses[1].error_threshold
+[400, 404, 408, 409, 410, 417, 500, 501, 502, 503, 504, 505]
 '''
 
 def _test():
