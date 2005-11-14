@@ -3,6 +3,9 @@
 * In the great debacle of lib rearrangement, the zconfig.py file was deleted
 with no existing copy remaining anyway. I attempted to reconstruct it from
 scratch.
+* Added support for default email notification list withing the general
+configuration section and overrides in ping-defaults as well as ping.
+* Added another set of tests for configuration (for pings).
 
 2005.11.07
 
