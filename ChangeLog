@@ -2,6 +2,12 @@
 
 * Updated the conf/example-pymon.conf and conf/schema.xml with the code
 developed in the tests.
+* Reorganized the service configuration nesting.
+* Made use of the "extends" attribute in the schema and most of the schema 
+redundancies.
+* Split schemas (ZConfig definitions) up into separate files for ease of
+development and maintenance; each monitor will have its own schema file, and
+the monitors will be grouped together in another services schema file.
 
 2005.11.13
 

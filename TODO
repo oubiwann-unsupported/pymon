@@ -9,6 +9,27 @@ o enable use of "Friendly Names" in emails
 o create valid regex for human-readable ranged values in the validator 
 pymon.zconfig.rangedValues.
 
+o tweak the ZConfig schema for pymon configuration to go from this:
+  <check_type-defaults>
+    ...
+  </check_type-defaults>
+  <check_type>
+    ...
+  </check_type>
+  <check_type>
+    ...
+  </check_type>
+
+to something more like this:
+  <check_type>
+    <defaults>
+      ...
+    </defaults>
+    <check>
+      ...
+    </check>
+  </check_type>
+
 This doesn't really belong in the TODO... I'll find a place for it later. How the port numbers were chosen:
 
 >>> from adytum.util import numerology

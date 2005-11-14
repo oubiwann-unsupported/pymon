@@ -1,0 +1,24 @@
+<!-- base sectiontypes /-->
+<sectiontype name="service-base">
+    <section name="*" type="notification-list-append"
+        attribute="notification_list_append" />
+
+    <section name="*" type="notification-list-replace"
+        attribute="notification_list_replace" />
+</sectiontype>
+
+
+<!-- extended sectiontypes: imports 
+        Note: these depend upon the above base sectiontypes
+/-->
+<import file="schema-ping.xml" />
+<import file="schema-http-status.xml" />
+
+<!-- service section: sub sections /-->
+<sectiontype name="services">
+    <section name="*" type="ping"
+        attribute="ping" />
+
+    <section name="*" type="http-status"
+        attribute="http_status" />
+</sectiontype>

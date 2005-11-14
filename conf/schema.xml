@@ -48,152 +48,10 @@
         <multikey name="email" attribute="emails" />
     </sectiontype>
 
-    <sectiontype name="ping-defaults">
-        <key name="count" datatype="integer" default="4"/>
-        <key name="interval" datatype="time-interval" default="25"/>
-        <key name="binary" default="/bin/ping"/>
-        <key name="ok-threshold" datatype=".rangedValues" default="76-100"
-            attribute="ok_threshold" />
-        <key name="warn-threshold" datatype=".rangedValues" default="26-75"
-            attribute="warn_threshold" />
-        <key name="error-threshold" datatype=".rangedValues" default="0-25"
-            attribute="error_threshold" />
+    <!-- import service definitions /-->
+    <import file="schema-services.xml" />
 
-        <key name="message-template" 
-            default="There was a %s%% ping return from host %s"
-            attribute="message_template" />
-        <key name="ok-message"
-            default="pymon OK: %s: %s%% loss"
-            attribute="ok_message" />
-        <key name="recovering-message"
-            default="pymon RECOVERING: %s : %s%% loss"
-            attribute="recovering_message" />
-        <key name="warn-message"
-            default="pymon WARN: %s : %s%% loss"
-            attribute="warn_message" />
-        <key name="error-message"
-            default="pymon ERROR: %s : %s%% loss"
-            attribute="error_message" />
-        <key name="sent-message"
-            default="Sent ping notice email message to %s"
-            attribute="sent_message" />
-
-        <section name="*" type="notification-list-append"
-            attribute="notification_list_append" />
-
-        <section name="*" type="notification-list-replace"
-            attribute="notification_list_replace" />
-
-    </sectiontype>
-
-    <sectiontype name="ping">
-        <key name="count" datatype="integer" default="4"/>
-        <key name="interval" datatype="time-interval" default="25"/>
-        <key name="binary" default="/bin/ping"/>
-        <key name="ok-threshold" datatype=".rangedValues" default="76-100"
-            attribute="ok_threshold" />
-        <key name="warn-threshold" datatype=".rangedValues" default="26-75"
-            attribute="warn_threshold" />
-        <key name="error-threshold" datatype=".rangedValues" default="0-25"
-            attribute="error_threshold" />
-
-        <key name="uri" required="yes" />
-        <key name="check-enabled" datatype="boolean" default="false"
-            attribute="check_enabled" />
-        <key name="escalation-enabled" datatype="boolean" default="false"
-            attribute="escalation_enabled" />
-        <key name="scheduled-downtime" datatype=".getDateRange" 
-            attribute="scheduled_downtime" />
-
-        <section name="*" type="notification-list-append"
-            attribute="notification_list_append" />
-
-        <section name="*" type="notification-list-replace"
-            attribute="notification_list_replace" />
-
-    </sectiontype>
-
-    <sectiontype name="http-status-defaults">
-        <key name="ok-threshold" datatype=".rangedValues" 
-            default="100-101, 200-203, 300, 302-305"
-            attribute="ok_threshold" />
-        <key name="warn-threshold" datatype=".rangedValues" 
-            default="204-206, 301, 401-403, 405-407, 411-416"
-            attribute="warn_threshold" />
-        <key name="error-threshold" datatype=".rangedValues" 
-            default="400, 404, 408-410, 417, 500-505"
-            attribute="error_threshold" />
-
-        <key name="message-template" 
-            default="The web server resource '%s' returned HTTP status %s (%s)."
-            attribute="message_template" />
-        <key name="ok-message"
-            default="pymon OK: %s : HTTP status %s"
-            attribute="ok_message" />
-        <key name="recovering-message"
-            default="pymon RECOVERING: %s : HTTP status %s"
-            attribute="recovering_message" />
-        <key name="warn-message"
-            default="pymon WARN: %s : HTTP status %s"
-            attribute="warn_message" />
-        <key name="error-message"
-            default="pymon ERROR: %s : HTTP status %s"
-            attribute="error_message" />
-        <key name="fail-message"
-            default="pymon ERROR: Connection Failed for %s"
-            attribute="fail_message" />
-        <key name="sent-message"
-            default="Sent http status notice email message to %s"
-            attribute="sent_message" />
-
-        <section name="*" type="notification-list-append"
-            attribute="notification_list_append" />
-
-        <section name="*" type="notification-list-replace"
-            attribute="notification_list_replace" />
-
-    </sectiontype>
-
-    <sectiontype name="http-status">
-        <key name="ok-threshold" datatype=".rangedValues" 
-            default="100-101, 200-203, 300, 302-305"
-            attribute="ok_threshold" />
-        <key name="warn-threshold" datatype=".rangedValues" 
-            default="204-206, 301, 401-403, 405-407, 411-416"
-            attribute="warn_threshold" />
-        <key name="error-threshold" datatype=".rangedValues" 
-            default="400, 404, 408-410, 417, 500-505"
-            attribute="error_threshold" />
-
-        <section name="*" type="notification-list-append"
-            attribute="notification_list_append" />
-
-        <section name="*" type="notification-list-replace"
-            attribute="notification_list_replace" />
-
-        <key name="uri" required="yes" />
-        <key name="check-enabled" datatype="boolean" default="false"
-            attribute="check_enabled" />
-        <key name="escalation-enabled" datatype="boolean" default="false"
-            attribute="escalation_enabled" />
-        <key name="scheduled-downtime" datatype=".getDateRange" 
-            attribute="scheduled_downtime" />
-    </sectiontype>
-
-    <sectiontype name="services">
-        <section name="*" type="ping-defaults"
-            attribute="ping_defaults" />
-        <multisection name="*" type="ping" 
-            attribute="pings" />
-
-
-        <section name="*" type="http-status-defaults"
-            attribute="http_status_defaults" />
-        <multisection name="*" type="http-status" 
-            attribute="http_statuses" />
-    </sectiontype>
-
-    <!-- section declarations -->
+    <!-- main section: keys /-->
     <key name="check-by" datatype=".checkBy" default="services"
         attribute="check_by" />
     <key name="uid" datatype="string" default="pymon" />
@@ -220,6 +78,7 @@
         attribute="mail_from" />
     <key name="sendmail" default="/usr/sbin/sendmail" />
 
+    <!-- main section: sub sections /-->
     <section name="*"
         type="monitor-status"
         attribute="monitor_status" />
