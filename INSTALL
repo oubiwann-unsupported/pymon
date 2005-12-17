@@ -1,4 +1,11 @@
-Please see the DEPENDANCIES file as well as the README.
+Please see the README.
+
+*** IMPORTANT ***
+You must create a copy of etc/example-pymon.conf and name it 
+"etc/pymon.conf". The install script setup.py will not run 
+without it.
+
+Edit your pymon.conf file to your tastes and needs.
 
 To install the application with all the defaults, simply run the
 usual:
@@ -10,28 +17,3 @@ configuration files, and a daemontools setup. The python libraries
 will be installed in the usual place, and all the pymon files you
 might need to change and/or configure, will be installed in
 /usr/local/pymon.
-
-Note: if you wish to install pymon in a directory other than
-'/usr/local/pymon', you will have to make changes to the following
-file:
-
-    ./lib/app/pymon/constants.py
-
-You will most likely want to edit the run inteval, the number of
-seconds between service polls. After you install pymon, edit
-/usr/local/pymon/bin/pymon.tac and change the value of INTERVAL to
-something that suites your needs.
-
-IMPORTANT !!! You will need to change the following file:
-
-    /usr/local/pymon/conf/pymon.ini
-
-This is where you define all your hosts and the thresholds for OK,
-WARN, and ERROR triggers. In addition, your ping and sendmail
-binaries need to be specified here. The ping binary is set in the
-ping defaults section. The sendmail binary is set in the system
-mail section.
-
-To run pymon, you just need to do the following:
-
-  twistd -noy /usr/local/pymon/bin/pymon.tac

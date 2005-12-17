@@ -1,3 +1,18 @@
+2005.12.16
+
+* Wrote a utility function pyInstall() in presetup.py that downloads and
+installs pymon dependencies.
+* Changed DEPENDENCIES to a useful file to be used during installation for
+downloading missing software. It's now a python data structure that gets
+eval'ed in presetup.py.
+* Renamed the "conf" dir to "etc".
+* Updated the INSTALL instructions.
+
+2005.12.15
+
+* Created pre- and postsetup.py files for getting around the setuptools
+sandbox.
+
 2005.11.14
 
 * Updated the conf/example-pymon.conf and conf/schema.xml with the code
@@ -8,6 +23,8 @@ redundancies.
 * Split schemas (ZConfig definitions) up into separate files for ease of
 development and maintenance; each monitor will have its own schema file, and
 the monitors will be grouped together in another services schema file.
+* Added ZConfig loaders and configuration instance to pymon config.
+* Setup bin/pymon to import cfg from pymon.config.
 
 2005.11.13
 

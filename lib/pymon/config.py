@@ -1,131 +1,49 @@
 import os
+from pkg_resources import Requirement, resource_filename
 
-from ConfigParser import ConfigParser
+from twisted.python import log
 
-from adytum.config.base import DictConfig
-from adytum.config.xml import XmlConfig
+import ZConfig
 
-from registry import globalRegistry
-import constants
+egg_pkg_name = "PyMonitor"
+schema_file = resource_filename(Requirement.parse(egg_pkg_name),
+    "etc/schema.xml")
+config_file = resource_filename(Requirement.parse(egg_pkg_name),
+    "etc/pymon.conf")
+schema = ZConfig.loadSchema(schema_file)
+cfg, nil = ZConfig.loadConfig(schema, config_file)
 
-class PyMonIniConfig(DictConfig):
-    '''
+# now that we've got the config file, we can get the prefix and then
+# check to see if there is an override on the filesystem for SonicVault
+# configuration. If so, we will override the one in the python lib.
+prefix = cfg.prefix.split('/')
+config_file = os.path.sep + os.path.join(*prefix+['etc', 
+    'pymon.conf'])
+if os.path.exists(config_file):
+    cfg, nil = ZConfig.loadConfig(schema, config_file)
 
-    '''
-    def __init__(self, filename):
-        pass
+def getResource(rsrc_list):
+    prefix = cfg.prefix.split('/')
+    rel_path = '/'.join(rsrc_list)
+    abs_path = os.path.sep + os.path.join(*prefix+rsrc_list)
+    if os.path.exists(abs_path):
+        return abs_path
+    else:
+        return resource_filename(Requirement.parse(egg_pkg_name), 
+            rel_path)
 
-class Configuration(object):
-    '''
-    >>> from config import pymon
-    >>> p = pymon.pings
-    >>> p.sort()
-    >>> p
-    ['i360.xnet.esecuresystems.com :: ping', 'shell1.adytum.us :: ping', 'shell2.adytum.us :: ping', 'www.divorce-md.com :: ping', 'www.esecuresystems.com :: ping']
-    >>> pymon.setPingConfigs()
-    >>> p = pymon.getPingConfigs()
-    >>> p.sort()
-    >>> p
-    ['i360.xnet.esecuresystems.com :: ping', 'shell1.adytum.us :: ping', 'shell2.adytum.us :: ping', 'www.divorce-md.com :: ping', 'www.esecuresystems.com :: ping']
-    >>> pymon.setHTTPConfigs()
-    >>> h = pymon.getHTTPConfigs()
-    >>> h.sort()
-    >>> h
-    ['accuratemachinery.com :: http', 'adytumsolutions.com :: http', 'bgrfamilylaw.com :: http', 'wmsoa.org :: http']
+# need to call these so pkg_resources caches the files that
+# ZConfig will look for by relative path from the cache
+resource_filename(Requirement.parse("PyMonitor"),"conf")
 
-    '''
+# now get teh config
+schema_filename = resource_filename(
+    Requirement.parse("PyMonitor"),"conf/schema.xml")
+config_filename = resource_filename(
+    Requirement.parse("PyMonitor"),"conf/pymon.conf")
+working_dir =  resource_filename(
+    Requirement.parse("PyMonitor"),"conf")
 
-    def __init__(self, inifile):
-        inidata = ConfigParser()
-        inidata.read(inifile)
-        self.inidata = inidata
-        self.__pings = []
-        self.__http = []
-        self.__sections = {}
-        self.setPingConfigs()
-        self.setHTTPConfigs()
-        self.setSections()
-
-    def setSections(self):
-        self.__sections = self.inidata.__dict__['_sections']
-
-    def getSection(self, section, sub_section):
-        key = '%s :: %s' % (section, sub_section)
-        return self.__sections[key]
-
-    def getStateDefs(self):
-        return self.getSection('constants', 'states')
-
-    def getSections(self):
-        return self.__sections
-        
-    def getTypes(self, service_type):
-        types = []
-        for section in self.inidata.sections():
-            if self.inidata.has_option(section, constants.TYPE):
-                if self.inidata.get(section, constants.TYPE) == service_type:
-                    types.append(section)
-        return types
-
-    def setPingConfigs(self):
-        self.__pings = self.getTypes('ping')
-
-    def getPingConfigs(self):
-        return self.__pings
-
-    def setHTTPConfigs(self):
-        self.__http = self.getTypes('http')
-
-    def getHTTPConfigs(self):
-        return self.__http
-
-    def setAllLocalProcessTypes(self):
-        pass
-
-    def setAllRemoteProcessTypes(self):
-        pass
-
-    def setAllSNMPTypes(self):
-        pass
-
-    def setAllSMTPTypes(self):
-        pass
-
-    def setAllDirectoryTypes(self):
-        pass
-
-    sections = property(getSections,
-        "This property provides access to all the sections in dict form.")
-
-    pings = property(getPingConfigs,
-        "This property provides access to the list of sections that are of 'ping' type.")
-
-    http = property(getHTTPConfigs,
-        "This property provides access to all the sections that are of 'http' type.")
-
-
-pymon = Configuration('%s/conf/pymon.ini' % constants.INSTALL_DIR)
-
-# get config file:
-CONFIG_FILE = os.path.join(constants.INSTALL_DIR, 
-    constants.CONFIG_DIR, '%s')
-if os.path.isfile(CONFIG_FILE % constants.CONFIG_INI):
-    pymoncfg = PyMonIniConfig(CONFIG_FILE % constants.CONFIG_INI)
-else:
-    pymoncfg = XmlConfig(CONFIG_FILE % constants.CONFIG_XML)
-
-# XXX temporary - override  configuration object
-pymoncfg = XmlConfig(CONFIG_FILE % constants.CONFIG_XML)
-    
-
-def getPingConfigForHost(hostname):
-    pass
-    
-
-def _test():
-    import doctest, config
-    return doctest.testmod(config)
-
-if __name__ == '__main__':
-    _test()
-
+#os.chdir(working_dir)
+schema = ZConfig.loadSchema(schema_filename)
+cfg, nil = ZConfig.loadConfig(schema, config_filename)

@@ -1,59 +1,31 @@
-import ez_setup
-ez_setup.use_setuptools()
-
-# XXX do search/replace templating in in the example-pymonl.xml
-# file, and write it out to the final file. 
-# XXX delete constants.py file, after removing all references to it.
-INSTALL_DIR     = '/usr/local/pymon'
-USER            = 'pymon'
-GROUP           = 'pymon'
-TYPE            = 'service type'
-CONFIG_DIR      = 'conf'
-CONFIG_INI      = 'pymon.ini'
-CONFIG_XML      = 'pymon.xml'
-PLUGINS_DIR     = 'plugins'
-PYMON_APP       = 'bin/pymon.tac'
-TWISTD          = '/usr/local/bin/twistd'
-
 import os
 import sys
 import glob
 import pwd, grp
-try:
-    # if you want to build python egg dist files,
-    # you'll need the latest version of setuptools
-    # You can get it in the nondist/sandbox/setuptools
-    # directory in a python cvs checkout.
-    from setuptools import setup
-except:
-    from distutils.core import setup
-from lib.pymon.constants import INSTALL_DIR, USER, GROUP, \
-    CONFIG_DIR, CONFIG_INI, CONFIG_XML, PLUGINS_DIR
+import ez_setup
+ez_setup.use_setuptools()
+from setuptools import setup
 
-# Dependancy Checks
-try:
-    uid = pwd.getpwnam(USER)[2]
-    gid = grp.getgrnam(GROUP)[2]
-except KeyError:
-    print """\nNon-system user or group name given. 
-Did you edit the ./lib/app/pymon/constants.py file?\n"""
-    sys.exit()
-try:
-    #import ElementTree
-    import cElementTree
-except:
-    print "\nYou will need ElementTree and cElementTree to run pymon.\n"
-    sys.exit()
-try:
-    from sqlobject import SQLObject
-except:
-    print "\nYou will need to have sqlobject installed to run pymon.\n"
+if not os.path.exists('etc/pymon.conf'):
+    print """
+Um, you have *obviously* not read the INSTALL carefully enough.
+Don't make me slap you from back in time, through your monitor. 
+I swear I'll do it. Read the INSTALL again, make the appropriate
+changes, and then rerun setup.py.
+"""
     sys.exit()
 
-plugins = glob.glob('%s/*.py' % PLUGINS_DIR)
+# Dependency Checks
+os.system("%s presetup.py" % sys.executable)
+sys.exit()
+
+version = open('VERSION').read()
+
+plugins = glob.glob(os.path.join('plugins', '*.py'))
+schemas = glob.glob(os.path.join('etc', 'schema*.xml'))
 
 setup(name="PyMonitor",
-    version="0.3.2",
+    version=version,
     description="Python Enterprise Monitoring Application",
     author="Duncan McGreggor",
     author_email="duncan@adytum.us",
@@ -84,12 +56,13 @@ setup(name="PyMonitor",
         'pymon': 'lib/pymon',
         'adytum': 'lib',
     },
+    zip_safe=False,
     data_files=[
         ('bin', ['bin/pymon.tac', 'bin/pymon']),
-        ('%s' % (CONFIG_DIR), ['conf/example-pymon.conf']),
-        ('%s' % (CONFIG_DIR), ['conf/schema.xml']),
+        ('etc', ['etc/pymon.conf']),
+        ('etc', schemas),
         ('data', ['data/.placeholder']),
-        ('%s' % (PLUGINS_DIR), plugins),
+        ('plugins', plugins),
         ('service', ['service/run']),
         ('service/log', ['service/log/run']),
         ('service/log/main', ['service/log/main/.placeholder']),
@@ -112,13 +85,3 @@ setup(name="PyMonitor",
     """.splitlines() if f.strip()],
 
 )
-
-# Set the permissions on the install directory
-'''
-print "Changing ownership of %s to %s:%s (%s:%s)..." % (INSTALL_DIR, USER, GROUP, uid, gid)
-for fullpath, dirs, files in os.walk(INSTALL_DIR):
-    #print fullpath, dirs, files
-    os.chown(fullpath, uid, gid)
-    for filename in files:
-        os.chown(os.path.join(fullpath, filename), uid, gid)
-'''

@@ -1,0 +1,17 @@
+<schema>
+
+    <!-- extended sectiontypes: imports 
+            Note: these depend upon the above base sectiontypes
+    /-->
+    <import src="schema-ping.xml" />
+    <import src="schema-http-status.xml" />
+
+    <!-- service section: sub sections /-->
+    <sectiontype name="services">
+        <section name="*" type="ping"
+            attribute="ping" />
+
+        <section name="*" type="http-status"
+            attribute="http_status" />
+    </sectiontype>
+</schema>

@@ -2,25 +2,14 @@
 
 import pwd, grp
 
-from pkg_resources import Requirement, resource_filename
-
 from twisted.application import service, app
 from twisted.scripts.twistd import runApp, ServerOptions
 
-import ZConfig
-
+from pymon.config import cfg
 from pymon.application import State, History
 from pymon.registry import globalRegistry
 from pymon import engines
 from pymon import servers
-
-# config has to be done first, as everything else depends upon it.
-schema_filename = resource_filename(
-    Requirement.parse("PyMonitor"),"conf/schema.xml")
-config_filename = resource_filename(
-    Requirement.parse("PyMonitor"),"conf/example-pymon.conf")
-schema = ZConfig.loadSchema(schema_filename)
-cfg, nil = ZConfig.loadConfig(schema, config_filename)
 
 # perform registry operations
 globalRegistry.add('config', cfg)
@@ -52,6 +41,9 @@ servers.addProcessServer(pymonsvc)
 
 # Add a Nevow web server to pymon for the HTTP interface
 servers.addWebServer(pymonsvc)
+
+#servers.addXMLRPCServer(pymonsvc)
+#servers.addSNMPServer(pymonsvc)
 
 # Schedule regular backups of state data to disk
 # XXX examine twisted.application's use of persisted data through restarts;
