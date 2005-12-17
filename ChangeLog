@@ -14,6 +14,8 @@ types/validators.
 * Changed the order of execution for code in presetup.py.
 * Updated presetup.py to create the required directories on the files system.
 * Moved all the schema files but etc/schema.xml into etc/old.
+* Re-enabled setup.py.
+* Organized bin/pymon and bin/pymon.tac better.
 
 2005.12.16
 

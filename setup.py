@@ -17,7 +17,6 @@ changes, and then rerun setup.py.
 
 # Dependency Checks
 os.system("%s presetup.py" % sys.executable)
-sys.exit()
 
 version = open('VERSION').read()
 
@@ -39,10 +38,10 @@ setup(name="PyMonitor",
     packages=[
         'pymon',
         'pymon.clients',
-        'pymon.storage',
+        #'pymon.storage',
         'pymon.ui',
-        'pymon.ui.jabber',
-        'pymon.ui.irc',
+        #'pymon.ui.jabber',
+        #'pymon.ui.irc',
         'pymon.ui.shell',
         'pymon.ui.web',
         'pymon.workflow',

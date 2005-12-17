@@ -1,53 +1,37 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2.4
 
+### Twisted Preamble
+# This makes sure that users don't have to set up their environment
+# specially in order to run these programs from bin/.
+import sys, os, string
 import pwd, grp
 
-from twisted.application import service, app
+if sys.version_info[0:3] < (2,4):
+    print "For some reason, you are not running python 2.4."
+    print "pymon must be run under python 2.4."
+    sys.exit()
+if string.find(os.path.abspath(sys.argv[0]), os.sep+'Twisted') != -1:
+    sys.path.insert(0, os.path.normpath(os.path.join(os.path.abspath(
+        sys.argv[0]), os.pardir, os.pardir)))
+if hasattr(os, "getuid") and os.getuid() != 0:
+    sys.path.insert(0, os.path.abspath(os.getcwd()))
+### end of preamble
+
+from twisted.application import app
 from twisted.scripts.twistd import runApp, ServerOptions
 
 from pymon.config import cfg
-from pymon.application import State, History
-from pymon.registry import globalRegistry
-from pymon import engines
-from pymon import servers
 
-# perform registry operations
-globalRegistry.add('config', cfg)
-state       = State()
-history     = History()
-factories   = {}
-globalRegistry.add(cfg.global_names.state, state)
-globalRegistry.add(cfg.global_names.history, history)
-globalRegistry.add(cfg.global_names.factories, factories)
+uid = pwd.getpwnam(cfg.user)[2]
+gid = grp.getgrnam(cfg.group)[2]
 
-# create application and application service container
-user        = pwd.getpwnam(cfg.uid)[2]
-group       = grp.getgrnam(cfg.gid)[2]
-appname     = pymoncfg.system.instance_name
-application = service.Application(appname, uid=user, gid=group)
-pymonsvc    = service.IServiceCollection(application)
-
-# add all the services that are going to be monitored. This is where you
-# add service engine; choose the right one for your architecture, for 
-# instance:
-#
-#   engines.runProcessOptimizedEngine()
-#
-# See pymon.engines for details
-engines.runTwistedFactoryEngine(pymonsvc)
-
-# Add a local perspective broker server for running processes
-servers.addProcessServer(pymonsvc)
-
-# Add a Nevow web server to pymon for the HTTP interface
-servers.addWebServer(pymonsvc)
-
-#servers.addXMLRPCServer(pymonsvc)
-#servers.addSNMPServer(pymonsvc)
-
-# Schedule regular backups of state data to disk
-# XXX examine twisted.application's use of persisted data through restarts;
-# maybe use theirs instead.
-servers.addBackupServer(pymonsvc)
-
+sys.argv[0] = 'twistd'
+sys.argv.extend([
+    '--rundir=%s' % cfg.prefix,
+    '--uid=%s' % uid,
+    '--gid=%s' % gid,
+    '-noy',
+    'bin/pymon.tac'
+])
 app.run(runApp, ServerOptions)
+
