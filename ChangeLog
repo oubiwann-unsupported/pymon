@@ -1,3 +1,13 @@
+2005.12.17
+
+* I Couldn't get the includes to work right for the ZConfig files, so I put
+all the schema files togheter in one schema.
+* To circumvent bootstrapping issues during install, the datatypes used in
+pymon's ZConfiguration are going to be called from adytum libraries, a
+dependency that will need to be installed prior to running pymon's setup.py.
+* The adytum libraries that have been a part of the working dreictory will now
+be separated out.
+
 2005.12.16
 
 * Wrote a utility function pyInstall() in presetup.py that downloads and

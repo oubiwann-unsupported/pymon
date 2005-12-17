@@ -52,6 +52,7 @@ Did you edit the ./lib/app/pymon/constants.py file?\n"""
 SENSITIVE_FILES = [
     'etc/pymon.conf',
     ]
+
 for filename in SENSITIVE_FILES:
     # get data
     data = open(filename).read()
@@ -69,7 +70,9 @@ for filename in SENSITIVE_FILES:
     out.write(data)
     out.close()
 
-print "Changing ownership of %s to %s:%s (%s:%s)..." % (cfg.prefix, cfg.user, cfg.group, uid, gid)
+print "Changing ownership of %s to %s:%s (%s:%s)..." % (cfg.prefix, 
+    cfg.user, cfg.group, uid, gid)
+
 for fullpath, dirs, files in os.walk(cfg.prefix):
     os.chown(fullpath, uid, gid)
     for filename in files:
