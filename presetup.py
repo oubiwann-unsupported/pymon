@@ -4,11 +4,6 @@ import pwd, grp
 import filecmp
 from urllib2 import urlparse
 
-import ZConfig 
-
-schema = ZConfig.loadSchema('etc/schema.xml')
-cfg, nil = ZConfig.loadConfig(schema, 'etc/pymon.conf')
-
 build_dir = os.path.join('build', 'third-party')
 try:
     os.makedirs(build_dir)
@@ -28,20 +23,37 @@ def pyInstall(url, unpak, unpakt):
         os.system('cd %s;wget -q -O - %s|%s' % (build_dir, url, 
             unpak))
     print "\nInstalling %s..." % unpakt
-    os.system('cd %s;%s setup.py build' % (unpakt, sys.executable))
+    os.system('cd %s;%s setup.py install' % (unpakt, sys.executable))
 
 deps = eval(open('DEPENDENCIES').read())
 for name, url, unpak, unpakt in deps['python_packages']:
     # do we need to install it?
-    #try:
-    #    exec("import %s" % name)
-    #except ImportError:
-    print "%s not installed." % name
-    pyInstall(url, unpak, unpakt)
+    try:
+        exec("import %s" % name)
+    except ImportError:
+        print "%s not installed." % name
+        pyInstall(url, unpak, unpakt)
+
+
+# now that we have all the stuff we need, we can procede
+import ZConfig 
+
+schema = ZConfig.loadSchema('etc/schema.xml')
+cfg, nil = ZConfig.loadConfig(schema, 'etc/pymon.conf')
+
+# create the necessary directories
+paths = ['bin', 'etc', 'var', 'log', 'data']
+for path in paths:
+    dir = os.path.join(cfg.prefix, path)
+    try:
+        os.makedirs(dir)
+    except OSError:
+        # dir already exists
+        pass
 
 try:
-    uid = pwd.getpwnam(USER)[2]
-    gid = grp.getgrnam(GROUP)[2]
+    uid = pwd.getpwnam(cfg.user)[2]
+    gid = grp.getgrnam(cfg.group)[2]
 except KeyError:
     print """\nNon-system user or group name given. 
 Did you edit the ./lib/app/pymon/constants.py file?\n"""

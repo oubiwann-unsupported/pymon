@@ -1,4 +1,4 @@
-<schema prefix="pymon.zconfig">
+<schema prefix="adytum.config.zconfig">
 
     <!-- concrete sectiontype declarations -->
     <sectiontype name="monitor-status">
@@ -176,10 +176,10 @@
 
 
     <!-- main section: keys /-->
-    <key name="check-by" datatype=".checkBy" default="services"
+    <key name="check-by" datatype=".pymonCheckBy" default="services"
         attribute="check_by" />
-    <key name="uid" datatype="string" default="pymon" />
-    <key name="gid" datatype="string" default="pymon" />
+    <key name="user" datatype="string" default="pymon" />
+    <key name="group" datatype="string" default="pymon" />
     <key name="prefix" required="yes" />
     <key name="pymon-app" default="pymon.tac" 
         attribute="pymon_app" />

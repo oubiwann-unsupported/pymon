@@ -7,6 +7,13 @@ pymon's ZConfiguration are going to be called from adytum libraries, a
 dependency that will need to be installed prior to running pymon's setup.py.
 * The adytum libraries that have been a part of the working dreictory will now
 be separated out.
+* Updated the setup.py to reflect the changes in the library structure.
+* Updated etc/schema.xml to use the new adytum.config.zconfig
+types/validators.
+* Updated the DEPENDENCIES to download the latest adytum/pymon tarball.
+* Changed the order of execution for code in presetup.py.
+* Updated presetup.py to create the required directories on the files system.
+* Moved all the schema files but etc/schema.xml into etc/old.
 
 2005.12.16
 
