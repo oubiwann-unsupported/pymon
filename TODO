@@ -4,7 +4,11 @@ time to check hosts, max checks in a given interval, etc.)
 
 o enable multiple criteria for process matching
 
-o enable use of "Friendly Names" in emails
+o Fix the Nevow web interface
+
+o Get a minimal pymon shell working
+
+o Fix the setuptools bin/script issues
 
 o DONE - create valid regex for human-readable ranged values in the
 validator pymon.zconfig.rangedValues. This has been moved to an
