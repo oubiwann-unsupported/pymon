@@ -23,8 +23,8 @@ def runTwistedFactoryEngine(rootService):
                 log.msg("Setting up monitor factory for monitor " + \
                     "service %s" % uid)
                 factory = monitors.AbstractFactory(uid)
-                globalRegistry.factories.update({uid:factory})
                 monitor = factory.makeMonitor()
+                globalRegistry.factories.update({uid:monitor})
                 service = internet.TimerService(monitor.getInterval(), 
                     monitor)
                 service.setServiceParent(rootService)

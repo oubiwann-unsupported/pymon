@@ -1,6 +1,17 @@
 2005.12.18
 
 * Updated web content.
+* Fixed a bug in utils.getMailList where a global data structure was getting
+appended to instead of a copy of the data structure.
+* Made the static/web/states.html template usable in Nevow (fixed some
+unclosed HTML tags).
+* Added test render and data methods to pymon.ui.web.pages.StatesPage that
+pull data from each monitor's current state. 
+* Fixed pymon.engines to that the monitor factories were added to the state
+machine instead of the abstract factory instances (which was useless and a
+mistake).
+* Added the appropriate nevow namespace attributes in
+static/web/states.html in order to view the state data as HTML.
 
 2005.12.17
 

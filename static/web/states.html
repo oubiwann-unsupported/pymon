@@ -1,10 +1,10 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html>
+<html xmlns:nevow="http://nevow.com/ns/nevow/0.1">
 <body>
 
-<div metal:fill-slot="main">    
+<div>
     
     <p>&nbsp;</p>
     <a href="detailed_view">Detailed View</a><br/>
@@ -13,8 +13,8 @@
     <tr bgcolor="#ffffff">
       <td>Current State</td><td>Host</td><td>Service Type</td><td>Service</td><td>Previous State</td><td>Messsage</td><td>Date Last Checked</td>
     </tr>
-    <tal:block tal:repeat="state here/pymon_states">
-      <tal:block tal:define="
+    <tal repeat="state here/pymon_states">
+      <tal define="
         host          python:state[1];
         service_type  python:state[2];
         service       python:state[3];
@@ -24,20 +24,28 @@
         messg         python:state[8];
         last_checked  python:state[9];
       ">
-        <tr tal:attributes="bgcolor hex">
-        <td tal:content="current_state"/>
-        <td tal:content="host"/>
-        <td tal:content="service_type"/>
-        <td tal:content="service"/>
-        <td tal:content="last_state"/>
-        <td tal:content="messg"/>
-        <td tal:content="last_checked"/>
+        <tr attributes="bgcolor hex">
+        <td content="current_state"/>
+        <td content="host"/>
+        <td content="service_type"/>
+        <td content="service"/>
+        <td content="last_state"/>
+        <td content="messg"/>
+        <td content="last_checked"/>
         </tr>
-      </tal:block>
-    </tal:block>
+      </tal>
+    </tal>
     </table>
+    </td></tr>
     </table>
-    <a href="detailed_view">Detailed View</a><br/>
+    <span nevow:render="getMonitors">
+        <p nevow:pattern="monitorList" nevow:render="data" />
+    </span>
+    <span nevow:render="getStates">
+        <p nevow:pattern="stateList" nevow:render="data" />
+    </span>
+    <div nevow:data="getMonitors" nevow:render="data" />
+    <a href="statesdetails">Detailed View</a><br/>
 </div>
   </body>
 </html>

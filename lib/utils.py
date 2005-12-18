@@ -77,7 +77,8 @@ def getMailList(uri):
     def_append = defs.notification_list_append
     svc_replace = service_cfg.notification_list_replace
     svc_append = service_cfg.notification_list_append
-    mail_list = base.emails
+    mail_list = []
+    mail_list.extend(base.emails)
     if svc_replace:
         return svc_replace.emails
     if def_replace:
@@ -87,7 +88,6 @@ def getMailList(uri):
     if def_append:
         mail_list.extend(def_append.emails)
     return mail_list
-        
 
 def _test():
     import doctest, utils
