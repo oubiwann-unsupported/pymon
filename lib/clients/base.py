@@ -23,6 +23,7 @@ class ClientMixin(object):
         self.buildRules()
 
     def updateState(self):
+        self.factory.state.setdefault('count', 0)
         self.factory.state['last status'] = self.factory.state.get('current status')
         self.factory.state['current status'] = self.rules.status
         if self.factory.state['last status'] == self.factory.state['current status']:

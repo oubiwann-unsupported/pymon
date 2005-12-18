@@ -32,18 +32,3 @@ def getResource(rsrc_list):
         return resource_filename(Requirement.parse(egg_pkg_name), 
             rel_path)
 
-# need to call these so pkg_resources caches the files that
-# ZConfig will look for by relative path from the cache
-resource_filename(Requirement.parse("PyMonitor"),"conf")
-
-# now get teh config
-schema_filename = resource_filename(
-    Requirement.parse("PyMonitor"),"conf/schema.xml")
-config_filename = resource_filename(
-    Requirement.parse("PyMonitor"),"conf/pymon.conf")
-working_dir =  resource_filename(
-    Requirement.parse("PyMonitor"),"conf")
-
-#os.chdir(working_dir)
-schema = ZConfig.loadSchema(schema_filename)
-cfg, nil = ZConfig.loadConfig(schema, config_filename)

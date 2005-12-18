@@ -1,3 +1,4 @@
+from twisted.python import log
 from twisted.application import internet
 
 from pymon.registry import globalRegistry
@@ -12,19 +13,20 @@ from pymon import monitors
 # may require that we offer different "tuning" options.
 def runTwistedFactoryEngine(rootService):
     cfg = globalRegistry.config
-    types = cfg.enabled.services.service_type
-    if not isinstance(types, list): 
-        types = [types]
-    for type in types:
-        for service in cfg.services.service(type=type).entries.entry:
-            enabled = service.enabled.capitalize()
-            if enabled == 'True':
-                uid = utils.makeUri(type, service.uri)
+    enabled = [ x.replace(' ', '_') for x in 
+        cfg.monitor_status.enabled ]
+    for pm_service_name in cfg.services.getSectionAttributes():
+        if pm_service_name in enabled:
+            pm_service = getattr(cfg.services, pm_service_name)
+            for check in pm_service.checks:
+                uid = utils.makeUri(pm_service_name, check.uri)
+                log.msg("Setting up monitor factory for monitor " + \
+                    "service %s" % uid)
                 factory = monitors.AbstractFactory(uid)
                 globalRegistry.factories.update({uid:factory})
-
                 monitor = factory.makeMonitor()
-                service = internet.TimerService(monitor.getInterval(), monitor)
+                service = internet.TimerService(monitor.getInterval(), 
+                    monitor)
                 service.setServiceParent(rootService)
 
 def runHighCheckVolumeEngine(rootService):

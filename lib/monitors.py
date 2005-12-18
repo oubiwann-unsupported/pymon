@@ -19,12 +19,11 @@ import utils
 
 class AbstractFactory(object):
     '''
-    A class for generating a specific type of monitor,
-    depending on the passed monitor type.
+    A class for generating a specific type of monitor, depending
+    on the passed monitor type.
 
-    The monitors are really client factories, and hold
-    configuration and other data that the clients need or
-    have use for.
+    The monitors are really client factories, and hold configuration
+    and other data that the clients need or have use for.
     '''
     def __init__(self, uid):
 
@@ -42,12 +41,12 @@ class AbstractFactory(object):
         monitor = PingMonitor(self.uid)
         return monitor
 
-    [ makeMonitor.when("self.type == 'http status'") ]
+    [ makeMonitor.when("self.type == 'http_status'") ]
     def makeHttpStatusMonitor(self):
         monitor = HttpStatusMonitor(self.uid)
         return monitor
 
-    [ makeMonitor.when("self.type == 'http text'") ]
+    [ makeMonitor.when("self.type == 'http_text'") ]
     def makeHttpTextMonitor(self):
         monitor = HttpTextMonitor(self.uid)
         return monitor
@@ -57,12 +56,12 @@ class AbstractFactory(object):
         monitor = FtpMonitor(self.uid)
         return monitor
 
-    [ makeMonitor.when("self.type == 'smtp status'") ]
+    [ makeMonitor.when("self.type == 'smtp_status'") ]
     def makeSmtpStatusMonitor(self):
         monitor = SmtpStatusMonitor(self.uid)
         return monitor
 
-    [ makeMonitor.when("self.type == 'smtp mail'") ]
+    [ makeMonitor.when("self.type == 'smtp_mail'") ]
     def makeSmtpMailMonitor(self):
         monitor = SmtpMailMonitor(self.uid)
         return monitor
@@ -73,16 +72,15 @@ class MonitorMixin(object):
         self.uid = uid
         self.cfg = globalRegistry.config
         self.service_type = utils.getTypeFromUri(self.uid)
-        self.service = self.cfg.services.service(type=self.service_type)
+        self.service = getattr(self.cfg.services, self.service_type)
         self.interval = None
         self.setInterval()
         self.workflow = workflow.ServiceState(workflow.state_wf)
         self.history = History()
         self.state = State()
-        self.statedefs = self.cfg.constants.states
-        self.mailcfg = self.cfg.system.mail
+        self.statedefs = self.cfg.state_definitions
         self.service_cfg = utils.getEntityFromUri(self.uid)
-        self.type_defaults = self.cfg.services.service(type=self.service_type).defaults
+        self.type_defaults = self.service.defaults
 
     def __call__(self):
         reactor.connectTCP(*self.reactor_params)
@@ -91,10 +89,11 @@ class MonitorMixin(object):
         if seconds:
             self.interval = seconds
         elif not self.interval:
-            interval = utils.getEntityFromUri(self.uid).interval
-            if not interval:
+            try:
+                interval = utils.getEntityFromUri(self.uid).interval
+            except AttributeError:
                 interval = utils.getDefaultsFromUri(self.uid).interval
-            self.interval = int(interval)
+            self.interval = interval
 
     def getInterval(self):
         return self.interval
@@ -119,11 +118,12 @@ class HttpStatusMonitor(HTTPClientFactory, MonitorMixin):
         #timeout = self.service_cfg.timeout
         #timeout = self.type_defaults.timeout
         self.host = Uri(uid).getAuthority().getHost()
-        self.agent = self.cfg.web.agent_string
+        self.agent = self.cfg.user_agent_string
         self.method = 'HEAD'
+        self.status = None
         # XXX write a method to get the http port from defaults or service config
         #port = self.service_cfg.http_port
-        port = int(self.type_defaults.http_port)
+        port = self.type_defaults.remote_port
         self.reactor_params = (self.host, port, self)
 
     def __call__(self):
@@ -159,7 +159,7 @@ class PingMonitor(pb.PBClientFactory, MonitorMixin):
 
         # ping config options setup
         self.defaultcfg = self.service.defaults
-        self.checkdata = self.service.entries.entry(uri=self.uid)
+        self.checkdata = self.service_cfg
 
         # get the info in order to make the next ping
         self.binary = self.defaultcfg.binary
@@ -168,7 +168,7 @@ class PingMonitor(pb.PBClientFactory, MonitorMixin):
         self.args = [count, host]
 
         #options = ['ping', '-c %s' % count, '%s' % host]
-        port = int(globalRegistry.config.system.agents.port)
+        port = int(globalRegistry.config.agents.port)
         self.reactor_params = ('127.0.0.1', port, self)
 
     def __call__(self):

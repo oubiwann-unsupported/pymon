@@ -1,21 +1,14 @@
 #!/usr/bin/env python2.4
 
-### Twisted Preamble
-# This makes sure that users don't have to set up their environment
-# specially in order to run these programs from bin/.
-import sys, os, string
+import os
+import sys
+import string
 import pwd, grp
 
 if sys.version_info[0:3] < (2,4):
     print "For some reason, you are not running python 2.4."
     print "pymon must be run under python 2.4."
     sys.exit()
-if string.find(os.path.abspath(sys.argv[0]), os.sep+'Twisted') != -1:
-    sys.path.insert(0, os.path.normpath(os.path.join(os.path.abspath(
-        sys.argv[0]), os.pardir, os.pardir)))
-if hasattr(os, "getuid") and os.getuid() != 0:
-    sys.path.insert(0, os.path.abspath(os.getcwd()))
-### end of preamble
 
 from twisted.application import app
 from twisted.scripts.twistd import runApp, ServerOptions
@@ -31,7 +24,8 @@ sys.argv.extend([
     '--uid=%s' % uid,
     '--gid=%s' % gid,
     '-noy',
-    'bin/pymon.tac'
+    os.path.join(cfg.prefix, 'bin', 'pymon.tac')
 ])
+print ' '.join(sys.argv)
 app.run(runApp, ServerOptions)
 

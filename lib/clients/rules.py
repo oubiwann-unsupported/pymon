@@ -11,22 +11,22 @@ class ThresholdRules(object):
     # messages sent? When are they NOT sent? Who gets what?
 
     def getOkThreshold(self):
-        if self.factory.service_cfg.ok.threshold:
-            return self.factory.service_cfg.ok.threshold
+        if self.factory.service_cfg.ok_threshold:
+            return self.factory.service_cfg.ok_threshold
         else:
-            return self.factory.type_defaults.ok.threshold
+            return self.factory.type_defaults.ok_threshold
 
     def getWarnThreshold(self):
-        if self.factory.service_cfg.warn.threshold:
-            return self.factory.service_cfg.warn.threshold
+        if self.factory.service_cfg.warn_threshold:
+            return self.factory.service_cfg.warn_threshold
         else:
-            return self.factory.type_defaults.warn.threshold
+            return self.factory.type_defaults.warn_threshold
 
     def getErrorThreshold(self):
-        if self.factory.service_cfg.error.threshold:
-            return self.factory.service_cfg.error.threshold
+        if self.factory.service_cfg.error_threshold:
+            return self.factory.service_cfg.error_threshold
         else:
-            return self.factory.type_defaults.error.threshold
+            return self.factory.type_defaults.error_threshold
 
     def setType(self, type):
         self.threshold_type = type
@@ -37,7 +37,8 @@ class ThresholdRules(object):
             # The 'current status' index hasn't been updated yet, so 
             # 'current status' is really 'last status', and 'last status'
             # is really the run prior to last.
-            if self.factory.state.get('current status') not in (self.factory.statedefs.ok,
+            if self.factory.state.get('current status') not in (
+                self.factory.statedefs.ok,
                 self.factory.statedefs.recovering):
                 status = self.factory.statedefs.recovering
             self.status = status
@@ -53,16 +54,20 @@ class ThresholdRules(object):
     [ dispatch.generic() ]
     def isIn(self, datum, threshold):
         '''
-        Generic method for testing threshold
+        Generic method for checking data against thresholds
         '''
 
     [ isIn.when("self.threshold_type == 'ranged'") ]
     def rangedIsIn(self, datum, threshold):
-        return utils.isInRange(datum, threshold)
+        if datum in threshold:
+            return True
+        return False
 
     [ isIn.when("self.threshold_type == 'listed'") ]
     def listedIsIn(self, datum, threshold):
-        return utils.isInList(datum, threshold)
+        if datum in threshold:
+            return True
+        return False
 
     [ isIn.when("self.threshold_type == 'exact'") ]
     def isExactly(self, datum, threshold):
@@ -80,17 +85,21 @@ class ThresholdRules(object):
 
     def setSubj(self, *args):
         status = utils.getStateNameFromNumber(self.status)
-        msg = self.factory.type_defaults.get(status).get('message')
-        self.subj = msg % args
+        if status == 'unknown':
+            self.subj = "Unknown status"
+        else:
+            msg = getattr(self.factory.type_defaults, '%s_message' % status)
+            self.subj = msg % args
 
     def sendIt(self):
         from pymon.message import LocalMail
 
         if self.status == self.factory.statedefs.recovering:
-            self.msg = self.msg + '\r\nRecovering from state %s.' % self.factory.state.get('current status')
+            self.msg = self.msg + '\r\nRecovering from state %s.' \
+                % self.factory.state.get('current status')
         cfg = self.factory.service_cfg
-        sendmail = self.factory.mailcfg.sendmail
-        frm = self.factory.mailcfg.from_address
+        sendmail = self.factory.cfg.sendmail
+        frm = self.factory.cfg.mail_from
         # XXX we probably want to make the actual sending of emails
         # non-blocking. Dererreds anyone?
         # XXX modify this when support for escalation and different 

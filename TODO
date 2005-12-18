@@ -1,15 +1,16 @@
-o examine methodologies for performing the most checks in the shortest time;
-calculate limitations of system (number of hosts, time to check hosts, max
-checks in a given interval, etc.)
+o examine methodologies for performing the most checks in the
+shortest time; calculate limitations of system (number of hosts,
+time to check hosts, max checks in a given interval, etc.)
 
 o enable multiple criteria for process matching
 
 o enable use of "Friendly Names" in emails
 
-o create valid regex for human-readable ranged values in the validator 
-pymon.zconfig.rangedValues.
+o DONE - create valid regex for human-readable ranged values in the
+validator pymon.zconfig.rangedValues. This has been moved to an
+externall library: adytum.config.zconfig.
 
-o tweak the ZConfig schema for pymon configuration to go from this:
+o DONE - tweak the ZConfig schema for pymon configuration to go from this:
   <check_type-defaults>
     ...
   </check_type-defaults>
@@ -30,10 +31,4 @@ to something more like this:
     </check>
   </check_type>
 
-This doesn't really belong in the TODO... I'll find a place for it later. How the port numbers were chosen:
 
->>> from adytum.util import numerology
->>> numerology.getNumerologicalValue('adytum pymon service web')
-3293
->>> numerology.getNumerologicalValue('adytum pymon service xml-rpc')
-3298

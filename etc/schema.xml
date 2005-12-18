@@ -21,6 +21,14 @@
         <key name="filename" default="backup.pkl" />
     </sectiontype>
 
+    <sectiontype name="agents">
+        <key name="port" datatype="integer" default="10999" />
+    </sectiontype>
+
+    <sectiontype name="web">
+        <key name="port" datatype="integer" default="8080" />
+    </sectiontype>
+
     <sectiontype name="state-definitions">
         <key name="unknown" datatype="integer" default="-1" />
         <key name="ok" datatype="integer" default="1" />
@@ -59,9 +67,11 @@
 
     <!-- PING SERVICES /-->
     <sectiontype name="ping-base" extends="service-base">
-        <key name="count" datatype="integer" default="4"/>
-        <key name="interval" datatype="time-interval" default="25"/>
         <key name="binary" default="/bin/ping"/>
+        <key name="count" datatype="integer" default="4" />
+        <key name="interval" datatype="time-interval" default="25" />
+        <key name="threshold-type" default="ranged"
+            attribute="threshold_type" />
         <key name="ok-threshold" datatype=".rangedValues" default="76-100"
             attribute="ok_threshold" />
         <key name="warn-threshold" datatype=".rangedValues" default="26-75"
@@ -111,6 +121,11 @@
 
     <!-- HTTP-STATUS SERVICES /-->
     <sectiontype name="http-status-base" extends="service-base">
+        <key name="interval" datatype="time-interval" default="25" />
+        <key name="remote-port" default="80" datatype="integer"
+            attribute="remote_port" />
+        <key name="threshold-type" default="ranged"
+            attribute="threshold_type" />
         <key name="ok-threshold" datatype=".rangedValues" 
             default="100-101, 200-203, 300, 302-305"
             attribute="ok_threshold" />
@@ -181,6 +196,8 @@
     <key name="user" datatype="string" default="pymon" />
     <key name="group" datatype="string" default="pymon" />
     <key name="prefix" required="yes" />
+    <key name="instance-name" required="yes" 
+        attribute="instance_name" />
     <key name="pymon-app" default="pymon.tac" 
         attribute="pymon_app" />
     <key name="twisted-daemon" default="pymon"
@@ -214,6 +231,14 @@
     <section name="*"
         type="backups"
         attribute="backups" />
+
+    <section name="*"
+        type="agents"
+        attribute="agents" />
+
+    <section name="*"
+        type="web"
+        attribute="web" />
 
     <section name="*"
         type="state-definitions"

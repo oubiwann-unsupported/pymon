@@ -18,7 +18,7 @@ changes, and then rerun setup.py.
 # Dependency Checks
 os.system("%s presetup.py" % sys.executable)
 
-version = open('VERSION').read()
+version = open('VERSION').read().strip()
 
 plugins = glob.glob(os.path.join('plugins', '*.py'))
 schemas = glob.glob(os.path.join('etc', 'schema*.xml'))
@@ -51,7 +51,6 @@ setup(name="PyMonitor",
     },
     zip_safe=False,
     data_files=[
-        ('bin', ['bin/pymon.tac', 'bin/pymon']),
         ('etc', ['etc/pymon.conf']),
         ('etc', schemas),
         ('data', ['data/.placeholder']),
@@ -60,7 +59,7 @@ setup(name="PyMonitor",
         ('service/log', ['service/log/run']),
         ('service/log/main', ['service/log/main/.placeholder']),
     ],
-    scripts = ['bin/pymon'],
+    scripts = ['bin/pymon', 'bin/pymon.tac'],
     classifiers = [f.strip() for f in """
     License :: OSI-Approved Open Source :: BSD License
     Development Status :: 3 - Alpha
@@ -78,3 +77,7 @@ setup(name="PyMonitor",
     """.splitlines() if f.strip()],
 
 )
+
+# finish up
+os.system("%s postsetup.py" % sys.executable)
+

@@ -16,6 +16,14 @@ types/validators.
 * Moved all the schema files but etc/schema.xml into etc/old.
 * Re-enabled setup.py.
 * Organized bin/pymon and bin/pymon.tac better.
+* Added a bunch of code to postsetup.py and added a call to it in setup.py.
+* Added Nevow and Phillip Eby's protocols and dispatch to DEPENDENCIES.
+* Removed old lib/utilities file, as it was replaced by lib/util.
+* Edited engines, monitors, servers, application, utils, and clients.rules
+to use the ZConfig API.
+* Updated schema.xml and example conf files with the missing "agents" section.
+* Fixed status default setting bug in clients.base.
+* Cleaned up lib/config.py.
 
 2005.12.16
 

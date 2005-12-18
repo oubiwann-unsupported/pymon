@@ -19,9 +19,9 @@ def isInRange(datum, incl_range):
         return True
     return False
 
-def isInList(datum, list_string):
+def isInList(datum, in_list):
     '''
-    >>> test_list = '200, 303, 304, 401'
+    >>> test_list = [200, 303, 304, 401]
     >>> isInList(200, test_list)
     True
     >>> isInList('200', test_list)
@@ -35,9 +35,12 @@ def isInList(datum, list_string):
     return False
 
 def getStateNameFromNumber(num):
-    cfg = globalRegistry.config
-    states = dict([ (val, key) for key, val in cfg.constants.states.items() ])
-    return states.get(num)
+    states = globalRegistry.config.state_definitions
+
+    for state in states.getSectionAttributes():
+        check = getattr(states, state)
+        if check == num:
+            return state
 
 def makeUri(scheme, uri_remainder):
     return (('%s://%s') % (scheme, uri_remainder)).replace(' ', '+')
@@ -53,24 +56,38 @@ def getTypeFromUri(uri):
 def getEntityFromUri(uri):
     cfg = globalRegistry.config
     type = getTypeFromUri(uri)
-    remainder = uri.split('://')[1]
-    return cfg.services.service(type=type).entries.entry(uri=remainder)
+    uri = uri.split('://')[1]
+    checks = getattr(cfg.services, type).checks
+    for check in checks:
+        if check.uri == uri:
+            return check
 
 def getDefaultsFromUri(uri):
     cfg = globalRegistry.config
     type = getTypeFromUri(uri)
-    remainder = uri.split('://')[1]
-    return cfg.services.service(type=type).defaults
+    uri = uri.split('://')[1]
+    return getattr(cfg.services, type).defaults
 
 def getMailList(uri):
     defs = getDefaultsFromUri(uri)
     service_cfg = getEntityFromUri(uri)
-    # XXX currently, this only supports the first escalation level
-    if service_cfg.escalation:
-        esc = service_cfg.escalation.group(level='0')
-    else:
-        esc = defs.escalation.group(level='0')
-    return esc.maillist.email
+    # check defaults for notification-list-replace
+    base = globalRegistry.config.notification_list
+    def_replace = defs.notification_list_replace
+    def_append = defs.notification_list_append
+    svc_replace = service_cfg.notification_list_replace
+    svc_append = service_cfg.notification_list_append
+    mail_list = base.emails
+    if svc_replace:
+        return svc_replace.emails
+    if def_replace:
+        return def_replace.emails
+    if svc_append:
+        mail_list.extend(svc_append.emails)
+    if def_append:
+        mail_list.extend(def_append.emails)
+    return mail_list
+        
 
 def _test():
     import doctest, utils

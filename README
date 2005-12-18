@@ -1,11 +1,14 @@
-THIS FILE IS OLD. DON"T PAY ATTENTION TO IT!!!
-
-
-
 ======================
 dependancies
 ======================
-Please see the DEPENDANCIES file.
+Dependencies are automatically downloaded and installed for you. I
+had planned on using EasyInstall for this, but alas, many people
+are not producing setup.py files that are EasyInstall-friendly. As
+the maintainers of the software upon which we depend make their
+stuff EasyInstall-ready, these will shift into the setup.py file,
+to be handled by setuptools/EasyInstall.
+
+If you are interestsed, you can read the DEPENDANCIES file.
 
 
 ======================
@@ -15,51 +18,35 @@ Please see the INSTALL file.
 
 
 ======================
-config.ini conventions
-======================
-* sections are composed of three parts:
- 1) source host (the host from which the monitoring is done)
- 2) destination host (the host which is being monitored)
- 3) the service type being monitored (ping, process, wed page check, etc.)
-
-* ok, warn, and error thresholds must:
- 1) be defined for each service type
- 2) have comma separated values
- 3) the values must be inclusive and not overlap with each other 
-
-
-======================
 creating a new monitor
 ======================
 If you want to add more monitoring types, you will need to:
 
-    * add the type to conf/pymon.ini
-    * edit the lib/app/pymon/config.py class file if you want to be able to
-    access your new configuration via an attribute of config.pymon
-    * add a new PyMonX protocol subclass to lib/app/pymon/protocols.py to handle
-    data processing and saving.
-    * add a getXMonitors() funtion to lib/app/pymon/monitors.py
-    * add a call to your new getXMonitor() funtion in bin/pymon.tac
-    runMonitors()
+    * add the type to etc/pymon.conf
+    * add the configuration to etc/schema.xml
+    * add a new PyMonXXX protocol subclass to lib/protocols.py to
+    handle data processing and saving.
+    * add a XXXMonitor class lib/monitors.py, inheriting from
+    MonitorMixin and an appropriate FactoryClass
+    * update AbstractFactory in lib/monitors.py with a dispatch
+    method for instantiating your new monitor class
+    * enable the new monitoring type in etc/pymon.conf
     * rebuild pymon with 'python setup.py install'
-
 
 ======================
 api notes
 ======================
 The currently defined monitor types are as follows:
     * ping
-    * HTTP
-    * SNMP
-    * SMTP
-    * local process
-    * local directory
-    * local file
-    * remote process
-    * remote directory
-    * remote file
+    * http status
     
-If the option name 'service type' ever changes, the lib/app/pymon/config.py
-class will have to be updated.
+======================
+port numbers
+======================
+How the port numbers were chosen:
 
-
+>>> from adytum.util import numerology
+>>> numerology.getNumerologicalValue('adytum pymon service web')
+3293
+>>> numerology.getNumerologicalValue('adytum pymon service xml-rpc')
+3298
