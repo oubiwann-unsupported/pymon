@@ -1,0 +1,37 @@
+body, html {
+    background-color: #ffffff;
+    margin: 0px;
+    padding: 0px;
+}
+
+tr.topbar {
+	background-color: #669999;
+}
+
+th, td {
+    font-size: 75%;
+}
+/* State classes */
+th {
+    color: #ffffff;
+    background-color: #013131;
+}
+.unknown {
+    background-color: #cccccc;
+}
+
+.ok {
+    background-color: #ccffcc;
+}
+
+.recovering {
+    background-color: #ccccff;
+}
+
+.warn {
+    background-color: #ffffcc;
+}
+.error {
+    color: #000000;
+    background-color: #ffcccc;
+}

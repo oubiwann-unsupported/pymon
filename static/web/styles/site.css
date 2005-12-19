@@ -1,17 +1,20 @@
-/* Let no border around the body appear, and set
-   it to display on a white background */
 body, html {
     margin: 0px;
     padding: 0px;
-    background-color: white;
+}
+
+html {
+    background-color: #cccccc;
 }
 
 /* Font settings for page elements */
-body, ul, td, th, p, h1, h2, h3, h4, small, .small,
-.tableTitle, .tableExtras, input, textarea, select {
+body {
     font-family: verdana, arial, helvetica, sans-serif;
+    color: #000000;
+    background-color: #ffffff;
 }
 tr.border {
+    color: #ffffff;
 	background-color: #000000;
 }
 
@@ -19,16 +22,12 @@ tr.headerback {
 	background-color: #FFFFFF;
 }
 
-div.logo {
+.logo {
 	margin: 0em 0em 0em 0em;
 }
 
 tr.datebar {
 	background-color: #669999;
-}
-
-code, pre, tt {
-    font-family: Courier, "Courier New", monospace;
 }
 
 pre {
@@ -60,15 +59,6 @@ h5 {
     font-size: 90%; 
 }
 
-/* Event month header on homepage */
-h4.eventmonth {
-    color: #990000;
-    border-style: solid;
-    border-color: black;
-    border-width: 1px;
-    background-color: lightgray;
-    padding: 2px;
-}
 h2 {
     color: #336666;
     font-size: 130%;
@@ -76,11 +66,6 @@ h2 {
     border-color: black;
     border-width: 0px 0px 1px 0px;
     padding: 2px;
-}
-
-/* Quicksearch table cell on top of every page. */
-td.quicksearch {
-    color: white;
 }
 
 /* Horizontal delimiter defaults */
@@ -92,32 +77,8 @@ hr {
 }
 
 /* Default font size for elements */
-body, ul, td, th {
-    font-size: 85%;
-}
-
-/* Indented block */
-div.indent {
-    margin-left: 50px;
-}
-
-li {
-	padding-top: 3px;
-	padding-bottom: 3px;
-}
-
-em {
-	font-weight: bold;
-	font-style: italic;
-}
-
-acronym {
-        border-bottom: 1px dashed #00cc00;
-        cursor: help;
-}
-
-.error {
-        color: #cc0000;
+td, th {
+    font-size: 90%;
 }
 
 /* News date info on frontpage and in the archives */
@@ -141,219 +102,6 @@ acronym {
 	text-align: left !important;
 }
 
-small, .small {
-	font-size: 75%;
-}
-
-a.small {
-	text-decoration: none;
-}
-
-.tableTitle {
-	font-weight: bold;
-}
-
-.tableExtras {
-	font-size: 85%;
-	color: #FFFFFF;
-}
-
-p.formerror {
-        border: 1px solid #ff0000;
-        color: #000000;
-        background: #ffeeee;
-        padding: 2px 4px;
-}
-
-div.errors, {
-        border: 1px dashed #666600;
-        color: #660000;
-        background: #ffeeee;
-        margin: 4px;
-        padding: 6px;
-}
-
-div.tip, p.tip {
-        border: 1px solid #00c;
-        color: #000066;
-        background: #eeeeff;
-        padding: 0px 8px;
-}
-
-table#cal {
-        font-size: smaller;
-}
-
-table#cal a {
-        text-decoration: none;
-}
-table#cal a:hover {
-        text-decoration: underline;
-}
-
-table#cal a.day {
-        float: right;
-        font-weight: bold;
-        color: #666666;
-}
-
-table#cal div.event {
-        margin-bottom: 2px;
-        padding-bottom: 2px;
-        border-bottom: 1px dashed #000000;
-}
-
-form.thin {
-	margin-bottom: 0px;
-	margin-top: 0px;
-}
-
-.parameter:after {
-	content: " ";
-}
-
-div.mirror {  
-	border: 1px dashed #660000;
-	background: #ffeeee;
-	color: #660000;
-	margin: 4px;
-	padding: 6px;
-} 
-
-img {
-	border: 0px;
-}
-img.flag {
-	border: 1px solid #000000;
-}
-
-.md5sum {
-	color: #6666cc;
-}
-
-/* Used on the credits page [.e, .h, .v and .vr] */
-.e {
-	background-color: #ccccff; 
-	font-weight: bold;
-}
-
-.h {
-	background-color: #9999cc; 
-	font-weight: bold;
-}
-
-.v {
-	background-color: #cccccc;
-}
-
-.vr {
-	background-color: #cccccc; 
-	text-align: right;
-}
-
-/* Standard table formatting */
-table.standard td {
-    background-color: #eeeeee;
-}
-table.standard th {
-    background-color: #cccccc;
-}
-table.standard td.sub, table.standard th.sub,
-table.standard th.subr {
-    background-color: #dddddd;
-}
-table.standard th.subr {
-    text-align: right;
-    vertical-align: top;
-}
-
-/* browsers handle this differently
-input.max, textarea.max, select.max {
-    width: 100%;
-}
-*/
-
-.center {
-	text-align: center;
-}
-.center table {
-	margin-left: auto;
-	margin-right: auto;
-	text-align: left;
-}
-.center th {
-	text-align: center;
-}
-
-/* Thanks listing on frontpage */
-ul.simple {
-	padding-left: 8px;
-	margin: 0 0 1em 0;
-}
-ul.simple li {
-	padding: 0px;
-	list-style-type: none;
-	font-size: 125%;
-}
-
-/* User notes display */
-div#usernotes {
-	background-color: #e0e0e0;
-	color; inherit;
-}
-div#usernotes div.head, div#usernotes div.foot {
-	background-color: #d0d0d0;
-	color: inherit;
-	padding: 4px;
-}
-div#usernotes div.foot {
-	text-align: right;
-}
-div#usernotes div.foot a, div#usernotes div.head a {
-	color: black;
-	background-color: transparent;
-}
-div#usernotes span.action {
-	float: right;
-}
-div#usernotes div.note {
-	padding: 4px;
-}
-div#usernotes div.text {
-	background-color: #f0f0f0;
-	color: inherit;
-	padding: 2px;
-	margin-top: 4px;
-}
-
-/* Left sidebar TOC on manual pages */
-ul#manualtoc {
-    margin: 0px 5px 5px 5px;
-    padding: 0px;
-}
-ul#manualtoc li {
-    margin: 1px 0 1px 1px;
-    padding: 1px 0 1px 11px;
-    list-style-type: none;
-    background-repeat: no-repeat;
-    background-position: center left;
-}
-ul#manualtoc li.header {
-    font-size: 135%;
-    padding: 5px 0px 5px 11px;
-    border-bottom: 1px solid #cccccc;
-    margin-bottom: 5px;
-}
-ul#manualtoc li.active {
-    font-weight: bold;
-}
-ul#manualtoc li a {
-    text-decoration: none;
-}
-ul#manualtoc li a:hover {
-    text-decoration: underline;
-}
-
 tr.footerback {
 	background-color: #669999;
 }
@@ -361,24 +109,3 @@ tr.footerback {
 tr.postfooter {
     background-color: #cccccc;
 }
-
-/* State classes */
-.unknown {
-    background-color: #cccccc;
-}
-.ok {
-    background-color: #ccffcc;
-}
-
-.recovering {
-    background-color: #ccccff;
-}
-
-.warn {
-    background-color: #ffffcc;
-}
-.error {
-    color: #000000;
-    background-color: #ffcccc;
-}
-

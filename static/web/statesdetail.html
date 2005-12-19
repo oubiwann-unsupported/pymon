@@ -6,19 +6,25 @@
         <title>pymon: Monitored Services - Detailed View</title>
         <link href="/icons/favicon.ico" rel="SHORTCUT ICON" />
         <style type="text/css">@import url('/styles/site.css');</style>
-
+        <style type="text/css">@import url('/styles/states.css');</style>
     </head>
     <body>
-
-    <div>
-    
-    <p>&nbsp;</p>
-    <a href="states">Summary View</a><br/>
-    <table cellpadding="0" cellspacing="1" border="0" width="100%"><tr><td bgcolor="#000000">
+    <table cellpadding="0" cellspacing="0" border="0" width="100%">
+        <tr class="headerback">
+            <td align="left" width="126">
+            <img class="logo" src="/images/logo.gif" border="0" />
+            </td>
+        </tr>
+        <tr class="border"><td><img src="/images/1px.gif" height="1" /></td></tr>
+        <tr class="topbar"><td>
+        <a href="/">Main Screen</a> |
+        <a href="states">Summary View</a><br/>
+        </td></tr>
+        <tr><td bgcolor="#000000">
     <table cellpadding="2" cellspacing="1" border="0" width="100%">
         <tr bgcolor="#ffffff">
-            <th>Host</th>
             <th>Service</th>
+            <th>Host</th>
             <!-- th>Service Type</th /-->
             <th>Current State</th>
             <th>Current State Count</th>
@@ -36,8 +42,8 @@
         <tbody nevow:data="getStates" nevow:render="sequence">
         <tr nevow:pattern="item" nevow:render="mapping" bgcolor="#ffffff">
             <nevow:attr name="class"><nevow:slot name="current status name" /></nevow:attr>
-            <td><nevow:slot name="node">Host</nevow:slot></td>
             <td><nevow:slot name="service">Service</nevow:slot></td>
+            <td><nevow:slot name="node">Host</nevow:slot></td>
             <!-- td>&nbsp;</td /-->
             <td><nevow:slot name="current status name">Status</nevow:slot></td>
             <td><nevow:slot name="count">Count</nevow:slot></td>
@@ -55,10 +61,13 @@
         </tbody>
     </table>
     </td></tr>
+    <tr><td>
+    <a href="/">Main Screen</a> |
+    <a href="states">Summary View</a><br/>
+    </td></tr>
+    <tr class="border"><td><img src="/images/1px.gif" height="1" /></td></tr>
     </table>
 
-    <a href="states">Summary View</a><br/>
-</div>
   </body>
 </html>
 
