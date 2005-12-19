@@ -1,3 +1,4 @@
+from twisted.python import log
 from twisted.web.client import HTTPPageGetter
 from twisted.web.http import HTTPClient
 
@@ -15,7 +16,7 @@ class HttpStatusClient(HTTPPageGetter, ClientMixin):
         ClientMixin.connectionMade(self)
     
     def connectionLost(self, reason):
-        status = self.factory.status
+        status = int(self.factory.status)
 
         # push the returned data through the threshold checks
         checked_resource = self.factory.service_cfg.uri
@@ -26,15 +27,14 @@ class HttpStatusClient(HTTPPageGetter, ClientMixin):
             self.rules.sendIt()
 
         # dump info to log file
-        print 'Service: %s' % self.factory.uid
-        print self.rules.msg 
-        print self.rules.subj
-        print "Status: %s for %s" % (status, self.getHost())
+        log.msg('Service: %s' % self.factory.uid, debug=True)
+        log.msg(self.rules.msg, debug=True)
+        log.msg(self.rules.subj, debug=True)
+        log.msg("Status: %s for %s" % (status, self.getHost()), debug=True)
 
         # update state information
         self.updateState()
 
         # dump info to log file
-        print self.factory.state
-        print ''
+        log.msg(str(self.factory.state)+'\n', debug=True)
 

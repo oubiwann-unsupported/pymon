@@ -1,8 +1,11 @@
+import re
 from Queue import Queue
 try:
     import cPickle as pickle
 except:
     import pickle
+
+from twisted.python import log
 
 class Error(Exception):
     pass
@@ -56,46 +59,74 @@ class State(dict):
     {'test data': 'Here it is!'}
 
     # lets cleanup that file
-    >>> os.unlink(s.getBackupFilename())
-    >>> os.path.exists(s.getBackupFilename())
+    >>> os.unlink(s.backup_file)
+    >>> os.path.exists(s.backup_file)
     False
     '''
-    def __init__(self, use_globalRegistry=True):
+    def __init__(self, uid=None, use_globalRegistry=True):
         import os
         if not use_globalRegistry:
             self.setBackupFilename(None)
         else:
             from registry import globalRegistry
             cfg = globalRegistry.config
-            self.filename = os.path.join(cfg.prefix, 
-                cfg.backups.directory, cfg.backups.filename)
-            self.setBackupFilename(self.filename)
-            if os.path.exists(self.filename):
+            if uid:
+                # Specific backup
+                filename = os.path.join(cfg.backups.state_dir,
+                    re.sub('[^0-9A-Za-z_]', '_', uid))
+            else:
+                # General backup
+                filename = 'app.pkl'
+            self.backup_file = os.path.join(cfg.prefix, 
+                cfg.backups.base_dir, filename)
+            if os.path.exists(self.backup_file):
                 self.restore()
-                os.unlink(self.filename)
-        self.setdefault('last status', -1)
-        self.setdefault('current status', -1)
-
-
-    def setBackupFilename(self, filename):
-        self.backup_file = filename
-
-    def getBackupFilename(self):
-        return self.backup_file
+                os.unlink(self.backup_file)
+            # Initialize data strcuture for state - we're using 
+            # setdefault here, so this doesn't need to be in an 'else'
+            # block. The addeded benefit is that if something is missing
+            # from any of the pickled data structures, they get a 
+            # default value set.
+            log.debug("Initializing state data...")
+            self.setdefault('org', '')
+            self.setdefault('node', '')
+            self.setdefault('service type', '')
+            self.setdefault('service', '')
+            self.setdefault('count', 0)
+            self.setdefault('count ok', 0)
+            self.setdefault('count warn', 0)
+            self.setdefault('count error', 0)
+            self.setdefault('count failed', 0)
+            self.setdefault('current status', -1)
+            self.setdefault('previous status', -1)
+            self.setdefault('current status name', '')
+            self.setdefault('previous status name', '')
+            self.setdefault('desc', '')
+            self.setdefault('data', '')
+            self.setdefault('last check', '')
+            self.setdefault('last ok', '')
+            self.setdefault('last warn', '')
+            self.setdefault('last error', '')
+            self.setdefault('last failed', '')
 
     def backup(self):
-        if not self.getBackupFilename():
-            raise StateBackupError, "The backup filename has not been set."
+        if not self.backup_file:
+            log.err("The backup filename has not been set.")
         try:
             pickle.dump(self, open(self.backup_file,'w'))
+            log.debug("State data has been written to %s." % self.backup_file)
         except IOError:
-            print "Backup file does not exist; couldn't backup data."
+            log.err("Backup file does not exist; couldn't backup data.")
 
     def restore(self):
-        if not self.getBackupFilename():
-            raise StateBackupError, "The backup filename has not been set."
-        saved_state = pickle.load(open(self.backup_file))
-        self.update(saved_state)
+        if not self.backup_file:
+            log.err("The backup filename has not been set.")
+        try:
+            saved_state = pickle.load(open(self.backup_file))
+            log.msg("State data has been loaded from %s." % self.backup_file)
+            self.update(saved_state)
+        except Exception, e:
+            log.err("Could not restore state: %s" % e)
         
 
 class History(Queue, object):

@@ -23,20 +23,36 @@ class ClientMixin(object):
         self.buildRules()
 
     def updateState(self):
-        self.factory.state.setdefault('count', 0)
-        self.factory.state['last status'] = self.factory.state.get('current status')
-        self.factory.state['current status'] = self.rules.status
-        if self.factory.state['last status'] == self.factory.state['current status']:
-            self.factory.state['count'] = self.factory.state['count'] + 1
+        state = self.factory.state
+        now = datetime.now().strftime("%Y.%m.%d %H:%M:%S")
+        uri = Uri(self.factory.uid)
+        
+        prev = state.get('current status')
+        state['previous status'] = prev
+        state['previous status name'] = utils.getStateNameFromNumber(prev)
+        state['current status'] = self.rules.status
+        state['node'] = uri.getAuthority().getHost()
+        state['service'] = uri.getScheme().replace('_', ' ')
+        if state['previous status'] == state['current status']:
+            state['count'] = state['count'] + 1
         else:
-            self.factory.state['count'] = 1
+            state['count'] = 1
         status = self.rules.status
-        if status == self.factory.statedefs.recovering:
-            status = self.factory.statedefs.ok 
+        #if status == self.factory.statedefs.recovering:
+        #    status = self.factory.statedefs.ok 
         status = utils.getStateNameFromNumber(status)
-        state_index = 'last %s' % status
-        self.factory.state[state_index] = datetime.now().strftime("%Y.%m.%d %H:%M:%S")
-
+        try:
+            state['desc'] = self.rules.msg
+        except AttributeError:
+            # mo msg set
+            pass
+        state['current status name'] = status
+        state['last check'] = now
+        if status != 'recovering':
+            count_index = 'count %s' % status
+            state[count_index] = state[count_index] + 1
+            state_index = 'last %s' % status
+            state[state_index] = now
 
 class NullClient(protocol.Protocol, ClientMixin):
     '''

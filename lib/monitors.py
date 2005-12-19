@@ -4,8 +4,9 @@ import dispatch
 
 from zope.interface import implements
 
-from twisted.internet import reactor
 from twisted.spread import pb
+from twisted.python import log
+from twisted.internet import reactor
 from twisted.web.client import HTTPClientFactory, PartialDownloadError
 from twisted.internet.protocol import ClientFactory
 
@@ -73,16 +74,20 @@ class MonitorMixin(object):
         self.cfg = globalRegistry.config
         self.service_type = utils.getTypeFromUri(self.uid)
         self.service = getattr(self.cfg.services, self.service_type)
-        self.interval = None
-        self.setInterval()
         self.workflow = workflow.ServiceState(workflow.state_wf)
         self.history = History()
-        self.state = State()
+        self.state = State(uid)
         self.statedefs = self.cfg.state_definitions
         self.service_cfg = utils.getEntityFromUri(self.uid)
         self.type_defaults = self.service.defaults
+        if self.service_cfg.interval:
+            interval = self.service_cfg.interval
+        else:
+            interval = self.type_defaults.interval
+        self.interval = interval
 
     def __call__(self):
+        self.state.backup()
         reactor.connectTCP(*self.reactor_params)
 
     def setInterval(self, seconds=None):

@@ -12,6 +12,17 @@ machine instead of the abstract factory instances (which was useless and a
 mistake).
 * Added the appropriate nevow namespace attributes in
 static/web/states.html in order to view the state data as HTML.
+* Changed configuration schema for backups to include state directory.
+* Changed application.State() to accept the uid of a monnitor during
+initialization.
+* Exapnded logging in the state machinery.
+* State is now preserved across pymon restarts for each individual monitor.
+* Fixed the HTTP status checks return code problem -- it was being returned as
+a string instead of an integer, and thus wasn't matching anything in the list
+of integer return codes, failing all the threshold tests.
+* Made further refinedments on states and statesdetail templates as well as
+CSS modifications.
+* Added missing VERSION file.
 
 2005.12.17
 

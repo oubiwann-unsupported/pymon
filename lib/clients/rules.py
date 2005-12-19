@@ -1,5 +1,7 @@
 import dispatch
 
+from twisted.python import log
+
 from pymon import utils
 
 class ThresholdRules(object):
@@ -32,7 +34,9 @@ class ThresholdRules(object):
         self.threshold_type = type
 
     def check(self, datum):
+        log.msg("Got check data '%s'." % datum, debug=True)
         if self.isIn(datum, self.getOkThreshold()):
+            log.msg("Status data is in 'ok' threshold.", debug=True)
             status = self.factory.statedefs.ok
             # The 'current status' index hasn't been updated yet, so 
             # 'current status' is really 'last status', and 'last status'
@@ -43,8 +47,10 @@ class ThresholdRules(object):
                 status = self.factory.statedefs.recovering
             self.status = status
         elif self.isIn(datum, self.getWarnThreshold()):
+            log.msg("Status data is in 'warn' threshold.", debug=True)
             self.status = self.factory.statedefs.warn
         elif self.isIn(datum, self.getErrorThreshold()):
+            log.msg("Status data is in 'error' threshold.", debug=True)
             self.status = self.factory.statedefs.error
         elif datum == self.factory.statedefs.failed:
             self.status = self.factory.statedefs.failed
@@ -59,18 +65,26 @@ class ThresholdRules(object):
 
     [ isIn.when("self.threshold_type == 'ranged'") ]
     def rangedIsIn(self, datum, threshold):
+        log.msg("Using dispatch method 'rangedIsIn'...", debug=True)
+        log.msg("datum: %s" % datum, debug=True)
+        log.msg("datum type: %s" % type(datum), debug=True)
+        log.msg("threshold: %s" % threshold, debug=True)
+        log.msg("threshold type: %s" % type(threshold), debug=True)
         if datum in threshold:
             return True
-        return False
+        else:
+            return False
 
     [ isIn.when("self.threshold_type == 'listed'") ]
     def listedIsIn(self, datum, threshold):
+        log.msg("Using dispatch method 'listedIsIn'...", debug=True)
         if datum in threshold:
             return True
         return False
 
     [ isIn.when("self.threshold_type == 'exact'") ]
     def isExactly(self, datum, threshold):
+        log.msg("Using dispatch method 'isExactly'...", debug=True)
         if str(datum) == threshold:
             return True
         return False
@@ -95,8 +109,9 @@ class ThresholdRules(object):
         from pymon.message import LocalMail
 
         if self.status == self.factory.statedefs.recovering:
-            self.msg = self.msg + '\r\nRecovering from state %s.' \
-                % self.factory.state.get('current status')
+            status_id = self.factory.state.get('current status')
+            status = utils.getStateNameFromNumber(status_id)
+            self.msg = self.msg + "\r\nRecovering from '%s'." % status
         cfg = self.factory.service_cfg
         sendmail = self.factory.cfg.sendmail
         frm = self.factory.cfg.mail_from

@@ -165,7 +165,7 @@ p.formerror {
         padding: 2px 4px;
 }
 
-div.errors, .warn {
+div.errors, {
         border: 1px dashed #666600;
         color: #660000;
         background: #ffeeee;
@@ -361,3 +361,24 @@ tr.footerback {
 tr.postfooter {
     background-color: #cccccc;
 }
+
+/* State classes */
+.unknown {
+    background-color: #cccccc;
+}
+.ok {
+    background-color: #ccffcc;
+}
+
+.recovering {
+    background-color: #ccccff;
+}
+
+.warn {
+    background-color: #ffffcc;
+}
+.error {
+    color: #000000;
+    background-color: #ffcccc;
+}
+

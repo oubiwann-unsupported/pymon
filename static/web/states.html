@@ -1,51 +1,49 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 <html xmlns:nevow="http://nevow.com/ns/nevow/0.1">
-<body>
+    <meta http-equiv="Refresh" content="10" />
+    <head>
+        <title>pymon: Monitored Services</title>
+        <link href="/icons/favicon.ico" rel="SHORTCUT ICON" />
+        <style type="text/css">@import url('/styles/site.css');</style>
 
-<div>
+    </head>
+    <body>
+
+    <div>
     
     <p>&nbsp;</p>
-    <a href="detailed_view">Detailed View</a><br/>
+    <a href="statesdetail">Detailed View</a><br/>
     <table cellpadding="0" cellspacing="1" border="0" width="100%"><tr><td bgcolor="#000000">
-    <table cellpadding="2" cellspacing="1" width="100%">
-    <tr bgcolor="#ffffff">
-      <td>Current State</td><td>Host</td><td>Service Type</td><td>Service</td><td>Previous State</td><td>Messsage</td><td>Date Last Checked</td>
-    </tr>
-    <tal repeat="state here/pymon_states">
-      <tal define="
-        host          python:state[1];
-        service_type  python:state[2];
-        service       python:state[3];
-        hex           python:state[5];
-        current_state python:state[6];
-        last_state    python:state[7];
-        messg         python:state[8];
-        last_checked  python:state[9];
-      ">
-        <tr attributes="bgcolor hex">
-        <td content="current_state"/>
-        <td content="host"/>
-        <td content="service_type"/>
-        <td content="service"/>
-        <td content="last_state"/>
-        <td content="messg"/>
-        <td content="last_checked"/>
+    <table cellpadding="2" cellspacing="1" border="0" width="100%">
+        <tr bgcolor="#ffffff">
+            <th>Host</th>
+            <th>Service</th>
+            <th>Service Type</th>
+            <th>Current State</th>
+            <th>Current State Count</th>
+            <th>Previous State</th>
+            <th>Messsage</th>
+            <th>Date Last Checked</th>
         </tr>
-      </tal>
-    </tal>
+        <tbody nevow:data="getStates" nevow:render="sequence">
+        <tr nevow:pattern="item" nevow:render="mapping" bgcolor="#ffffff">
+            <nevow:attr name="class"><nevow:slot name="current status name" /></nevow:attr>
+            <td><nevow:slot name="node">Host</nevow:slot></td>
+            <td><nevow:slot name="service">Service</nevow:slot></td>
+            <td>&nbsp;</td>
+            <td><nevow:slot name="current status name">Status</nevow:slot></td>
+            <td><nevow:slot name="count">Count</nevow:slot></td>
+            <td><nevow:slot name="previous status name">Previous Status</nevow:slot></td>
+            <td><nevow:slot name="desc">Message</nevow:slot></td>
+            <td><nevow:slot name="last check">Last Checked</nevow:slot></td>
+        </tr>
+        </tbody>
     </table>
     </td></tr>
     </table>
-    <span nevow:render="getMonitors">
-        <p nevow:pattern="monitorList" nevow:render="data" />
-    </span>
-    <span nevow:render="getStates">
-        <p nevow:pattern="stateList" nevow:render="data" />
-    </span>
-    <div nevow:data="getMonitors" nevow:render="data" />
-    <a href="statesdetails">Detailed View</a><br/>
+
+    <a href="statesdetail">Detailed View</a><br/>
 </div>
   </body>
 </html>

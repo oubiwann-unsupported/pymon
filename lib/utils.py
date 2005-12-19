@@ -40,7 +40,7 @@ def getStateNameFromNumber(num):
     for state in states.getSectionAttributes():
         check = getattr(states, state)
         if check == num:
-            return state
+            return state.strip()
 
 def makeUri(scheme, uri_remainder):
     return (('%s://%s') % (scheme, uri_remainder)).replace(' ', '+')

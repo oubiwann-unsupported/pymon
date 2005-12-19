@@ -40,21 +40,9 @@ class StatesPage(rend.Page):
     def __init__(self):
         self.monitors = globalRegistry.factories
 
-    def data_host(self, context, data):
-        return self.monitors
-
-    def render_getMonitors(self, context, data):
+    def data_getStates(self, context, data):
         idxs = sorted(self.monitors)
-        pat = inevow.IQ(context).patternGenerator('monitorList')
-        return [ pat(data=mon) for mon in idxs ]
-
-    def render_getStates(self, context, data):
-        idxs = sorted(self.monitors)
-        pat = inevow.IQ(context).patternGenerator('stateList')
-        return [ pat(data=self.monitors[mon].state) for mon in idxs ]
-
-    def data_getMonitors(self, context, data):
-        return str(self.monitors)
+        return [ self.monitors[mon].state for mon in idxs ]
 
 class StatesDetailPage(StatesPage):
     docFactory = loaders.xmlfile('static/web/statesdetail.html')

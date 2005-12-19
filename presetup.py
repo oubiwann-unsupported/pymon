@@ -46,11 +46,14 @@ schema = ZConfig.loadSchema('etc/schema.xml')
 cfg, nil = ZConfig.loadConfig(schema, 'etc/pymon.conf')
 
 # Create the necessary directories
-paths = ['bin', 'etc', 'var', 'log', 'data']
+paths = ['bin', 'etc', 'var', 'log', 
+    os.path.join(cfg.backups.base_dir,cfg.backups.state_dir),
+]
 for path in paths:
     dir = os.path.join(cfg.prefix, path)
     try:
         os.makedirs(dir)
+        print "Created directory %s." % dir
     except OSError:
         # Path already exists
         pass
