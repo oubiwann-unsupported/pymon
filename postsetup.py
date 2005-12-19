@@ -9,15 +9,6 @@ cfg, nil = ZConfig.loadConfig(schema, 'etc/pymon.conf')
 uid = pwd.getpwnam(cfg.user)[2]
 gid = grp.getgrnam(cfg.group)[2]
 
-# Set the permissions on the install directory
-print "Changing ownership of %s to %s:%s (%s:%s)..." % (cfg.prefix, 
-    cfg.user, cfg.group, uid, gid)
-
-for fullpath, dirs, files in os.walk(cfg.prefix):
-    os.chown(fullpath, uid, gid)
-    for filename in files:
-        os.chown(os.path.join(fullpath, filename), uid, gid)
-
 # Create links in cfg.prefix to the installed binaries
 src_bin_dir = os.path.join(sys.exec_prefix, 'bin')
 dst_bin_dir = os.path.join(*cfg.prefix.split('/')+['bin'])
@@ -33,10 +24,22 @@ for bin in ['pymon', 'pymon.tac']:
     except OSError:
         print "Already linked; skipping."
 '''
-for bin in ['pymon', 'pymon.tac']:
+for bin in ['pymond', 'pymon.tac']:
     src = open(os.path.join('./bin', bin))
     dst = os.path.sep+os.path.join(dst_bin_dir, bin)
     os.remove(dst)
-    dst = open(dst, 'w')
-    dst.write(src.read())
-    
+    dstfh = open(dst, 'w')
+    dstfh.write(src.read())
+    os.system('chmod 755 %s' % dst)
+
+print "Copying web files..."
+os.system('cp -r static %s' % cfg.prefix)
+
+# Set the permissions on the install directory
+print "Changing ownership of %s to %s:%s (%s:%s)..." % (cfg.prefix, 
+    cfg.user, cfg.group, uid, gid)
+
+for fullpath, dirs, files in os.walk(cfg.prefix):
+    os.chown(fullpath, uid, gid)
+    for filename in files:
+        os.chown(os.path.join(fullpath, filename), uid, gid)

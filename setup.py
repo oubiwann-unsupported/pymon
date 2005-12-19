@@ -59,7 +59,7 @@ setup(name="PyMonitor",
         ('service/log', ['service/log/run']),
         ('service/log/main', ['service/log/main/.placeholder']),
     ],
-    scripts = ['bin/pymon', 'bin/pymon.tac'],
+    scripts = ['bin/pymond', 'bin/pymon.tac'],
     classifiers = [f.strip() for f in """
     License :: OSI-Approved Open Source :: BSD License
     Development Status :: 3 - Alpha

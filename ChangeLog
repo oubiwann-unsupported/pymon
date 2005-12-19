@@ -10,6 +10,12 @@ bin files. This needs to be fixed.
 * Updated instructions in INSTALL and README.
 * Fixed the black on green of the top menu to be white on green on the status
 web screens.
+* Updated etc/example-pymon.conf to match the recent schema changes for the
+backups section.
+* Fixed postsetup.py to chmod the scripts as well as copy the web material to
+the appropriate location.
+* Renamed bin/pymon to bin/pymond and updated the README, setup.py, and
+postsetup.py to reflect this change.
 
 2005.12.18
 

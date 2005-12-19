@@ -25,14 +25,14 @@ running pymon
 ======================
 If the python scripts bin dir is in your path, you can just run the
 following:
-  sudo pymon
+  sudo pymond
 
 If not, you can add that to your path, but you may as well add
 /usr/local/pymon/bin to your path too ;-) Then you can run that
 command. If you prefer to not make PATH changes, just run it like this:
-  sudo PYMON_PREFIX/bin/pymon
+  sudo PYMON_PREFIX/bin/pymond
 
-(The default would be "sudo /usr/local/pymon/bin/pymon").
+(The default would be "sudo /usr/local/pymon/bin/pymond").
 
 ======================
 creating a new monitor
