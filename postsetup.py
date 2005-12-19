@@ -21,6 +21,9 @@ for fullpath, dirs, files in os.walk(cfg.prefix):
 # Create links in cfg.prefix to the installed binaries
 src_bin_dir = os.path.join(sys.exec_prefix, 'bin')
 dst_bin_dir = os.path.join(*cfg.prefix.split('/')+['bin'])
+# XXX this isn't cooperating with the setuptools stuff and needs to
+# be fixed
+'''
 for bin in ['pymon', 'pymon.tac']:
     src = os.path.join(src_bin_dir, bin)
     dst = os.path.sep+os.path.join(dst_bin_dir, bin)
@@ -29,3 +32,11 @@ for bin in ['pymon', 'pymon.tac']:
         os.symlink(src, dst)
     except OSError:
         print "Already linked; skipping."
+'''
+for bin in ['pymon', 'pymon.tac']:
+    src = open(os.path.join('./bin', bin))
+    dst = os.path.sep+os.path.join(dst_bin_dir, bin)
+    os.remove(dst)
+    dst = open(dst, 'w')
+    dst.write(src.read())
+    

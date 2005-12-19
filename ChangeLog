@@ -3,6 +3,11 @@
 * Fixed the main management screen and prettied up the status screens.
 * Added a new secondary stylesheet to be used by the status screens.
 * Updated the screenshots.
+* Commented out the linking in postsetup.py and just do a direct copy of the
+bin files. This needs to be fixed.
+* Updated the PyAdytum release in DEPENDENCIES.
+* Deleted etc/pymon.conf.
+* Updated instructions in INSTALL and README.
 
 2005.12.18
 

@@ -1,11 +1,16 @@
 Please see the README.
 
+pymon runs under a dedicated user and group. If you don't have a user
+and group on your system for pymon, you need to add them now.
+
 *** IMPORTANT ***
 You must create a copy of etc/example-pymon.conf and name it 
 "etc/pymon.conf". The install script setup.py will not run 
 without it.
 
-Edit your pymon.conf file to your tastes and needs.
+Edit your pymon.conf file to your tastes and needs, particularly changing
+the "user" and "group" directives to match the user and group under
+which your pymon install will be running.
 
 To install the application with all the defaults, simply run the
 usual:
@@ -17,3 +22,5 @@ configuration files, and a daemontools setup. The python libraries
 will be installed in the usual place, and all the pymon files you
 might need to change and/or configure, will be installed in
 /usr/local/pymon.
+
+See the README for instructions on running pymon.
