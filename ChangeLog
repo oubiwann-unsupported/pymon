@@ -8,6 +8,8 @@ bin files. This needs to be fixed.
 * Updated the PyAdytum release in DEPENDENCIES.
 * Deleted etc/pymon.conf.
 * Updated instructions in INSTALL and README.
+* Fixed the black on green of the top menu to be white on green on the status
+web screens.
 
 2005.12.18
 

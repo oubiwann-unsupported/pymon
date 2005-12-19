@@ -10,6 +10,10 @@ to be handled by setuptools/EasyInstall.
 
 If you are interestsed, you can read the DEPENDANCIES file.
 
+Please note, that if you have Twisted installed already, the
+auto-installer won't install it. But pymon requires Twisted 2.1.0,
+because it users the Epsilon package, so you will need to manually
+install/upgrade your Twisted if you have anything less than 2.1.0.
 
 ======================
 installation
