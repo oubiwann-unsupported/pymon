@@ -3,11 +3,10 @@ import pwd, grp
 from twisted.python import log
 from twisted.application import service
 
+from pymon import engines
 from pymon.config import cfg
 from pymon.application import State, History
 from pymon.registry import globalRegistry
-from pymon import engines
-from pymon import servers
 
 # perform registry operations
 globalRegistry.add('config', cfg)
@@ -17,6 +16,9 @@ factories   = {}
 globalRegistry.add(cfg.global_names.state, state)
 globalRegistry.add(cfg.global_names.history, history)
 globalRegistry.add(cfg.global_names.factories, factories)
+
+# this has to be imported after the registry is setup
+from pymon import servers
 
 # create application and application service container
 user        = pwd.getpwnam(cfg.user)[2]

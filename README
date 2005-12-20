@@ -17,6 +17,12 @@ command. If you prefer to not make PATH changes, just run it like this:
 
 (The default would be "sudo /usr/local/pymon/bin/pymond").
 
+If you would like to run this under daemontools, and you have daemontools installed, all you have to do is the following:
+    * edit service/run and make sure that it points to your twistd and pymon.tac, and
+    * ln -s PREFIX/service /service/pymond
+
+And you should be up and running.
+
 ======================
 creating a new monitor
 ======================

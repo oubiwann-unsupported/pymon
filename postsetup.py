@@ -39,6 +39,9 @@ for bin in ['pymond', 'pymon.tac']:
 print "Copying web files..."
 os.system('cp -r static %s' % cfg.prefix)
 
+print "Copying daemontools files..."
+os.system('cp -r service %s' % cfg.prefix)
+
 # Set the permissions on the install directory
 print "Changing ownership of %s to %s:%s (%s:%s)..." % (cfg.prefix, 
     cfg.user, cfg.group, uid, gid)

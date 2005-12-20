@@ -2,6 +2,11 @@
 
 * Fixed some issues with setup.py using os.system. It's now using
 subprocess.call, and is working well and predictably.
+* Added a new directive to web: doc-root.
+* Fixed pymon.ui.web.pages to use absolute path names to files.
+* Updated TODO and README.
+* Now copying 'service' to PREFIX in postsetup.py.
+* Fixed relative path issues with ui.web.pages.
 
 2005.12.19
 

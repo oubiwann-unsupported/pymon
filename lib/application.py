@@ -92,7 +92,7 @@ class State(dict):
             # a list of tuples will be passed; the list will be iterated
             # through in order, and the tuple will get passed with the
             # extended call syntax,  self.setdefault(*data_tuple).
-            log.debug("Initializing state data...")
+            log.msg("Initializing state data...", debug=True)
             self.setdefault('org', '')
             self.setdefault('node', '')
             self.setdefault('service type', '')

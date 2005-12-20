@@ -1,3 +1,5 @@
+import os
+
 from nevow import rend
 from nevow import loaders
 from nevow import static
@@ -7,11 +9,17 @@ from formless import webform
 
 from pymon.registry import globalRegistry
 
+pref = globalRegistry.config.prefix
+web = os.path.join(*globalRegistry.config.web.doc_root.split('/'))
+
 class TestPage(rend.Page):
     addSlash = True
-    docFactory = loaders.xmlfile('static/web/testpage.html')
-    child_styles = static.File('static/web/styles')
-    child_images = static.File('static/web/images')
+    docFactory = loaders.xmlfile(os.path.join(
+        pref, web, 'testpage.html'))
+    child_styles = static.File(os.path.join(
+        pref, web, 'styles'))
+    child_images = static.File(os.path.join(
+        pref, web, 'images'))
     child_webform_css = webform.defaultCSS
 
 class Root(rend.Page):
@@ -19,10 +27,14 @@ class Root(rend.Page):
     Root pymon page class.
     """
     addSlash = True
-    docFactory = loaders.xmlfile('static/web/home.html')
-    child_styles = static.File('static/web/styles')
-    child_images = static.File('static/web/images')
-    child_icons = static.File('static/web/icons')
+    docFactory = loaders.xmlfile(os.path.join(
+        pref, web, 'home.html'))
+    child_styles = static.File(os.path.join(
+        pref, web, 'styles'))
+    child_images = static.File(os.path.join(
+        pref, web, 'images'))
+    child_icons = static.File(os.path.join(
+        pref, web, 'icons'))
     child_webform_css = webform.defaultCSS
 
     def child_states(self, context):
@@ -35,7 +47,8 @@ class StatesPage(rend.Page):
     """
     Service states are listed in this page.
     """
-    docFactory = loaders.xmlfile('static/web/states.html')
+    docFactory = loaders.xmlfile(os.path.join(
+        pref, web, 'states.html'))
 
     def __init__(self):
         self.monitors = globalRegistry.factories
@@ -45,5 +58,6 @@ class StatesPage(rend.Page):
         return [ self.monitors[mon].state for mon in idxs ]
 
 class StatesDetailPage(StatesPage):
-    docFactory = loaders.xmlfile('static/web/statesdetail.html')
+    docFactory = loaders.xmlfile(os.path.join(
+        pref, web, 'statesdetail.html'))
 
