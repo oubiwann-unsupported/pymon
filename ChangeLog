@@ -22,6 +22,14 @@ setup.
 ClientMixin, and web ui.
 * Added notes in TODO and application.State() about taking the data structure
 out of hardcode and putting it in config.
+* Added notes about setuptools issues during installs.
+* Added a delay to presetup.py when installing files in the hopes of
+eliminating to weird errors (I think some files aren't getting written to
+quickly enough).
+* Added dev and regular tarball/release scripts.
+* Added a Twisted version check in setup.py.
+* Changed file write mode from 'w' to 'w+' in postsetup.py.
+* Incremented the version.
 
 2005.12.18
 

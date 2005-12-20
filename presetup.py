@@ -1,5 +1,6 @@
 import os
 import sys
+import time
 import pwd, grp
 import filecmp
 from urllib2 import urlparse
@@ -28,6 +29,7 @@ def pyInstall(url, unpak, unpakt):
     print "\nInstalling %s..." % unpakt
     os.system('cd %s;cd %s;%s setup.py install' % (build_dir, unpakt, 
         sys.executable))
+    time.sleep(2)
 
 deps = eval(open('DEPENDENCIES').read())
 for name, url, unpak, unpakt in deps['python_packages']:

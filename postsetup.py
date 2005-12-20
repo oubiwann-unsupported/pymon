@@ -32,7 +32,7 @@ for bin in ['pymond', 'pymon.tac']:
     except OSError:
         # doesn't exist; don't worry about it
         pass
-    dstfh = open(dst, 'w')
+    dstfh = open(dst, 'w+')
     dstfh.write(src.read())
     os.system('chmod 755 %s' % dst)
 

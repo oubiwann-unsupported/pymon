@@ -17,6 +17,10 @@ changes, and then rerun setup.py.
 
 # Dependency Checks
 os.system("%s presetup.py" % sys.executable)
+import twisted
+if twisted.__version__ < '2.1.0':
+    print "Sorry, you must have Twisted 2.1.0 or greater installed."
+    sys.exit()
 
 version = open('VERSION').read().strip()
 
