@@ -5,6 +5,7 @@ import pwd, grp
 import ez_setup
 ez_setup.use_setuptools()
 from setuptools import setup
+from subprocess import call
 
 if not os.path.exists('etc/pymon.conf'):
     print """
@@ -16,10 +17,12 @@ changes, and then rerun setup.py.
     sys.exit()
 
 # Dependency Checks
-os.system("%s presetup.py" % sys.executable)
+if not call([sys.executable, 'presetup.py']):
+    sys.exit()
+
 import twisted
 if twisted.__version__ < '2.1.0':
-    print "Sorry, you must have Twisted 2.1.0 or greater installed."
+    print "Sorry, you need to have Twisted 2.1.0 or greater installed."
     sys.exit()
 
 version = open('VERSION').read().strip()
@@ -83,5 +86,7 @@ setup(name="PyMonitor",
 )
 
 # finish up
-os.system("%s postsetup.py" % sys.executable)
+if not call([sys.executable, 'postsetup.py']):
+    sys.exit()
+
 

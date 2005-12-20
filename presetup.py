@@ -31,11 +31,13 @@ def pyInstall(url, unpak, unpakt):
         sys.executable))
     time.sleep(2)
 
+# Process all the dependencies
 deps = eval(open('DEPENDENCIES').read())
 for name, url, unpak, unpakt in deps['python_packages']:
     # Do we need to install it?
     try:
         exec("import %s" % name)
+        print "%s is installed." % name
     except ImportError:
         print "%s not installed." % name
         pyInstall(url, unpak, unpakt)
@@ -46,6 +48,16 @@ import ZConfig
 
 schema = ZConfig.loadSchema('etc/schema.xml')
 cfg, nil = ZConfig.loadConfig(schema, 'etc/pymon.conf')
+
+# User/Group check
+try:
+    uid = pwd.getpwnam(cfg.user)[2]
+    gid = grp.getgrnam(cfg.group)[2]
+except KeyError:
+    print """
+Non-system user or group name given.  Did you create the user and
+group, and then edit your copied ./etc/pymon.con file?\n"""
+    sys.exit()
 
 # Create the necessary directories
 paths = ['bin', 'etc', 'var', 'log', 
@@ -59,14 +71,6 @@ for path in paths:
     except OSError:
         # Path already exists
         pass
-
-try:
-    uid = pwd.getpwnam(cfg.user)[2]
-    gid = grp.getgrnam(cfg.group)[2]
-except KeyError:
-    print """\nNon-system user or group name given. 
-Did you edit the ./lib/app/pymon/constants.py file?\n"""
-    sys.exit()
 
 ### Sensitive Files -- this is for files that users/administrator
 # will be customizing, which we do not want setup to overwrite.

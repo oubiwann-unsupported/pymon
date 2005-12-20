@@ -1,3 +1,8 @@
+2005.12.20
+
+* Fixed some issues with setup.py using os.system. It's now using
+subprocess.call, and is working well and predictably.
+
 2005.12.19
 
 * Fixed the main management screen and prettied up the status screens.
