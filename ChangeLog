@@ -16,6 +16,12 @@ backups section.
 the appropriate location.
 * Renamed bin/pymon to bin/pymond and updated the README, setup.py, and
 postsetup.py to reflect this change.
+* Added a try/except for removing old binaries in PREFIX/bin during post
+setup.
+* Added support for organization entry in config schema, State data structure, 
+ClientMixin, and web ui.
+* Added notes in TODO and application.State() about taking the data structure
+out of hardcode and putting it in config.
 
 2005.12.18
 

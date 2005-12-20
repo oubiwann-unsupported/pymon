@@ -28,6 +28,9 @@ class ClientMixin(object):
         uri = Uri(self.factory.uid)
         
         prev = state.get('current status')
+        org = self.factory.service_cfg.org
+        if org and not state['org']:
+            state['org'] = org
         state['previous status'] = prev
         state['previous status name'] = utils.getStateNameFromNumber(prev)
         state['current status'] = self.rules.status

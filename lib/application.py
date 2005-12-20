@@ -87,6 +87,11 @@ class State(dict):
             # block. The addeded benefit is that if something is missing
             # from any of the pickled data structures, they get a 
             # default value set.
+            #
+            # XXX this is going to move into configuration. At that time,
+            # a list of tuples will be passed; the list will be iterated
+            # through in order, and the tuple will get passed with the
+            # extended call syntax,  self.setdefault(*data_tuple).
             log.debug("Initializing state data...")
             self.setdefault('org', '')
             self.setdefault('node', '')

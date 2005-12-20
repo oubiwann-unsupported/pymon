@@ -27,7 +27,11 @@ for bin in ['pymon', 'pymon.tac']:
 for bin in ['pymond', 'pymon.tac']:
     src = open(os.path.join('./bin', bin))
     dst = os.path.sep+os.path.join(dst_bin_dir, bin)
-    os.remove(dst)
+    try:
+        os.remove(dst)
+    except OSError:
+        # doesn't exist; don't worry about it
+        pass
     dstfh = open(dst, 'w')
     dstfh.write(src.read())
     os.system('chmod 755 %s' % dst)

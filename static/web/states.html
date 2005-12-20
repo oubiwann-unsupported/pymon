@@ -23,6 +23,7 @@
         <tr><td bgcolor="#000000">
     <table cellpadding="2" cellspacing="1" border="0" width="100%">
         <tr bgcolor="#ffffff">
+            <th>Organization</th>
             <th>Service</th>
             <th>Host</th>
             <!-- th>Service Type</th /-->
@@ -35,6 +36,7 @@
         <tbody nevow:data="getStates" nevow:render="sequence">
         <tr nevow:pattern="item" nevow:render="mapping" bgcolor="#ffffff">
             <nevow:attr name="class"><nevow:slot name="current status name" /></nevow:attr>
+            <td><nevow:slot name="org">Organization</nevow:slot></td>
             <td><nevow:slot name="service">Service</nevow:slot></td>
             <td><nevow:slot name="node">Host</nevow:slot></td>
             <!-- td>&nbsp;</td /-->

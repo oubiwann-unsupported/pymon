@@ -104,9 +104,10 @@
     </sectiontype>
 
     <sectiontype name="ping-check" extends="ping-base">
+        <key name="org" />
         <key name="uri" required="yes" />
         <key name="interval" datatype="time-interval" />
-        <key name="enabled" datatype="boolean" default="false"
+        <key name="enabled" datatype="boolean" default="true"
             attribute="enabled" />
         <key name="escalation-enabled" datatype="boolean" default="false"
             attribute="escalation_enabled" />
@@ -165,9 +166,10 @@
     </sectiontype>
 
     <sectiontype name="http-status-check" extends="http-status-base">
+        <key name="org" />
         <key name="uri" required="yes" />
         <key name="interval" datatype="time-interval" />
-        <key name="enabled" datatype="boolean" default="false"
+        <key name="enabled" datatype="boolean" default="true"
             attribute="check_enabled" />
         <key name="escalation-enabled" datatype="boolean" default="false"
             attribute="escalation_enabled" />
