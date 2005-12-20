@@ -17,7 +17,9 @@ changes, and then rerun setup.py.
     sys.exit()
 
 # Dependency Checks
-if not call([sys.executable, 'presetup.py']):
+ret = call([sys.executable, 'presetup.py'])
+if ret != 0:
+    print "\nThere was a problem running the pre-setup script.\n"
     sys.exit()
 
 import twisted
@@ -86,7 +88,10 @@ setup(name="PyMonitor",
 )
 
 # finish up
-if not call([sys.executable, 'postsetup.py']):
+ret = call([sys.executable, 'postsetup.py'])
+if ret != 0:
+    print "\nThere was a problem running the post-setup script.\n"
     sys.exit()
+
 
 

@@ -4,7 +4,7 @@ dependancies
 
 System dependencies
 ----------------------
-* Python 2.4
+* Python 2.4 - python2.4 needs to be in your path
 * wget
 * tar
 * unzip
