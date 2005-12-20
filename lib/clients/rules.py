@@ -3,6 +3,7 @@ import dispatch
 from twisted.python import log
 
 from pymon import utils
+from pymon.registry import globalRegistry
 
 class ThresholdRules(object):
     # XXX need checks for state and separate checks for
@@ -107,25 +108,30 @@ class ThresholdRules(object):
 
     def sendIt(self):
         from pymon.message import LocalMail
-
-        if self.status == self.factory.statedefs.recovering:
-            status_id = self.factory.state.get('current status')
-            status = utils.getStateNameFromNumber(status_id)
-            self.msg = self.msg + "\r\nRecovering from '%s'." % status
-        cfg = self.factory.service_cfg
-        sendmail = self.factory.cfg.sendmail
-        frm = self.factory.cfg.mail_from
-        # XXX we probably want to make the actual sending of emails
-        # non-blocking. Dererreds anyone?
-        # XXX modify this when support for escalation and different 
-        # group levels is added to python
-        for address in utils.getMailList(self.factory.uid):
-            email = LocalMail()
-            email.setSendmailBinary(sendmail)
-            email.setSubject(self.subj)
-            email.setTo(address)
-            email.setFrom(frm)
-            email.setData(self.msg)
-            email.send()
-            print self.factory.type_defaults.sent_message % address  
+        
+        cutoff = globalRegistry.config.notifications.cut_off
+        if self.factory.state.get('count') > cutoff:
+            log.msg("Incident count has passed the cut-off " + \
+                "threshold; not sending email.")
+        else:
+            if self.status == self.factory.statedefs.recovering:
+                status_id = self.factory.state.get('current status')
+                status = utils.getStateNameFromNumber(status_id)
+                self.msg = self.msg + "\r\nRecovering from '%s'." % status
+            cfg = self.factory.service_cfg
+            sendmail = self.factory.cfg.sendmail
+            frm = self.factory.cfg.mail_from
+            # XXX we probably want to make the actual sending of emails
+            # non-blocking. Dererreds anyone?
+            # XXX modify this when support for escalation and different 
+            # group levels is added to python
+            for address in utils.getMailList(self.factory.uid):
+                email = LocalMail()
+                email.setSendmailBinary(sendmail)
+                email.setSubject(self.subj)
+                email.setTo(address)
+                email.setFrom(frm)
+                email.setData(self.msg)
+                email.send()
+                log.msg(self.factory.type_defaults.sent_message % address)
 

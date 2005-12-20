@@ -7,6 +7,9 @@ subprocess.call, and is working well and predictably.
 * Updated TODO and README.
 * Now copying 'service' to PREFIX in postsetup.py.
 * Fixed relative path issues with ui.web.pages.
+* Added notification cut-off and reorganized the base notification list to
+fall under the more general "notifications".
+* Updated utils.getMailList() to use the new scheme.
 
 2005.12.19
 

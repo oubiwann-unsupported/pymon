@@ -72,7 +72,7 @@ def getMailList(uri):
     defs = getDefaultsFromUri(uri)
     service_cfg = getEntityFromUri(uri)
     # check defaults for notification-list-replace
-    base = globalRegistry.config.notification_list
+    base = globalRegistry.config.notifications.list
     def_replace = defs.notification_list_replace
     def_append = defs.notification_list_append
     svc_replace = service_cfg.notification_list_replace

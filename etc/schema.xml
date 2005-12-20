@@ -48,8 +48,10 @@
         <key name="factories" default="factories" />
     </sectiontype>
 
-    <sectiontype name="notification-list">
-        <multikey name="email" attribute="emails" />
+    <sectiontype name="notifications">
+        <key name="cut-off" default="3" datatype="integer"
+            attribute="cut_off" />
+        <section name="*" type="list" attribute="list" />
     </sectiontype>
 
     <sectiontype name="notification-list-append">
@@ -257,8 +259,8 @@
         attribute="global_names" />
 
     <section name="*"
-        type="notification-list"
-        attribute="notification_list" />
+        type="notifications"
+        attribute="notifications" />
 
     <section name="*"
         type="services"

@@ -1,20 +1,33 @@
-o examine methodologies for performing the most checks in the
+o Examine methodologies for performing the most checks in the
 shortest time; calculate limitations of system (number of hosts,
 time to check hosts, max checks in a given interval, etc.)
 
-o Add notification threshold logic (cutoff based on count to avoid getting spammed by pymon alerts)
+o Add a virtual host monster so that it can be easily integrated
+with other web server software
 
-o Add organization to email message and subj; if not org, then host or IP
+o Add a regular check for config file modifications... re-load
+config?
+
+o With notification cut-offs in place, the next thing to implement
+is checks for flapping services... that spend less than the cut-off
+limit in each state.
+
+o Add organization to email message and subj; if not org, then host
+or IP
 
 o Add the ability to diable notifications on a per-service basis
 
-o Fix the maintenance window notification skips; add "maintenance" to state data structure
+o Fix the maintenance window notification skips; add "maintenance"
+to state data structure
 
 o Fix the "disabled" service configuration option
 
 o Make the loglevel (verbosity) configurable
 
-o Move the hard-coded data structure out of application.State and put it into code that is reusable. State() should have the flexibility to be initialized with whatever data structure the user wants. Ideally, the state data structure should be configurable in pymon.conf.
+o Move the hard-coded data structure out of application.State and
+put it into code that is reusable. State() should have the flexibility
+to be initialized with whatever data structure the user wants.
+Ideally, the state data structure should be configurable in pymon.conf.
 
 o Get a minimal pymon shell working
 
@@ -26,11 +39,17 @@ o Use log levels for every log message (DEBUG, CRIT, INFO, etc.)
 
 o Fix the HTTP NullClient being __call__'ed.
 
-o Make sending of emails in clients.rules.ThresholdRules.sendIt() non-blocking.
+o Make sending of emails in clients.rules.ThresholdRules.sendIt()
+non-blocking.
 
-o Use JSON/AJAX for arbitrarily sorting by columns on the services web views
+o Use JSON/AJAX for arbitrarily sorting by columns on the services
+web views
 
-o DONE - Fix the status processing for http_status -- it seems to be broken
+o DONE - Add notification threshold logic (cutoff based on count
+to avoid getting spammed by pymon alerts)
+
+o DONE - Fix the status processing for http_status -- it seems to
+be broken
 
 o DONE - Fix the Nevow web interface
 
