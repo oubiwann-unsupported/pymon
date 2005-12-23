@@ -17,11 +17,24 @@ command. If you prefer to not make PATH changes, just run it like this:
 
 (The default would be "sudo /usr/local/pymon/bin/pymond").
 
-If you would like to run this under daemontools, and you have daemontools installed, all you have to do is the following:
-    * edit service/run and make sure that it points to your twistd and pymon.tac, and
+If you would like to run this under daemontools, and you have 
+daemontools installed, all you have to do is the following:
+    * edit service/run and make sure that it points to your 
+    twistd and pymon.tac, and
     * ln -s PREFIX/service /service/pymond
 
 And you should be up and running.
+
+Apache Virtual Hosts
+----------------------
+You can also run pymon under apache configured as a virtual host. Here's 
+how you'd do that:
+
+<VirtualHost *:80>
+    ServerAdmin netadmin@mycompany.com
+    ServerName pymon.mycompany.com
+    ProxyPass / http://localhost:8080/vhost/http/pymon.mycompany.com/
+</VirtualHost>
 
 ======================
 creating a new monitor

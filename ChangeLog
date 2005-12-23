@@ -15,6 +15,7 @@ file, and if it finds them, restarts via daemontools.
 service check configurations.
 * Fixed the problem with disabled services.
 * Added suport for virtual host monster in the Nevow web admin.
+* Added info on setting pymon up with Apache virtual hosts.
 
 2005.12.22
 
