@@ -1,3 +1,25 @@
+2005.12.23
+
+* Fixed the connection-failed messages (typo in the schema.xml).
+* Added CSS style for "failed".
+* Redefined the ping threshold defaults such that 1-25 return is "error" and 
+0 return is "failed".
+* Redefined state numbers to be more easily extended in the future.
+* Added new states: maintenance and disabled.
+* Added missing 'failed' updates in clients.rules.
+* Added MochiKit in anticipation of dynamically sorting the tables in the
+pymon web UI.
+* Wrote a utils.refreshConfig() function that checks for changes in the config
+file, and if it finds them, restarts via daemontools.
+* Added support for dynamic, in-process updates of service check and default
+service check configurations.
+* Fixed the problem with disabled services.
+
+2005.12.22
+
+* Trying to fix the import issues with setup.py by calling presetup.py prior 
+to importing ez_setup.
+
 2005.12.20
 
 * Fixed some issues with setup.py using os.system. It's now using
@@ -10,6 +32,9 @@ subprocess.call, and is working well and predictably.
 * Added notification cut-off and reorganized the base notification list to
 fall under the more general "notifications".
 * Updated utils.getMailList() to use the new scheme.
+* Updated TODO with feedback from the maillist.
+* Added some sandbox code exploring service flapping and how to encode
+flapping.
 
 2005.12.19
 

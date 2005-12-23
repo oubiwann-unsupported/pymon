@@ -1,3 +1,11 @@
+import md5
+import subprocess
+
+import ZConfig
+
+from twisted.python import log
+
+from pymon.config import getResource
 from pymon.registry import globalRegistry
 
 
@@ -88,6 +96,25 @@ def getMailList(uri):
     if def_append:
         mail_list.extend(def_append.emails)
     return mail_list
+
+def refreshConfig():
+    log.msg("Checking for config file changes...")
+    conf_file = getResource(['etc', 'pymon.conf'])
+    conf = open(conf_file).read()
+    new_md5 = md5.new(conf).hexdigest()
+    old_md5 = globalRegistry.state.get('config_md5')
+    globalRegistry.state['config_md5'] = new_md5
+    # check against MD5 in state
+    if new_md5 != old_md5:
+        log.msg("Config MD5 signatures do not match; loading new config...")
+        # get and load schema, load config
+        schema_file = getResource(['etc', 'schema.xml'])
+        schema = ZConfig.loadSchema(schema_file)
+        cfg, nil = ZConfig.loadConfig(schema, conf_file)
+        # set global config to newly loaded config
+        globalRegistry.config = cfg
+        #if cfg.daemontools_enabled:
+        #    subprocess.call('svc', '-t %s' % cfg.daemontools_service)
 
 def _test():
     import doctest, utils

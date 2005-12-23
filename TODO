@@ -2,11 +2,12 @@ o Examine methodologies for performing the most checks in the
 shortest time; calculate limitations of system (number of hosts,
 time to check hosts, max checks in a given interval, etc.)
 
+o Fix email formatting
+
+o Add https checks
+
 o Add a virtual host monster so that it can be easily integrated
 with other web server software
-
-o Add a regular check for config file modifications... re-load
-config?
 
 o With notification cut-offs in place, the next thing to implement
 is checks for flapping services... that spend less than the cut-off
@@ -15,12 +16,16 @@ limit in each state.
 o Add organization to email message and subj; if not org, then host
 or IP
 
-o Add the ability to diable notifications on a per-service basis
+o Add a built-in SMTP server for receiving acknowledgements from
+users (mail list will be checked for "authorized users"; headers
+will be checked for service uri)
+
+o Add custom pymon mail headers to outgoing messages
+
+o Add the ability to disable notifications on a per-service basis
 
 o Fix the maintenance window notification skips; add "maintenance"
 to state data structure
-
-o Fix the "disabled" service configuration option
 
 o Make the loglevel (verbosity) configurable
 
@@ -44,6 +49,17 @@ non-blocking.
 
 o Use JSON/AJAX for arbitrarily sorting by columns on the services
 web views
+
+o DONE - Fix the "disabled" service configuration option
+
+o DONE - Add a regular check for config file modifications... re-load
+config? This might mean changing the "backup server" to "admin
+server", where backups and config file scanning/reloading would be
+two of its tasks.
+
+o DONE - Add failed message templates (these were actually already 
+there for HTTP status checks, there was just a typo in the 
+schema.xml file.
 
 o DONE - Add notification threshold logic (cutoff based on count
 to avoid getting spammed by pymon alerts)

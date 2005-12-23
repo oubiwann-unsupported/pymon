@@ -1,20 +1,6 @@
 import os
 import sys
-import glob
-import pwd, grp
-import ez_setup
-ez_setup.use_setuptools()
-from setuptools import setup
 from subprocess import call
-
-if not os.path.exists('etc/pymon.conf'):
-    print """
-Um, you have *obviously* not read the INSTALL carefully enough.
-Don't make me slap you from back in time, through your monitor. 
-I swear I'll do it. Read the INSTALL again, make the appropriate
-changes, and then rerun setup.py.
-"""
-    sys.exit()
 
 # Dependency Checks
 ret = call([sys.executable, 'presetup.py'])
@@ -25,6 +11,21 @@ if ret != 0:
 import twisted
 if twisted.__version__ < '2.1.0':
     print "Sorry, you need to have Twisted 2.1.0 or greater installed."
+    sys.exit()
+
+import glob
+import pwd, grp
+import ez_setup
+ez_setup.use_setuptools()
+from setuptools import setup
+
+if not os.path.exists('etc/pymon.conf'):
+    print """
+Um, you have *obviously* not read the INSTALL carefully enough.
+Don't make me slap you from back in time, through your monitor. 
+I swear I'll do it. Read the INSTALL again, make the appropriate
+changes, and then rerun setup.py.
+"""
     sys.exit()
 
 version = open('VERSION').read().strip()

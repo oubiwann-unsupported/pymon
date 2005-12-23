@@ -13,9 +13,9 @@ globalRegistry.add('config', cfg)
 state       = State()
 history     = History()
 factories   = {}
-globalRegistry.add(cfg.global_names.state, state)
-globalRegistry.add(cfg.global_names.history, history)
-globalRegistry.add(cfg.global_names.factories, factories)
+globalRegistry.add('state', state)
+globalRegistry.add('history', history)
+globalRegistry.add('factories', factories)
 
 # this has to be imported after the registry is setup
 from pymon import servers
@@ -45,7 +45,8 @@ servers.addWebServer(pymonsvc)
 #servers.addXMLRPCServer(pymonsvc)
 #servers.addSNMPServer(pymonsvc)
 
-# Schedule regular backups of state data to disk
+# Schedule regular tasks
 # XXX examine twisted.application's use of persisted data through restarts;
-# maybe use theirs instead.
+# maybe use their backups instead.
+servers.addConfigServer(pymonsvc)
 servers.addBackupServer(pymonsvc)

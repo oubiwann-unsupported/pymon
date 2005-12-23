@@ -50,12 +50,10 @@ class StatesPage(rend.Page):
     docFactory = loaders.xmlfile(os.path.join(
         pref, web, 'states.html'))
 
-    def __init__(self):
-        self.monitors = globalRegistry.factories
-
     def data_getStates(self, context, data):
-        idxs = sorted(self.monitors)
-        return [ self.monitors[mon].state for mon in idxs ]
+        monitors = globalRegistry.factories
+        idxs = sorted(monitors)
+        return [ monitors[mon].state for mon in idxs ]
 
 class StatesDetailPage(StatesPage):
     docFactory = loaders.xmlfile(os.path.join(

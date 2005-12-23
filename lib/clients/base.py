@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from twisted.python import log
 from twisted.internet import protocol
 
 from adytum.util.uri import Uri
@@ -29,7 +30,7 @@ class ClientMixin(object):
         
         prev = state.get('current status')
         org = self.factory.service_cfg.org
-        if org and not state['org']:
+        if org:
             state['org'] = org
         state['previous status'] = prev
         state['previous status name'] = utils.getStateNameFromNumber(prev)
@@ -51,7 +52,8 @@ class ClientMixin(object):
             pass
         state['current status name'] = status
         state['last check'] = now
-        if status != 'recovering':
+        if status not in ['recovering', 'maintenance', 'disabled'
+            'acknowledged']:
             count_index = 'count %s' % status
             state[count_index] = state[count_index] + 1
             state_index = 'last %s' % status

@@ -61,7 +61,9 @@ group, and then edit your copied ./etc/pymon.con file?\n"""
 
 # Create the necessary directories
 paths = ['bin', 'etc', 'var', 'log', 
-    os.path.join(cfg.backups.base_dir,cfg.backups.state_dir),
+    os.path.join(
+        cfg.admin.backups.base_dir,
+        cfg.admin.backups.state_dir),
 ]
 for path in paths:
     dir = os.path.join(cfg.prefix, path)

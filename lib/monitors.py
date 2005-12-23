@@ -70,6 +70,13 @@ class AbstractFactory(object):
 class MonitorMixin(object):
 
     def __init__(self, uid):
+        # XXX why does all this stuff have to be stored in the object? 
+        # That's a lot of memory utilization... duplication. We've got a 
+        # global registry -- why not use it? We've got lookup function,
+        # and the lookups are operating against the in-memory registry.
+        # It may be a little slower, but I think it will be better to 
+        # decrease memory utilization of objects. pymon will scale 
+        # better... will be able to take on more service checks.
         self.uid = uid
         self.cfg = globalRegistry.config
         self.service_type = utils.getTypeFromUri(self.uid)
@@ -87,8 +94,20 @@ class MonitorMixin(object):
         self.interval = interval
 
     def __call__(self):
+        # update the configuration in case it has changed
+        self.service_cfg = utils.getEntityFromUri(self.uid)
+        self.type_defaults = utils.getDefaultsFromUri(self.uid)
+
         self.state.backup()
-        reactor.connectTCP(*self.reactor_params)
+        if self.service_cfg.enabled:
+            reactor.connectTCP(*self.reactor_params)
+        else:
+            log.msg("Service %s has been disabled; not checking." % self.uid)
+            log.msg("State: %s" % str(self.state))
+            self.state['current status'] = self.statedefs.disabled
+            self.state['current status name'] = 'disabled'
+            self.state['count disabled'] = 1
+            globalRegistry.factories[self.uid].state = self.state
 
     def setInterval(self, seconds=None):
         if seconds:

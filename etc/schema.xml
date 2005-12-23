@@ -23,6 +23,17 @@
             attribute="base_dir" />
     </sectiontype>
 
+    <sectiontype name="config-update">
+        <key name="interval" datatype="time-interval" default="60" />
+    </sectiontype>
+
+    <sectiontype name="admin">
+        <section name="*" type="backups" 
+            attribute="backups" />
+        <section name="*" type="config-update" 
+            attribute="config_update" />
+    </sectiontype>
+
     <sectiontype name="agents">
         <key name="port" datatype="integer" default="10999" />
     </sectiontype>
@@ -35,17 +46,24 @@
 
     <sectiontype name="state-definitions">
         <key name="unknown" datatype="integer" default="-1" />
-        <key name="ok" datatype="integer" default="1" />
-        <key name="recovering" datatype="integer" default="2" />
-        <key name="warn" datatype="integer" default="3" />
-        <key name="error" datatype="integer" default="4" />
-        <key name="failed" datatype="integer" default="5" />
+        <key name="failed" datatype="integer" default="10" />
+        <key name="error" datatype="integer" default="20" />
+        <key name="warn" datatype="integer" default="30" />
+        <key name="acknowledged" datatype="integer" default="40" />
+        <key name="recovering" datatype="integer" default="50" />
+        <key name="maintenance" datatype="integer" default="60" />
+        <key name="ok" datatype="integer" default="70" />
+        <key name="disabled" datatype="integer" default="80" />
     </sectiontype>
 
     <sectiontype name="global-names">
         <key name="state" default="state" />
         <key name="history" default="history" />
         <key name="factories" default="factories" />
+    </sectiontype>
+
+    <sectiontype name="list">
+        <multikey name="email" attribute="emails" />
     </sectiontype>
 
     <sectiontype name="notifications">
@@ -81,8 +99,10 @@
             attribute="ok_threshold" />
         <key name="warn-threshold" datatype=".rangedValues" default="26-75"
             attribute="warn_threshold" />
-        <key name="error-threshold" datatype=".rangedValues" default="0-25"
+        <key name="error-threshold" datatype=".rangedValues" default="1-25"
             attribute="error_threshold" />
+        <key name="failed-threshold" datatype=".rangedValues" default="0-0"
+            attribute="failed_threshold" />
     </sectiontype>
 
     <sectiontype name="ping-defaults" extends="ping-base">
@@ -102,6 +122,9 @@
         <key name="error-message"
             default="pymon ERROR: %s : %s%% loss"
             attribute="error_message" />
+        <key name="failed-message"
+            default="pymon ERROR: %s : %s%% loss"
+            attribute="failed_message" />
         <key name="sent-message"
             default="Sent ping notice email message to %s."
             attribute="sent_message" />
@@ -111,8 +134,7 @@
         <key name="org" />
         <key name="uri" required="yes" />
         <key name="interval" datatype="time-interval" />
-        <key name="enabled" datatype="boolean" default="true"
-            attribute="enabled" />
+        <key name="enabled" datatype="boolean" default="true" />
         <key name="escalation-enabled" datatype="boolean" default="false"
             attribute="escalation_enabled" />
         <key name="scheduled-downtime" datatype=".getDateRange" 
@@ -161,9 +183,9 @@
         <key name="error-message"
             default="pymon ERROR: %s : HTTP status %s"
             attribute="error_message" />
-        <key name="fail-message"
+        <key name="failed-message"
             default="pymon ERROR: Connection Failed for %s"
-            attribute="fail_message" />
+            attribute="failed_message" />
         <key name="sent-message"
             default="Sent http status notice email message to %s."
             attribute="sent_message" />
@@ -173,8 +195,7 @@
         <key name="org" />
         <key name="uri" required="yes" />
         <key name="interval" datatype="time-interval" />
-        <key name="enabled" datatype="boolean" default="true"
-            attribute="check_enabled" />
+        <key name="enabled" datatype="boolean" default="true" />
         <key name="escalation-enabled" datatype="boolean" default="false"
             attribute="escalation_enabled" />
         <key name="scheduled-downtime" datatype=".getDateRange" 
@@ -215,19 +236,13 @@
     <key name="user-agent-string" 
         default="pymon Enterprise Monitoring (http://pymon.sf.net)"
         attribute="user_agent_string" />
-    <key name="jabber-port" datatype="integer" default="3292"
-        attribute="jabber_port" />
-    <key name="web-port" datatype="integer" default="3293"
-        attribute="web_port" />
-    <key name="telnet-port" datatype="integer" default="3294"
-        attribute="telnet_port" />
-    <key name="smtp-port" datatype="integer" default="3295"
-        attribute="smtp_port" />
-    <key name="xmlrpc-port" datatype="integer" default="3298"
-        attribute="xmlrpc_port" />
     <key name="mail-from" required="yes"
         attribute="mail_from" />
     <key name="sendmail" default="/usr/sbin/sendmail" />
+    <key name="daemontools-enabled" datatype="boolean"
+        default="True" attribute="daemontools_enabled" />
+    <key name="daemontools-service" default="/service/pymond" 
+        attribute="daemontools_service" />
 
     <!-- main section: sub sections /-->
     <section name="*"
@@ -239,8 +254,8 @@
         attribute="database" />
 
     <section name="*"
-        type="backups"
-        attribute="backups" />
+        type="admin"
+        attribute="admin" />
 
     <section name="*"
         type="agents"

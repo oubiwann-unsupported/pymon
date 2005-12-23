@@ -31,6 +31,12 @@ class ThresholdRules(object):
         else:
             return self.factory.type_defaults.error_threshold
 
+    def getFailedThreshold(self):
+        if self.factory.service_cfg.failed_threshold:
+            return self.factory.service_cfg.failed_threshold
+        else:
+            return self.factory.type_defaults.failed_threshold
+
     def setType(self, type):
         self.threshold_type = type
 
@@ -53,6 +59,9 @@ class ThresholdRules(object):
         elif self.isIn(datum, self.getErrorThreshold()):
             log.msg("Status data is in 'error' threshold.", debug=True)
             self.status = self.factory.statedefs.error
+        elif self.isIn(datum, self.getFailedThreshold()):
+            log.msg("Status data is in 'failed' threshold.", debug=True)
+            self.status = self.factory.statedefs.failed
         elif datum == self.factory.statedefs.failed:
             self.status = self.factory.statedefs.failed
         else:

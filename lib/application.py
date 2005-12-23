@@ -72,13 +72,13 @@ class State(dict):
             cfg = globalRegistry.config
             if uid:
                 # Specific backup
-                filename = os.path.join(cfg.backups.state_dir,
+                filename = os.path.join(cfg.admin.backups.state_dir,
                     re.sub('[^0-9A-Za-z_]', '_', uid))
             else:
                 # General backup
                 filename = 'app.pkl'
             self.backup_file = os.path.join(cfg.prefix, 
-                cfg.backups.base_dir, filename)
+                cfg.admin.backups.base_dir, filename)
             if os.path.exists(self.backup_file):
                 self.restore()
                 os.unlink(self.backup_file)
@@ -102,6 +102,9 @@ class State(dict):
             self.setdefault('count warn', 0)
             self.setdefault('count error', 0)
             self.setdefault('count failed', 0)
+            self.setdefault('count unknown', 0)
+            self.setdefault('count maintenance', 0)
+            self.setdefault('count disabled', 0)
             self.setdefault('current status', -1)
             self.setdefault('previous status', -1)
             self.setdefault('current status name', '')
@@ -119,7 +122,8 @@ class State(dict):
             log.err("The backup filename has not been set.")
         try:
             pickle.dump(self, open(self.backup_file,'w'))
-            log.debug("State data has been written to %s." % self.backup_file)
+            log.msg("State data has been written to %s." % self.backup_file,
+                debug=True)
         except IOError:
             log.err("Backup file does not exist; couldn't backup data.")
 

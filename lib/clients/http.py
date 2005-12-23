@@ -4,6 +4,9 @@ from twisted.web.http import HTTPClient
 
 from base import ClientMixin
 
+from pymon.registry import globalRegistry
+from pymon import utils
+
 class HttpTextClient:
 
     def connectionLost(self, reason):
@@ -17,9 +20,9 @@ class HttpStatusClient(HTTPPageGetter, ClientMixin):
     
     def connectionLost(self, reason):
         status = int(self.factory.status)
+        checked_resource = self.factory.service_cfg.uri
 
         # push the returned data through the threshold checks
-        checked_resource = self.factory.service_cfg.uri
         self.rules.check(status)
         self.rules.setMsg(checked_resource, status, self.factory.message)
         self.rules.setSubj(checked_resource, status)
