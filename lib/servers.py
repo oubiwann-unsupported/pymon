@@ -1,5 +1,6 @@
 from twisted.application import internet
 
+from nevow import vhost
 from nevow import appserver
 
 from pymon import utils
@@ -11,9 +12,12 @@ from registry import globalRegistry
 
 def addWebServer(rootService):
     factories = globalRegistry.factories
-    webroot = appserver.NevowSite(pages.Root(factories))
+    vResource = vhost.VHostMonsterResource()
+    webroot = pages.Root(factories)
+    webroot.putChild(globalRegistry.config.web.vhost_root, vResource)
+    site = appserver.NevowSite(webroot)
     port = globalRegistry.config.web.port
-    webserver = internet.TCPServer(port, webroot)
+    webserver = internet.TCPServer(port, site)
     webserver.setServiceParent(rootService)
 
 def addConfigServer(rootService):

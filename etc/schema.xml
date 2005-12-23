@@ -42,6 +42,8 @@
         <key name="port" datatype="integer" default="8080" />
         <key name="doc-root" default="static/web" 
             attribute="doc_root" />
+        <key name="vhost-root" default="vhost" 
+            attribute="vhost_root" />
     </sectiontype>
 
     <sectiontype name="state-definitions">

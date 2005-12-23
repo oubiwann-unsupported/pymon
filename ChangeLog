@@ -14,6 +14,7 @@ file, and if it finds them, restarts via daemontools.
 * Added support for dynamic, in-process updates of service check and default
 service check configurations.
 * Fixed the problem with disabled services.
+* Added suport for virtual host monster in the Nevow web admin.
 
 2005.12.22
 
