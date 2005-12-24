@@ -8,6 +8,11 @@ instance.
 * Updated the TODO.
 * Updated the news items, features, and future on the website.
 * Added a new screenshot.
+* Incremented version number in anticipation of release.
+* Renamed the main page in the web UI from home.html to main.html and updated
+pages.py accordingly.
+* Added release-candidate-generating scripts.
+* Unified the tarball scripts.
 
 2005.12.23
 

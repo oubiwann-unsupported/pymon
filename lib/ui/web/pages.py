@@ -28,7 +28,7 @@ class Root(rend.Page):
     """
     addSlash = True
     docFactory = loaders.xmlfile(os.path.join(
-        pref, web, 'home.html'))
+        pref, web, 'main.html'))
 
     child_styles = static.File(os.path.join(
         pref, web, 'styles'))
