@@ -1,13 +1,18 @@
+import sys
 import md5
 import subprocess
+import logging as log
 
 import ZConfig
-
-from twisted.python import log
 
 from pymon.config import getResource
 from pymon.registry import globalRegistry
 
+log_level = eval('log.%s' % globalRegistry.config.log_level)
+log.basicConfig(level=log_level,
+    format='%(levelname)-8s %(message)s',
+    stream=sys.stdout,
+)
 
 class LocalTools:
 
@@ -98,7 +103,7 @@ def getMailList(uri):
     return mail_list
 
 def refreshConfig():
-    log.msg("Checking for config file changes...")
+    log.info("Checking for config file changes...")
     conf_file = getResource(['etc', 'pymon.conf'])
     conf = open(conf_file).read()
     new_md5 = md5.new(conf).hexdigest()
@@ -106,7 +111,7 @@ def refreshConfig():
     globalRegistry.state['config_md5'] = new_md5
     # check against MD5 in state
     if new_md5 != old_md5:
-        log.msg("Config MD5 signatures do not match; loading new config...")
+        log.warning("Config MD5 signatures do not match; loading new config...")
         # get and load schema, load config
         schema_file = getResource(['etc', 'schema.xml'])
         schema = ZConfig.loadSchema(schema_file)

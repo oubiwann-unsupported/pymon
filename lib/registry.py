@@ -125,7 +125,20 @@ class Registry(dict):
             raise RegistrationError, \
                 "An object with that name is already registered."
 
-globalRegistry = Registry()
+try:
+    globalRegistry.config
+except AttributeError:
+    # setup global registry
+    globalRegistry = Registry()
+    from pymon.config import cfg
+    globalRegistry.add('config', cfg)
+    from pymon.application import State, History
+    state       = State()
+    history     = History()
+    factories   = {}
+    globalRegistry.add('state', state)
+    globalRegistry.add('history', history)
+    globalRegistry.add('factories', factories)
 
 def _test():
     import doctest, registry

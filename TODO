@@ -1,13 +1,32 @@
+o Entirely rip out configuration from globalRegistry -- there's no need 
+to that to be copied to another object -- it's all available as a 
+pymon.config import
+
 o Examine methodologies for performing the most checks in the
 shortest time; calculate limitations of system (number of hosts,
 time to check hosts, max checks in a given interval, etc.)
 
+o Clean up the print statements (convert to log) in stmp, ftp, and http 
+text client code.
+
+o Remove all the redundant copying of configuration data into objects 
+instances and instead use the globalRegistry.
+
+o Add pymon overview page to the web UI
+
+o Add a form in the state lists for entering the number of seconds after 
+which the page shoudl refresh.
+
+o I would like to add an event system to pymon... events which would 
+push to a listener. This means that there would be a single place for 
+doing many sorts of things (like updating state), and any time pymon 
+would need to update state, it would notify the listener.
+
+o Convert the meta refrsh of the states web ui to AJAX/JSON.
+
 o Fix email formatting
 
 o Add https checks
-
-o Add a virtual host monster so that it can be easily integrated
-with other web server software
 
 o With notification cut-offs in place, the next thing to implement
 is checks for flapping services... that spend less than the cut-off
@@ -24,15 +43,18 @@ o Add custom pymon mail headers to outgoing messages
 
 o Add the ability to disable notifications on a per-service basis
 
-o Fix the maintenance window notification skips; add "maintenance"
-to state data structure
-
 o Make the loglevel (verbosity) configurable
 
 o Move the hard-coded data structure out of application.State and
 put it into code that is reusable. State() should have the flexibility
 to be initialized with whatever data structure the user wants.
 Ideally, the state data structure should be configurable in pymon.conf.
+
+o There is now state-related information in pymon.application, 
+pymon.client.base, and pymon.monitors. These need to be consolidated 
+into some subclass of State() and methods for dealing with this subclass 
+need to be generalized such that any arbitrary state information can be 
+stored.
 
 o Get a minimal pymon shell working
 
@@ -47,8 +69,14 @@ o Fix the HTTP NullClient being __call__'ed.
 o Make sending of emails in clients.rules.ThresholdRules.sendIt()
 non-blocking.
 
-o Use JSON/AJAX for arbitrarily sorting by columns on the services
+o DONE - Use JSON/AJAX for arbitrarily sorting by columns on the services
 web views
+
+o DONE - Fix the maintenance window notification skips; add "maintenance"
+to state data structure
+
+o DONE - Add a virtual host monster so that it can be easily integrated
+with other web server software
 
 o DONE - Fix the "disabled" service configuration option
 

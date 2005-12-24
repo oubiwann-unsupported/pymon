@@ -45,6 +45,9 @@ setup(name="PyMonitor",
         conifiguration is designed to be easily and rapidly deployed,
         saving on time and overhead often associated with other 
         monitoring solutions.''',
+    install_requires=[
+        'Adytum-PyMonitor >= 1.0.4',
+    ],
     packages=[
         'pymon',
         'pymon.clients',

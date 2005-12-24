@@ -1,8 +1,7 @@
 import dispatch
 
-from twisted.python import log
-
 from pymon import utils
+from pymon.utils import log
 from pymon.registry import globalRegistry
 
 class ThresholdRules(object):
@@ -41,9 +40,9 @@ class ThresholdRules(object):
         self.threshold_type = type
 
     def check(self, datum):
-        log.msg("Got check data '%s'." % datum, debug=True)
+        log.debug("Got check data '%s'." % datum)
         if self.isIn(datum, self.getOkThreshold()):
-            log.msg("Status data is in 'ok' threshold.", debug=True)
+            log.debug("Status data is in 'ok' threshold.")
             status = self.factory.statedefs.ok
             # The 'current status' index hasn't been updated yet, so 
             # 'current status' is really 'last status', and 'last status'
@@ -54,13 +53,13 @@ class ThresholdRules(object):
                 status = self.factory.statedefs.recovering
             self.status = status
         elif self.isIn(datum, self.getWarnThreshold()):
-            log.msg("Status data is in 'warn' threshold.", debug=True)
+            log.debug("Status data is in 'warn' threshold.")
             self.status = self.factory.statedefs.warn
         elif self.isIn(datum, self.getErrorThreshold()):
-            log.msg("Status data is in 'error' threshold.", debug=True)
+            log.debug("Status data is in 'error' threshold.")
             self.status = self.factory.statedefs.error
         elif self.isIn(datum, self.getFailedThreshold()):
-            log.msg("Status data is in 'failed' threshold.", debug=True)
+            log.debug("Status data is in 'failed' threshold.")
             self.status = self.factory.statedefs.failed
         elif datum == self.factory.statedefs.failed:
             self.status = self.factory.statedefs.failed
@@ -75,11 +74,11 @@ class ThresholdRules(object):
 
     [ isIn.when("self.threshold_type == 'ranged'") ]
     def rangedIsIn(self, datum, threshold):
-        log.msg("Using dispatch method 'rangedIsIn'...", debug=True)
-        log.msg("datum: %s" % datum, debug=True)
-        log.msg("datum type: %s" % type(datum), debug=True)
-        log.msg("threshold: %s" % threshold, debug=True)
-        log.msg("threshold type: %s" % type(threshold), debug=True)
+        log.debug("Using dispatch method 'rangedIsIn'...")
+        log.debug("datum: %s" % datum)
+        log.debug("datum type: %s" % type(datum))
+        log.debug("threshold: %s" % threshold)
+        log.debug("threshold type: %s" % type(threshold))
         if datum in threshold:
             return True
         else:
@@ -87,14 +86,14 @@ class ThresholdRules(object):
 
     [ isIn.when("self.threshold_type == 'listed'") ]
     def listedIsIn(self, datum, threshold):
-        log.msg("Using dispatch method 'listedIsIn'...", debug=True)
+        log.debug("Using dispatch method 'listedIsIn'...")
         if datum in threshold:
             return True
         return False
 
     [ isIn.when("self.threshold_type == 'exact'") ]
     def isExactly(self, datum, threshold):
-        log.msg("Using dispatch method 'isExactly'...", debug=True)
+        log.debug("Using dispatch method 'isExactly'...")
         if str(datum) == threshold:
             return True
         return False
@@ -120,7 +119,7 @@ class ThresholdRules(object):
         
         cutoff = globalRegistry.config.notifications.cut_off
         if self.factory.state.get('count') > cutoff:
-            log.msg("Incident count has passed the cut-off " + \
+            log.info("Incident count has passed the cut-off " + \
                 "threshold; not sending email.")
         else:
             if self.status == self.factory.statedefs.recovering:
@@ -142,5 +141,5 @@ class ThresholdRules(object):
                 email.setFrom(frm)
                 email.setData(self.msg)
                 email.send()
-                log.msg(self.factory.type_defaults.sent_message % address)
+                log.info(self.factory.type_defaults.sent_message % address)
 

@@ -1,8 +1,6 @@
 import os
 from pkg_resources import Requirement, resource_filename
 
-from twisted.python import log
-
 import ZConfig
 
 egg_pkg_name = "PyMonitor"

@@ -32,7 +32,7 @@ th {
 }
 
 .warn {
-    background-color: #ffffcc;
+    background-color: #ffff99;
 }
 
 .acknowledged {
@@ -44,16 +44,16 @@ th {
 }
 
 .maintenance {
-    background-color: #ccccff;
+    background-color: #00cccc;
 }
 
 .ok {
-    background-color: #ccffcc;
+    background-color: #aaffaa;
 }
 
 .disabled {
     color: #ffffff;
-    background-color: #333333;
+    background-color: #666666;
 }
 
 .toplink {

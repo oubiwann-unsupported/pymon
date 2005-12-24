@@ -29,12 +29,16 @@ class Root(rend.Page):
     addSlash = True
     docFactory = loaders.xmlfile(os.path.join(
         pref, web, 'home.html'))
+
     child_styles = static.File(os.path.join(
         pref, web, 'styles'))
     child_images = static.File(os.path.join(
         pref, web, 'images'))
     child_icons = static.File(os.path.join(
         pref, web, 'icons'))
+    child_js = static.File(os.path.join(
+        pref, web, 'javascript'))
+
     child_webform_css = webform.defaultCSS
 
     def child_states(self, context):

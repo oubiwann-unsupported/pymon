@@ -1,11 +1,14 @@
 import re
+import os
 from Queue import Queue
 try:
     import cPickle as pickle
 except:
     import pickle
 
-from twisted.python import log
+from config import cfg
+from registry import globalRegistry
+from utils import log
 
 class Error(Exception):
     pass
@@ -63,25 +66,44 @@ class State(dict):
     >>> os.path.exists(s.backup_file)
     False
     '''
-    def __init__(self, uid=None, use_globalRegistry=True):
-        import os
-        if not use_globalRegistry:
-            self.setBackupFilename(None)
-        else:
-            from registry import globalRegistry
-            cfg = globalRegistry.config
-            if uid:
-                # Specific backup
-                filename = os.path.join(cfg.admin.backups.state_dir,
-                    re.sub('[^0-9A-Za-z_]', '_', uid))
-            else:
-                # General backup
-                filename = 'app.pkl'
+    def __init__(self, use_globalRegistry=True):
+        self.setFilename()
+        self.initializeBackup()
+
+    def setFilename(self):
+            filename = 'app.pkl'
             self.backup_file = os.path.join(cfg.prefix, 
                 cfg.admin.backups.base_dir, filename)
-            if os.path.exists(self.backup_file):
-                self.restore()
-                os.unlink(self.backup_file)
+
+    def backup(self):
+        if not self.backup_file:
+            log.error("The backup filename has not been set.")
+        try:
+            pickle.dump(self, open(self.backup_file,'w'))
+            log.debug("State data has been written to %s." % self.backup_file)
+        except IOError:
+            log.error("Backup file does not exist; couldn't backup data.")
+
+    def restore(self):
+        if not self.backup_file:
+            log.error("The backup filename has not been set.")
+        try:
+            saved_state = pickle.load(open(self.backup_file))
+            log.debug("State data has been loaded from %s." % self.backup_file)
+            self.update(saved_state)
+        except Exception, e:
+            log.error("Could not restore state: %s" % e)
+
+    def initializeBackup(self):
+        if os.path.exists(self.backup_file):
+            self.restore()
+            os.unlink(self.backup_file)
+        
+class MonitorState(State):
+
+    def __init__(self, uid, use_globalRegistry=True):
+            self.uid = uid
+            super(MonitorState, self).__init__()
             # Initialize data strcuture for state - we're using 
             # setdefault here, so this doesn't need to be in an 'else'
             # block. The addeded benefit is that if something is missing
@@ -92,7 +114,7 @@ class State(dict):
             # a list of tuples will be passed; the list will be iterated
             # through in order, and the tuple will get passed with the
             # extended call syntax,  self.setdefault(*data_tuple).
-            log.msg("Initializing state data...", debug=True)
+            log.debug("Initializing state data...")
             self.setdefault('org', '')
             self.setdefault('node', '')
             self.setdefault('service type', '')
@@ -117,26 +139,16 @@ class State(dict):
             self.setdefault('last error', '')
             self.setdefault('last failed', '')
 
-    def backup(self):
-        if not self.backup_file:
-            log.err("The backup filename has not been set.")
-        try:
-            pickle.dump(self, open(self.backup_file,'w'))
-            log.msg("State data has been written to %s." % self.backup_file,
-                debug=True)
-        except IOError:
-            log.err("Backup file does not exist; couldn't backup data.")
+    def setFilename(self, filename=None):
+        if not filename:
+            filename = self.uid
+        filename = os.path.join(
+            cfg.admin.backups.state_dir,
+            re.sub('[^0-9A-Za-z_]', '_', filename))
+        self.backup_file = os.path.join(cfg.prefix, 
+            cfg.admin.backups.base_dir, filename)
 
-    def restore(self):
-        if not self.backup_file:
-            log.err("The backup filename has not been set.")
-        try:
-            saved_state = pickle.load(open(self.backup_file))
-            log.msg("State data has been loaded from %s." % self.backup_file)
-            self.update(saved_state)
-        except Exception, e:
-            log.err("Could not restore state: %s" % e)
-        
+        log.debug("Backup file named '%s'." % filename)
 
 class History(Queue, object):
     '''

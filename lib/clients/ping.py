@@ -2,6 +2,7 @@ from twisted.spread import pb
 
 from pymon.registry import globalRegistry
 from pymon import utils
+from pymon.utils import log
 
 from base import ClientMixin
 
@@ -30,15 +31,14 @@ class PingClient(pb.Broker, ClientMixin):
             self.rules.sendIt()
 
         # dump info to log file
-        print 'Service: %s' % self.factory.uid
-        print self.rules.msg 
-        print self.rules.subj
-        print 'Status: %s' % self.rules.status
+        log.debug('Service: %s' % self.factory.uid)
+        log.info(self.rules.msg)
+        log.info(self.rules.subj)
+        log.debug("Status: %s for %s" % (self.rules.status, host))
 
         # update state information
         self.updateState()
 
         # dump info to log file
-        print self.factory.state
-        print ''
+        log.debug(str(self.factory.state)+'\n')
 

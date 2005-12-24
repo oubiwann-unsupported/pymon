@@ -1,3 +1,4 @@
+from datetime import datetime
 from email.MIMEText import MIMEText
 
 import dispatch
@@ -5,18 +6,19 @@ import dispatch
 from zope.interface import implements
 
 from twisted.spread import pb
-from twisted.python import log
 from twisted.internet import reactor
 from twisted.web.client import HTTPClientFactory, PartialDownloadError
 from twisted.internet.protocol import ClientFactory
 
 from adytum.util.uri import Uri
 
+from config import cfg
 from registry import globalRegistry
-from application import State, History
+from application import MonitorState, History
 from workflow import service as workflow
 from clients import base, ping, http, ftp, smtp
 import utils
+from utils import log
 
 class AbstractFactory(object):
     '''
@@ -78,12 +80,12 @@ class MonitorMixin(object):
         # decrease memory utilization of objects. pymon will scale 
         # better... will be able to take on more service checks.
         self.uid = uid
-        self.cfg = globalRegistry.config
+        self.cfg = cfg
         self.service_type = utils.getTypeFromUri(self.uid)
         self.service = getattr(self.cfg.services, self.service_type)
         self.workflow = workflow.ServiceState(workflow.state_wf)
         self.history = History()
-        self.state = State(uid)
+        self.state = MonitorState(uid)
         self.statedefs = self.cfg.state_definitions
         self.service_cfg = utils.getEntityFromUri(self.uid)
         self.type_defaults = self.service.defaults
@@ -95,18 +97,48 @@ class MonitorMixin(object):
 
     def __call__(self):
         # update the configuration in case it has changed
+        uri = Uri(self.uid)
         self.service_cfg = utils.getEntityFromUri(self.uid)
         self.type_defaults = utils.getDefaultsFromUri(self.uid)
 
         self.state.backup()
-        if self.service_cfg.enabled:
+        maint_window = False
+        try:
+            if (self.service_cfg.scheduled_downtime['start'].timetuple() <
+                datetime.now().timetuple() <
+                self.service_cfg.scheduled_downtime['end'].timetuple()):
+                maint_window = True
+        except TypeError:
+            pass
+        if maint_window:
+            # XXX These two chunks of state info access need to be moved 
+            # out of here... and made less eyesoreingly redundant. 
+            # There's another set of XXX's that discuss this in general
+            # elsewhere. There are also notes in the TODO.
+            msg = "Service %s has been disabled during maintenance."
+            log.warning(msg % self.uid)
+            self.state['current status'] = self.statedefs.maintenance
+            self.state['current status name'] = 'maintenance'
+            self.state['count maintenance'] = 1
+            self.state['node'] = uri.getAuthority().getHost()
+            self.state['service'] = uri.getScheme().replace('_', ' ')
+            org = self.service_cfg.org
+            if org:
+                self.state['org'] = org
+            globalRegistry.factories[self.uid].state = self.state            
+        elif self.service_cfg.enabled:
             reactor.connectTCP(*self.reactor_params)
         else:
-            log.msg("Service %s has been disabled; not checking." % self.uid)
-            log.msg("State: %s" % str(self.state))
+            msg = "Service %s has been disabled; not checking."
+            log.warning(msg % self.uid)
             self.state['current status'] = self.statedefs.disabled
             self.state['current status name'] = 'disabled'
             self.state['count disabled'] = 1
+            self.state['node'] = uri.getAuthority().getHost()
+            self.state['service'] = uri.getScheme().replace('_', ' ')
+            org = self.service_cfg.org
+            if org:
+                self.state['org'] = org
             globalRegistry.factories[self.uid].state = self.state
 
     def setInterval(self, seconds=None):
@@ -155,16 +187,16 @@ class HttpStatusMonitor(HTTPClientFactory, MonitorMixin):
             agent=self.agent, timeout=int(self.type_defaults.interval))
         MonitorMixin.__call__(self)
         d = self.deferred
-        d.addCallback(self.printStatus)
+        d.addCallback(self.logStatus)
         d.addErrback(self.errorHandlerPartialPage)
 
-    def printStatus(self):
-        print 'Here is the return status: %s' % self.status
+    def logStatus(self):
+        log.info('Here is the return status: %s' % self.status)
 
     def errorHandlerPartialPage(self, failure):
         failure.trap(PartialDownloadError)
-        print "Hmmm... got a partial page..."
-        print 'Here is the return status: %s' % self.status
+        log.error("Hmmm... got a partial page...")
+        log.debug('Here is the return status: %s' % self.status)
 
     def clientConnectionFailed(self, connector, reason):
         self.message = reason.getErrorMessage()
@@ -192,7 +224,7 @@ class PingMonitor(pb.PBClientFactory, MonitorMixin):
         self.args = [count, host]
 
         #options = ['ping', '-c %s' % count, '%s' % host]
-        port = int(globalRegistry.config.agents.port)
+        port = cfg.agents.port
         self.reactor_params = ('127.0.0.1', port, self)
 
     def __call__(self):
@@ -239,17 +271,16 @@ class FtpMonitor(ClientFactory, MonitorMixin):
 
 
     def clientConnectionLost(self, connector, reason):
-        print "Connection Lost:", reason
+        log.debug("Connection Lost:", reason)
 
     def clientConnectionFailed(self, connector, reason):
         self.return_code = 100
-        print "Connection Failed:", reason.getErrorMessage()
+        log.error("Connection Failed:", reason.getErrorMessage())
         self.message = reason.getErrorMessage()
         self.status = 'NA'
         self.protocol = base.NullClient()
         self.protocol.factory = self
         self.protocol.makeConnection()
-
 
 class SmtpStatusMonitor(ClientFactory, MonitorMixin):
 
@@ -272,7 +303,7 @@ class SmtpStatusMonitor(ClientFactory, MonitorMixin):
         MonitorMixin.__call__(self)
 
     def clientConnectionFailed(self, connector, reason):
-        print "Connection Failed: %s " % reason.getErrorMessage()
+        log.error("Connection Failed: %s " % reason.getErrorMessage())
         self.message = reason.getErrorMessage()
         self.status = 'NA'
         self.protocol = base.NullClient()
@@ -311,9 +342,10 @@ class SmtpMailMonitor(ClientFactory, MonitorMixin):
         MonitorMixin.__call__(self)
 
     def clientConnectionFailed(self, connector, reason):
-        print "Connection Failed: %s " % reason.getErrorMessage()
+        log.error("Connection Failed: %s " % reason.getErrorMessage())
         self.message = reason.getErrorMessage()
         self.status = 'NA'
         self.protocol = base.NullClient()
         self.protocol.factory = self
         self.protocol.makeConnection()
+

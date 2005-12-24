@@ -1,3 +1,11 @@
+2005.12.24
+
+* Put all of the globalRegistry setup into pymon.registry (and out of
+pymon.tac).
+* Started replacing references of globalRegistry.config with config.cfg.
+* Replaced all occurences of twisted.python.log with a standard library logger
+instance.
+
 2005.12.23
 
 * Fixed the connection-failed messages (typo in the schema.xml).
@@ -16,6 +24,12 @@ service check configurations.
 * Fixed the problem with disabled services.
 * Added suport for virtual host monster in the Nevow web admin.
 * Added info on setting pymon up with Apache virtual hosts.
+* Enabled checks for maintenance windows on indiviidual services.
+* Added javascript static directory.
+* Added styles for new states.
+* Added javascript/sorted_tables.js for sorting the rows of services in the web
+UI.
+* Edited the states html files to use the javascript and provide ordered tables.
 
 2005.12.22
 

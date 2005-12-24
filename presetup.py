@@ -33,7 +33,7 @@ def pyInstall(url, unpak, unpakt):
 
 # Process all the dependencies
 deps = eval(open('DEPENDENCIES').read())
-for name, url, unpak, unpakt in deps['python_packages']:
+for name, url, unpak, unpakt, force in deps['python_packages']:
     # Do we need to install it?
     try:
         exec("import %s" % name)
@@ -41,7 +41,8 @@ for name, url, unpak, unpakt in deps['python_packages']:
     except ImportError:
         print "%s not installed." % name
         pyInstall(url, unpak, unpakt)
-
+    if force:
+        pyInstall(url, unpak, unpakt)
 
 # Now that we have all the stuff we need, we can procede
 import ZConfig 

@@ -1,10 +1,11 @@
 from datetime import datetime
 
-from twisted.python import log
 from twisted.internet import protocol
 
 from adytum.util.uri import Uri
+
 from pymon import utils
+from pymon.utils import log
 
 from rules import ThresholdRules
 
@@ -87,15 +88,14 @@ class NullClient(protocol.Protocol, ClientMixin):
             self.rules.sendIt()
 
         # dump info to log file
-        print 'Service: %s' % self.factory.uid
-        print self.rules.msg 
-        print self.rules.subj
-        print "Status: %s for %s" % (status, self.getHost())
+        log.info('Service: %s' % self.factory.uid)
+        log.info(self.rules.msg)
+        log.info(self.rules.subj)
+        log.info("Status: %s for %s" % (status, self.getHost()))
 
         # update state information
         self.updateState()
 
         # dump info to log file
-        print self.factory.state
-        print ''
+        log.info(self.factory.state)
 

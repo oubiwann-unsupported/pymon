@@ -1,8 +1,8 @@
-from twisted.python import log
 from twisted.application import internet
 
 from pymon.registry import globalRegistry
 from pymon import utils
+from pymon.utils import log
 from pymon import monitors
 
 # XXX need to add support for service groups here...
@@ -20,7 +20,7 @@ def runTwistedFactoryEngine(rootService):
             pm_service = getattr(cfg.services, pm_service_name)
             for check in pm_service.checks:
                 uid = utils.makeUri(pm_service_name, check.uri)
-                log.msg("Setting up monitor factory for monitor " + \
+                log.debug("Setting up monitor factory for monitor " + \
                     "service %s" % uid)
                 factory = monitors.AbstractFactory(uid)
                 monitor = factory.makeMonitor()

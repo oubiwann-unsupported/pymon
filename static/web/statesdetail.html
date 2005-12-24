@@ -1,12 +1,16 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns:nevow="http://nevow.com/ns/nevow/0.1">
-    <meta http-equiv="Refresh" content="10" />
+<html xmlns:nevow="http://nevow.com/ns/nevow/0.1"
+      xmlns:mochi="http://mochikit.com/examples/sorted_tables">
+
+    <meta http-equiv="Refresh" content="20" />
     <head>
         <title>pymon: Monitored Services - Detailed View</title>
         <link href="/icons/favicon.ico" rel="SHORTCUT ICON" />
         <style type="text/css">@import url('/styles/site.css');</style>
         <style type="text/css">@import url('/styles/states.css');</style>
+        <script type="text/javascript" src="/js/MochiKit/MochiKit.js"></script>
+        <script type="text/javascript" src="/js/sorted_tables.js"></script>
     </head>
     <body>
     <table cellpadding="0" cellspacing="0" border="0" width="100%">
@@ -21,8 +25,10 @@
         <a class="toplink" href="states">Summary View</a><br/>
         </td></tr>
         <tr><td bgcolor="#000000">
-    <table cellpadding="2" cellspacing="1" border="0" width="100%">
+    <table id="sortable_table" cellpadding="2" cellspacing="1" border="0" width="100%">
+        <thead>
         <tr bgcolor="#ffffff">
+            <th mochi:format="number">Current<br/>State</th>
             <th>Organization</th>
             <th>Service</th>
             <th>Host</th>
@@ -34,15 +40,17 @@
             <th>Total Error</th>
             <th>Total Failed</th>
             <th>Previous State</th>
-            <th>Date Last Checked</th>
-            <th>Date Last Ok</th>
-            <th>Date Last Warn</th>
-            <th>Date Last Error</th>
-            <th>Date Last Failed</th>
+            <th mochi:format="str">Date Last Checked</th>
+            <th mochi:format="str">Date Last Ok</th>
+            <th mochi:format="str">Date Last Warn</th>
+            <th mochi:format="str">Date Last Error</th>
+            <th mochi:format="str">Date Last Failed</th>
         </tr>
+        </thead>
         <tbody nevow:data="getStates" nevow:render="sequence">
         <tr nevow:pattern="item" nevow:render="mapping" bgcolor="#ffffff">
             <nevow:attr name="class"><nevow:slot name="current status name" /></nevow:attr>
+            <td><nevow:slot name="current status">Status</nevow:slot></td>
             <td><nevow:slot name="org">Organization</nevow:slot></td>
             <td><nevow:slot name="service">Service</nevow:slot></td>
             <td><nevow:slot name="node">Host</nevow:slot></td>

@@ -245,6 +245,8 @@
         default="True" attribute="daemontools_enabled" />
     <key name="daemontools-service" default="/service/pymond" 
         attribute="daemontools_service" />
+    <key name="log-level" default="WARNING" datatype=".logLevel" 
+        attribute="log_level" />
 
     <!-- main section: sub sections /-->
     <section name="*"

@@ -1,4 +1,3 @@
-from twisted.python import log
 from twisted.web.client import HTTPPageGetter
 from twisted.web.http import HTTPClient
 
@@ -6,6 +5,7 @@ from base import ClientMixin
 
 from pymon.registry import globalRegistry
 from pymon import utils
+from pymon.utils import log
 
 class HttpTextClient:
 
@@ -30,14 +30,14 @@ class HttpStatusClient(HTTPPageGetter, ClientMixin):
             self.rules.sendIt()
 
         # dump info to log file
-        log.msg('Service: %s' % self.factory.uid, debug=True)
-        log.msg(self.rules.msg, debug=True)
-        log.msg(self.rules.subj, debug=True)
-        log.msg("Status: %s for %s" % (status, self.getHost()), debug=True)
+        log.debug('Service: %s' % self.factory.uid)
+        log.info(self.rules.msg)
+        log.info(self.rules.subj)
+        log.debug("Status: %s for %s" % (status, self.getHost()))
 
         # update state information
         self.updateState()
 
         # dump info to log file
-        log.msg(str(self.factory.state)+'\n', debug=True)
+        log.debug(str(self.factory.state)+'\n')
 
