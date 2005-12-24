@@ -5,6 +5,9 @@ pymon.tac).
 * Started replacing references of globalRegistry.config with config.cfg.
 * Replaced all occurences of twisted.python.log with a standard library logger
 instance.
+* Updated the TODO.
+* Updated the news items, features, and future on the website.
+* Added a new screenshot.
 
 2005.12.23
 

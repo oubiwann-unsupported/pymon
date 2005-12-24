@@ -17,14 +17,26 @@ o Add pymon overview page to the web UI
 o Add a form in the state lists for entering the number of seconds after 
 which the page shoudl refresh.
 
+o Convert the meta refrsh of the states web ui to AJAX/JSON.
+
+o Move the hard-coded data structure out of application.State and
+put it into code that is reusable. State() should have the flexibility
+to be initialized with whatever data structure the user wants.
+Ideally, the state data structure should be configurable in pymon.conf.
+
+o There is now state-related information in pymon.application, 
+pymon.client.base, and pymon.monitors. These need to be consolidated 
+into some subclass of State() and methods for dealing with this subclass 
+need to be generalized such that any arbitrary state information can be 
+stored.
+
 o I would like to add an event system to pymon... events which would 
 push to a listener. This means that there would be a single place for 
 doing many sorts of things (like updating state), and any time pymon 
 would need to update state, it would notify the listener.
 
-o Convert the meta refrsh of the states web ui to AJAX/JSON.
-
-o Fix email formatting
+o Fix email formatting (only a problem onn some servers... needs 
+investigation)
 
 o Add https checks
 
@@ -43,31 +55,20 @@ o Add custom pymon mail headers to outgoing messages
 
 o Add the ability to disable notifications on a per-service basis
 
-o Make the loglevel (verbosity) configurable
-
-o Move the hard-coded data structure out of application.State and
-put it into code that is reusable. State() should have the flexibility
-to be initialized with whatever data structure the user wants.
-Ideally, the state data structure should be configurable in pymon.conf.
-
-o There is now state-related information in pymon.application, 
-pymon.client.base, and pymon.monitors. These need to be consolidated 
-into some subclass of State() and methods for dealing with this subclass 
-need to be generalized such that any arbitrary state information can be 
-stored.
-
 o Get a minimal pymon shell working
 
 o Fix the setuptools bin/script issues
 
 o enable multiple criteria for process matching
 
-o Use log levels for every log message (DEBUG, CRIT, INFO, etc.)
-
 o Fix the HTTP NullClient being __call__'ed.
 
 o Make sending of emails in clients.rules.ThresholdRules.sendIt()
 non-blocking.
+
+o DONE - Make the loglevel (verbosity) configurable
+
+o DONE - Use log levels for every log message (DEBUG, CRIT, INFO, etc.)
 
 o DONE - Use JSON/AJAX for arbitrarily sorting by columns on the services
 web views
