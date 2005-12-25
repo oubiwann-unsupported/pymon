@@ -1,1 +1,3 @@
-See CONTRIBUTORS.
+for line in open('CONTRIBUTORS').readlines():
+    for name in line.split(','):
+        print "A special thanks goes out to "+name.strip()
