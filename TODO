@@ -1,3 +1,7 @@
+o Run some prototype code with Glyph's Q2Q Vertext code... examine if 
+it's possible to do this via ssh... setting up shared keys between pymon 
+instances.
+
 o Entirely rip out configuration from globalRegistry -- there's no need 
 to that to be copied to another object -- it's all available as a 
 pymon.config import
@@ -11,6 +15,8 @@ text client code.
 
 o Remove all the redundant copying of configuration data into objects 
 instances and instead use the globalRegistry.
+
+o Standardize repr's of all Monitor objects.
 
 o Add pymon overview page to the web UI
 

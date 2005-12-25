@@ -75,7 +75,7 @@ setup(name="PyMonitor",
     scripts = ['bin/pymond', 'bin/pymon.tac'],
     classifiers = [f.strip() for f in """
     License :: OSI-Approved Open Source :: BSD License
-    Development Status :: 3 - Alpha
+    Development Status :: 4 - Beta
     Intended Audience :: by End-User Class :: System Administrators
     Intended Audience :: Developers
     Intended Audience :: by End-User Class :: Advanced End Users

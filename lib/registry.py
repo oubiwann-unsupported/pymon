@@ -126,8 +126,8 @@ class Registry(dict):
                 "An object with that name is already registered."
 
 try:
-    globalRegistry.config
-except AttributeError:
+    globalRegistry
+except NameError:
     # setup global registry
     globalRegistry = Registry()
     from pymon.config import cfg

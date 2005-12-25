@@ -13,6 +13,15 @@ instance.
 pages.py accordingly.
 * Added release-candidate-generating scripts.
 * Unified the tarball scripts.
+* Added an error handler to pymon.monitors.HTTPStatusMonitor for
+TimeoutError.
+* Fixed except block on globalRegistry setup.
+* Started giving each monitor factory a standard __repr__.
+* Added a bunch of documentation placeholders and updated the release script.
+* Restructured the manner in which a NullClient is instantiated.
+* Added an extra except in pymon.monitors.MonitorMixin.__call__() to check for
+missing configs.
+* Updated etc/schema.xml to provide failed thresholds for HTTP checks.
 
 2005.12.23
 

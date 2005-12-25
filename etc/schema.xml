@@ -166,6 +166,9 @@
         <key name="error-threshold" datatype=".rangedValues" 
             default="400, 404, 408-410, 417, 500-505"
             attribute="error_threshold" />
+        <key name="failed-threshold" datatype=".rangedValues" 
+            default="0-0"
+            attribute="failed_threshold" />
     </sectiontype>
 
     <sectiontype name="http-status-defaults" extends="http-status-base">

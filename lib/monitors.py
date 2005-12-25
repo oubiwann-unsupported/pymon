@@ -7,7 +7,9 @@ from zope.interface import implements
 
 from twisted.spread import pb
 from twisted.internet import reactor
-from twisted.web.client import HTTPClientFactory, PartialDownloadError
+from twisted.web.client import HTTPClientFactory
+from twisted.web.client import PartialDownloadError
+from twisted.internet.defer import TimeoutError
 from twisted.internet.protocol import ClientFactory
 
 from adytum.util.uri import Uri
@@ -95,6 +97,9 @@ class MonitorMixin(object):
             interval = self.type_defaults.interval
         self.interval = interval
 
+    def __repr__(self):
+        return "<%s: %s>" % (self.__class__.__name__, self.uid)
+
     def __call__(self):
         # update the configuration in case it has changed
         uri = Uri(self.uid)
@@ -110,6 +115,11 @@ class MonitorMixin(object):
                 maint_window = True
         except TypeError:
             pass
+        except AttributeError:
+            if self.service_cfg == None:
+                log.error("Configuration should not be none!")
+                log.debug("MonitorMixin: \n%s\n%s\n%s" % (self, 
+                    dir(self), self.__dict__))
         if maint_window:
             # XXX These two chunks of state info access need to be moved 
             # out of here... and made less eyesoreingly redundant. 
@@ -182,6 +192,13 @@ class HttpStatusMonitor(HTTPClientFactory, MonitorMixin):
         port = self.type_defaults.remote_port
         self.reactor_params = (self.host, port, self)
 
+    def __repr__(self):
+        """
+        We need to overried the __repr__ in HTTPClientFactory; 
+        inheriting from MonitorMixin won't do it.
+        """
+        return "<%s: %s>" % (self.__class__.__name__, self.uid)
+
     def __call__(self):
         HTTPClientFactory.__init__(self, self.page_url, method=self.method, 
             agent=self.agent, timeout=int(self.type_defaults.interval))
@@ -189,21 +206,41 @@ class HttpStatusMonitor(HTTPClientFactory, MonitorMixin):
         d = self.deferred
         d.addCallback(self.logStatus)
         d.addErrback(self.errorHandlerPartialPage)
+        d.addErrback(self.errorHandlerTimeout)
+
+    def clientConnectionFailed(self, connector, reason):
+        self.message = reason.getErrorMessage()
+        log.error("Failed: %s" % self.message)
+        self._setupNullClient()
 
     def logStatus(self):
-        log.info('Here is the return status: %s' % self.status)
+        log.info('Return status: %s' % self.status)
 
     def errorHandlerPartialPage(self, failure):
         failure.trap(PartialDownloadError)
         log.error("Hmmm... got a partial page...")
         log.debug('Here is the return status: %s' % self.status)
 
-    def clientConnectionFailed(self, connector, reason):
-        self.message = reason.getErrorMessage()
-        self.status = 'NA'
+    def errorHandlerTimeout(self, failure):
+        failure.trap(TimeoutError)
+        self.message = failure.getErrorMessage()
+        log.error("Timeout: %s" % self.message)
+        self._setupNullClient()
+    
+    def _setupNullClient(self):
+        '''
+        This needs to be called anytime we didn't get a connection. 
+        Rules processing occurs 
+        '''
+        self.status = '0'
+        log.debug('Config: %s' % self.service_cfg)
+        self.original_protocol = self.protocol
+        log.debug('Original Protocol: %s' % self.original_protocol)
         self.protocol = base.NullClient()
-        self.protocol.factory = self
-        self.protocol.makeConnection()
+        log.debug('New Protocol: %s' % self.protocol)
+        self.protocol.makeConnection(self)
+        self.protocol = self.original_protocol
+        log.debug('Reverted Protocol: %s' % self.protocol)
 
 class PingMonitor(pb.PBClientFactory, MonitorMixin):
 
