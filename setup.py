@@ -2,6 +2,20 @@ import os
 import sys
 from subprocess import call
 
+if not os.path.exists('etc/pymon.conf'):
+    print """
+Um, you have *obviously* not read the INSTALL carefully enough.
+Don't make me slap you from back in time, through your monitor. 
+I swear I'll do it. Read the INSTALL again, make the appropriate
+changes, and then rerun setup.py.
+
+Yes, you still have to do this if you are updating/reinstalling.
+We don't know where you installed it, so you have to tell us
+by providing an 'etc/pymon.conf' with a prefix. Sooner or later,
+we'll get around to using a --prefix option in the install...
+"""
+    sys.exit()
+
 # Dependency Checks
 ret = call([sys.executable, 'presetup.py'])
 if ret != 0:
@@ -18,15 +32,6 @@ import pwd, grp
 import ez_setup
 ez_setup.use_setuptools()
 from setuptools import setup
-
-if not os.path.exists('etc/pymon.conf'):
-    print """
-Um, you have *obviously* not read the INSTALL carefully enough.
-Don't make me slap you from back in time, through your monitor. 
-I swear I'll do it. Read the INSTALL again, make the appropriate
-changes, and then rerun setup.py.
-"""
-    sys.exit()
 
 version = open('VERSION').read().strip()
 

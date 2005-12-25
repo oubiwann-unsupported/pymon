@@ -1,3 +1,10 @@
+o Implement a very basic flap-guard: don't send out a notice until you 
+get x fails in a row, y warns in a row, or z errors in a row.
+
+o With notification cut-offs in place, the next thing to implement
+is checks for flapping services... that spend less than the cut-off
+limit in each state.
+
 o Run some prototype code with Glyph's Q2Q Vertext code... examine if 
 it's possible to do this via ssh... setting up shared keys between pymon 
 instances.
@@ -9,6 +16,10 @@ pymon.config import
 o Examine methodologies for performing the most checks in the
 shortest time; calculate limitations of system (number of hosts,
 time to check hosts, max checks in a given interval, etc.)
+
+o Start putting example configurations in the examples directory.
+
+o Renamed etc/example-pymon.conf to etc/default-pymon.conf.
 
 o Clean up the print statements (convert to log) in stmp, ftp, and http 
 text client code.
@@ -45,10 +56,6 @@ o Fix email formatting (only a problem onn some servers... needs
 investigation)
 
 o Add https checks
-
-o With notification cut-offs in place, the next thing to implement
-is checks for flapping services... that spend less than the cut-off
-limit in each state.
 
 o Add organization to email message and subj; if not org, then host
 or IP

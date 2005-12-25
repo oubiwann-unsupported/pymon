@@ -112,7 +112,16 @@ class ThresholdRules(object):
             self.subj = "Unknown status"
         else:
             msg = getattr(self.factory.type_defaults, '%s_message' % status)
-            self.subj = msg % args
+            # XXX This try/except is a quick hack that REALLY needs to 
+            # be done right... just because it's so ugly... and...
+            # ugly.
+            try:
+                self.subj = msg % args
+            except TypeError:
+                # for "not all arguments converted during string 
+                # formatting"
+                self.subj = msg % args[0]
+                
 
     def sendIt(self):
         from pymon.message import LocalMail

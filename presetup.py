@@ -44,6 +44,11 @@ for name, url, unpak, unpakt, force in deps['python_packages']:
     if force:
         pyInstall(url, unpak, unpakt)
 
+# Make sure that the most recent version of the support modules are 
+# loaded
+from pkg_resources import require
+require('Adytum-PyMonitor >= 1.0.4')
+
 # Now that we have all the stuff we need, we can procede
 import ZConfig 
 

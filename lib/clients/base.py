@@ -6,6 +6,7 @@ from adytum.util.uri import Uri
 
 from pymon import utils
 from pymon.utils import log
+from pymon.config import cfg
 
 from rules import ThresholdRules
 
@@ -98,7 +99,8 @@ class NullClient(protocol.Protocol, ClientMixin):
         self.rules.setMsg(checked_resource, self.factory.status, self.factory.message)
         self.rules.setSubj(checked_resource)
         if self.rules.isMessage():
-            self.rules.sendIt()
+            if cfg.notifications.enabled:
+                self.rules.sendIt()
         log.debug("Finished rules processing.")
 
         # dump info to log file

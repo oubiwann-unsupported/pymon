@@ -69,6 +69,7 @@
     </sectiontype>
 
     <sectiontype name="notifications">
+        <key name="enabled" default="true" datatype="boolean" />
         <key name="cut-off" default="3" datatype="integer"
             attribute="cut_off" />
         <section name="*" type="list" attribute="list" />

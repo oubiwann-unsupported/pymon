@@ -7,7 +7,6 @@
 'python_packages': [
     # The following have been moved into setuptools' install_requires 
     # option:
-    #   Adytum-PyMonitor (supporting python modules)
     #
     ('ZConfig', 
         'http://www.zope.org/Members/fdrake/zconfig/ZConfig-2.3.1.tar.gz', 
@@ -33,6 +32,9 @@
     ('cElementTree',
         'http://effbot.org/downloads/cElementTree-1.0.5-20051216.tar.gz',
         'tar xvz', 'cElementTree-1.0.5-20051216', ''),
+    ('adytum',
+        'http://projects.adytum.us/tracs/adytum/file/releases/Adytum-PyMonitor-1.0.4.tar.bz2?format=raw',
+        'tar xvj', 'Adytum-PyMonitor-1.0.4', 'force'),
     #('pysqlite2', '', '', ''),
     #('sqlobject', '', '', ''),
     #('epsilon', '', '', ''),

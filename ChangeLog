@@ -1,3 +1,20 @@
+2005.12.25
+
+* Had to put the adytum support modules install back in the DEPENDENCIES since
+it's needed by presetup.py for as long as there is a dependency that can't be
+downloaded and installed using setuptools (most of them now).
+* Replaced the globalReg code with a config import in pymon.servers.
+* Added a quick hack to temporarily fix the error we were getting when sending
+some failed messages (with more than one entry in "args").
+* Added support to schema.xml for disabling all noticications and put the
+necessary check in pymon.clients.base.
+* Added a pkg_resource.require to presetup.py so that we can explicitly tell
+it which Adytum-PyMonitor egg version to use duing the install. With updates
+to that package (version number increments), we will need to manually update
+this line in presetup.py as well.
+* Updated etc/example-pymon.conf with 
+* Updated TODO.
+
 2005.12.24
 
 * Put all of the globalRegistry setup into pymon.registry (and out of
