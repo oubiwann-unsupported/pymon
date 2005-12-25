@@ -1,6 +1,9 @@
 import os
 import sys
 import pwd, grp
+from pkg_resources import require
+require('Adytum-PyMonitor >= 1.0.4')
+from adytum.config import zconfig
 import ZConfig 
 
 schema = ZConfig.loadSchema('etc/schema.xml')

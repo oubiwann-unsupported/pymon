@@ -48,6 +48,7 @@ for name, url, unpak, unpakt, force in deps['python_packages']:
 # loaded
 from pkg_resources import require
 require('Adytum-PyMonitor >= 1.0.4')
+from adytum.config import zconfig
 
 # Now that we have all the stuff we need, we can procede
 import ZConfig 
