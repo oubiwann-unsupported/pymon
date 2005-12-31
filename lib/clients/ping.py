@@ -17,6 +17,7 @@ class PingClient(pb.Broker, ClientMixin):
         from adytum.net.ping import OutputParser
         
         # parse returned data
+        log.debug(self.factory.data)
         parse = OutputParser(self.factory.data)
         loss = parse.getPingLoss()
         gain = parse.getPingGain()

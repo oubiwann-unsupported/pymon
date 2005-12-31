@@ -179,7 +179,7 @@ class HttpStatusMonitor(HTTPClientFactory, MonitorMixin):
 
     def __init__(self, uid):
         MonitorMixin.__init__(self, uid)
-        self.page_url = 'http://%s/' % self.service_cfg.uri
+        self.page_url = 'http://%s' % self.service_cfg.uri
         # XXX write a getTimeout method
         #timeout = self.service_cfg.timeout
         #timeout = self.type_defaults.timeout
@@ -194,14 +194,14 @@ class HttpStatusMonitor(HTTPClientFactory, MonitorMixin):
 
     def __repr__(self):
         """
-        We need to overried the __repr__ in HTTPClientFactory; 
+        We need to override the __repr__ in HTTPClientFactory; 
         inheriting from MonitorMixin won't do it.
         """
         return "<%s: %s>" % (self.__class__.__name__, self.uid)
 
     def __call__(self):
         HTTPClientFactory.__init__(self, self.page_url, method=self.method, 
-            agent=self.agent, timeout=int(self.type_defaults.interval))
+            agent=self.agent, timeout=self.type_defaults.interval)
         MonitorMixin.__call__(self)
         d = self.deferred
         d.addCallback(self.logStatus)
@@ -219,7 +219,7 @@ class HttpStatusMonitor(HTTPClientFactory, MonitorMixin):
     def errorHandlerPartialPage(self, failure):
         failure.trap(PartialDownloadError)
         log.error("Hmmm... got a partial page...")
-        log.debug('Here is the return status: %s' % self.status)
+        log.debug('Return status: %s' % self.status)
 
     def errorHandlerTimeout(self, failure):
         failure.trap(TimeoutError)
@@ -276,7 +276,7 @@ class PingMonitor(pb.PBClientFactory, MonitorMixin):
     def getPingReturn(self, results):
         self.data = results
         #print dir(self)
-        #print results
+        log.debug('Ping results: %s' % results)
         self.disconnect()
 
     def clientConnectionLost(self, connector, reason, reconnecting=1):

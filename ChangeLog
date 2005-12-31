@@ -1,3 +1,16 @@
+2005.12.31
+
+* Added exarkun's slides and code from his pycon2004 talk on migrating running
+twisted applications to newer versions without stopping the application.
+
+2005.12.26
+
+* Fixed the sentIt() bug in client.http (it was sending even when
+notifications were disabled).
+* Fixed some log message calls in pymon.monitors.
+* Changed the page URL in pymon.monitors.HttpStatusMonitor from http://%s/ to
+http://%s.
+
 2005.12.25
 
 * Had to put the adytum support modules install back in the DEPENDENCIES since
