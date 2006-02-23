@@ -1,20 +1,12 @@
+import sys
 import unittest
 import doctest
 
-
-import sys
-sys.path.append('./lib')
-
-from config.xml import XmlConfig
-pymoncfg = XmlConfig('conf/example-pymon.xml')
-
-sys.path.append('./lib/app/pymon')
+sys.path.extend(['./lib', '../lib'])
 from registry import globalRegistry
 from application import State, History
 
-globalRegistry.add('config', pymoncfg)
-state = State()
-globalRegistry.add(pymoncfg.global_names.state, state)
+globalRegistry.add(pymoncfg.global_names.state, State())
 globalRegistry.add(pymoncfg.global_names.history, History())
 
 # to add a new module to the test runner,
@@ -39,4 +31,4 @@ for modname in modules:
             #print "Adding mod '%s'..." % mod
             suite.addTest(doctest.DocTestSuite(mod))
 runner = unittest.TextTestRunner()
-runner.run(suite)        
+runner.run(suite)

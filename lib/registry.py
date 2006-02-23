@@ -129,10 +129,8 @@ try:
     globalRegistry
 except NameError:
     # setup global registry
-    globalRegistry = Registry()
-    from pymon.config import cfg
-    globalRegistry.add('config', cfg)
     from pymon.application import State, History
+    globalRegistry = Registry()
     state       = State()
     history     = History()
     factories   = {}

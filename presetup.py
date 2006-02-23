@@ -14,7 +14,7 @@ except OSError:
 
 if sys.version_info[0:3] < (2,4):
     print """pymon requires version python 2.4 or greater."""
-    sys.exit()
+    sys.exit(1)
 
 def pyInstall(url, unpak, unpakt):
     prot, host, path, nil, nil, nil = urlparse.urlparse(url)
@@ -51,7 +51,7 @@ require('Adytum-PyMonitor >= 1.0.4')
 from adytum.config import zconfig
 
 # Now that we have all the stuff we need, we can procede
-import ZConfig 
+import ZConfig
 
 schema = ZConfig.loadSchema('etc/schema.xml')
 cfg, nil = ZConfig.loadConfig(schema, 'etc/pymon.conf')
@@ -64,7 +64,7 @@ except KeyError:
     print """
 Non-system user or group name given.  Did you create the user and
 group, and then edit your copied ./etc/pymon.con file?\n"""
-    sys.exit()
+    sys.exit(1)
 
 # Create the necessary directories
 paths = ['bin', 'etc', 'var', 'log', 

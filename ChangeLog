@@ -1,3 +1,13 @@
+2006.02.23
+
+* Added system exit numbers to sys.exit() in presetup.py.
+* Consolidated tests and removed old files.
+* Updated test suite runner.
+* Removed another reference to config in the globalRegistry (in
+pymon.registry).
+* Renamed svnstat.sh to stat.sh.
+* Added commit.sh script.
+
 2005.12.31
 
 * Added exarkun's slides and code from his pycon2004 talk on migrating running
