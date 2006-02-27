@@ -1,8 +1,8 @@
 import dispatch
 
 from pymon import utils
-from pymon.utils import log
-from pymon.registry import globalRegistry
+from pymon.logger import log
+from pymon.config import cfg
 
 class ThresholdRules(object):
     # XXX need checks for state and separate checks for
@@ -126,7 +126,7 @@ class ThresholdRules(object):
     def sendIt(self):
         from pymon.message import LocalMail
         
-        cutoff = globalRegistry.config.notifications.cut_off
+        cutoff = cfg.notifications.cut_off
         if self.factory.state.get('count') > cutoff:
             log.info("Incident count has passed the cut-off " + \
                 "threshold; not sending email.")
@@ -135,7 +135,6 @@ class ThresholdRules(object):
                 status_id = self.factory.state.get('current status')
                 status = utils.getStateNameFromNumber(status_id)
                 self.msg = self.msg + "\r\nRecovering from '%s'." % status
-            cfg = self.factory.service_cfg
             sendmail = self.factory.cfg.sendmail
             frm = self.factory.cfg.mail_from
             # XXX we probably want to make the actual sending of emails

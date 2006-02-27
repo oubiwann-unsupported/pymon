@@ -1,18 +1,13 @@
 import sys
 import md5
 import subprocess
-import logging as log
 
 import ZConfig
 
-from pymon.config import getResource
-from pymon.registry import globalRegistry
-
-log_level = eval('log.%s' % globalRegistry.config.log_level)
-log.basicConfig(level=log_level,
-    format='%(levelname)-8s %(message)s',
-    stream=sys.stdout,
-)
+from logger import log
+from config import cfg
+from config import getResource
+from registry import globalRegistry
 
 class LocalTools:
 
@@ -48,7 +43,7 @@ def isInList(datum, in_list):
     return False
 
 def getStateNameFromNumber(num):
-    states = globalRegistry.config.state_definitions
+    states = cfg.state_definitions
 
     for state in states.getSectionAttributes():
         check = getattr(states, state)
@@ -67,7 +62,6 @@ def getTypeFromUri(uri):
     return scheme.replace('+', ' ')
 
 def getEntityFromUri(uri):
-    cfg = globalRegistry.config
     type = getTypeFromUri(uri)
     uri = uri.split('://')[1]
     checks = getattr(cfg.services, type).checks
@@ -76,7 +70,6 @@ def getEntityFromUri(uri):
             return check
 
 def getDefaultsFromUri(uri):
-    cfg = globalRegistry.config
     type = getTypeFromUri(uri)
     uri = uri.split('://')[1]
     return getattr(cfg.services, type).defaults
@@ -85,7 +78,7 @@ def getMailList(uri):
     defs = getDefaultsFromUri(uri)
     service_cfg = getEntityFromUri(uri)
     # check defaults for notification-list-replace
-    base = globalRegistry.config.notifications.list
+    base = cfg.notifications.list
     def_replace = defs.notification_list_replace
     def_append = defs.notification_list_append
     svc_replace = service_cfg.notification_list_replace

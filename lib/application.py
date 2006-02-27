@@ -7,8 +7,7 @@ except:
     import pickle
 
 from config import cfg
-from registry import globalRegistry
-from utils import log
+from logger import log
 
 class Error(Exception):
     pass
@@ -19,6 +18,7 @@ class StateBackupError(Error):
 class State(dict):
     '''
     # create a state and add some test data
+    >>> from registry import globalRegistry
     >>> s = State(use_globalRegistry=False)
     >>> data = {'bogus data': 'nothin'}
     >>> s.update(data)

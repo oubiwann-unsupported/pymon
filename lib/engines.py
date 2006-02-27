@@ -1,9 +1,10 @@
 from twisted.application import internet
 
 from pymon.registry import globalRegistry
-from pymon import utils
-from pymon.utils import log
+from pymon.config import cfg
+from pymon.logger import log
 from pymon import monitors
+from pymon import utils
 
 # XXX need to add support for service groups here...
 # XXX if factories are iterated through first and instantiated,
@@ -12,7 +13,6 @@ from pymon import monitors
 # circumstances under this would not be ideal, though, and so
 # may require that we offer different "tuning" options.
 def runTwistedFactoryEngine(rootService):
-    cfg = globalRegistry.config
     enabled = [ x.replace(' ', '_') for x in 
         cfg.monitor_status.enabled ]
     for pm_service_name in cfg.services.getSectionAttributes():

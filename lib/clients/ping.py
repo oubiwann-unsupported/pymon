@@ -2,7 +2,7 @@ from twisted.spread import pb
 
 from pymon.registry import globalRegistry
 from pymon import utils
-from pymon.utils import log
+from pymon.logger import log
 
 from base import ClientMixin
 

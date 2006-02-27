@@ -5,7 +5,7 @@ from twisted.internet import protocol
 from adytum.util.uri import Uri
 
 from pymon import utils
-from pymon.utils import log
+from pymon.logger import log
 from pymon.config import cfg
 
 from rules import ThresholdRules

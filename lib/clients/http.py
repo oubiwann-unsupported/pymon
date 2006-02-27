@@ -3,9 +3,9 @@ from twisted.web.http import HTTPClient
 
 from base import ClientMixin
 
-from pymon.registry import globalRegistry
 from pymon import utils
-from pymon.utils import log
+from pymon.config import cfg
+from pymon.logger import log
 
 class HttpTextClient:
 
@@ -19,7 +19,9 @@ class HttpStatusClient(HTTPPageGetter, ClientMixin):
         ClientMixin.connectionMade(self)
     
     def connectionLost(self, reason):
-        status = int(self.factory.status)
+        status = self.factory.status
+        if status:
+            status = int(status)
         log.debug(str(dir(self.factory)))
         log.debug(str(self.factory.headers))
         log.debug(str(self.factory.response_headers))

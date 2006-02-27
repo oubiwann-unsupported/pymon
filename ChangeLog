@@ -1,6 +1,12 @@
 2006.02.27
 
 * Created an admin directory and moved all the shell scripts in there.
+* Removed the registry import from application.
+* Removed unnecessary references import from utils and substituted with
+config.cfg.
+* Moved the logger out of utils and into its own logger module.
+* Cleaned up more pymon code.
+* Started adding support for twisted.trial.
 
 2006.02.23
 

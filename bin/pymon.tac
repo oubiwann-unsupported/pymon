@@ -2,6 +2,7 @@ import pwd, grp
 
 from twisted.application import service
 
+from pymon.registry import globalRegistry
 from pymon.config import cfg
 from pymon import engines
 from pymon import servers
