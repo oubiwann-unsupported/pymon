@@ -1,3 +1,7 @@
+2006.02.27
+
+* Created an admin directory and moved all the shell scripts in there.
+
 2006.02.23
 
 * Added system exit numbers to sys.exit() in presetup.py.
