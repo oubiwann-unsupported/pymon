@@ -2,7 +2,7 @@
 CHECK=$1
 SOURCE_DIR="sourceforge_website/"
 REMOTE_USER="oubiwann"
-REMOTE_HOST="shell.sf.net"
+REMOTE_HOST="shell.sourceforge.net"
 REMOTE_DIR="pymon/"
 
 if [ "$CHECK" = "check" ]; then
