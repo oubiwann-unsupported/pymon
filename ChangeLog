@@ -6,7 +6,7 @@
 * Created a new directory for non-essential files called "extras".
 * Moved resource files into extras.
 * Moved contrib into extras.
-* 
+* Moved trunk/sandbox into its own top-level dir.
 
 2006.05.05
 
