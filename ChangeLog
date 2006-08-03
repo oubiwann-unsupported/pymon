@@ -7,6 +7,8 @@
 * Moved resource files into extras.
 * Moved contrib into extras.
 * Moved trunk/sandbox into its own top-level dir.
+* Moved etc/old and etc/tests into extras.
+* Removed old MochiKit.
 
 2006.05.05
 
