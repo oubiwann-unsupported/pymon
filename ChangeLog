@@ -3,6 +3,10 @@
 * Added news item about the new pymon space at code.google.com.
 * Updated the home page menu links to reflect this change.
 * Merged (unfinished) branch r286 to trunk r301.
+* Created a new directory for non-essential files called "extras".
+* Moved resource files into extras.
+* Moved contrib into extras.
+* 
 
 2006.05.05
 
