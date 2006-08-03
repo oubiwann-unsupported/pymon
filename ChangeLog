@@ -11,6 +11,7 @@
 * Removed old MochiKit.
 * Added new (packed) MochiKit.
 * Updated the templates to point to the new MochiKit location.
+* Moved diagrams into extras.
 
 2006.05.05
 
