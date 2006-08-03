@@ -8,7 +8,7 @@ from nevow import inevow
 from formless import webform
 
 from pymon.config import cfg
-from pymon.registry import globalRegistry
+from pymon.application import globalRegistry
 
 pref = cfg.prefix
 web = os.path.join(*cfg.web.doc_root.split('/'))

@@ -1,0 +1,61 @@
+There are actually two sets of states and two sets of transitions in 
+pymon workflow.  There's a primary set of states with legal 
+transitions, and then a secondary set of states. However, the secondary 
+set of states don't transition between themselves but rather follow the 
+primary state transition.
+
+Primary States:
+UNKNOWN, FAILED, ERROR, WARN, OK, DISABLED
+
+Secondary States:
+ACKNOWLEDGED, MAINTENANCE, RECOVERING, ESCALATED, NONE
+
+* A primary state of one of [UNKNOWN, FAILED, ERROR, WARN] can have any 
+one of the secondary states [ACKNOWLEDGED, MAINTENANCE, ESCALATED, 
+NONE].
+
+* A primary state of OK can have one or both of the secondary states 
+[MAINTENANCE, RECOVERING] or NONE.
+
+* A primary state of DISABLED can have only a secondary state of NONE.
+
+Not counting cases where {initial state} == {final state}, these are 
+the legal state transitions:
+
+UNKNOWN -> [FAILED, ERROR, WARN, OK, DISABLED]
+FAILED -> [UNKNOWN, ERROR, WARN, OK, DISABLED]
+ERROR -> [UNKNOWN, FAILED, WARN, OK, DISABLED]
+WARN -> [UNKNOWN, FAILED, ERROR, OK, DISABLED]
+OK -> [UNKNOWN, FAILED, ERROR, WARN, DISABLED]
+DISABLED -> [UNKNOWN, FAILED, ERROR, WARN, OK]
+
+So you can see here how secondary states don't operate independently 
+with their own transitions, but rather "follow" the primary state. For 
+example, when a service is in state FAILED it can have one of the 
+secondary states [ACKNOWLEDGED, MAINTENANCE, ESCALATED, NONE] but as 
+soon as it transitions to, say, OK the secondary states "swap out" and 
+it can now only have one of [MAINTENANCE, RECOVERING, NONE].
+
+Continuing with that example, now that the service is in state OK and 
+since it was previously in FAILED, the rule is that one of it's 
+secondary states has to be RECOVERING. It could very well be in 
+maintenance mode (within a maintenance window) during this time as 
+well, so it could also have MAINTENANCE as a secondary state.
+
+In MAINTENANCE, no workflow actions will take place other than 
+recording state transitions (i.e., monitoring will continue but alerts 
+will not be generated). In DISABLED, no actions and no monitoring for 
+that service will take place.
+
+For the "error" group of [UNKNOWN, FAILED, ERROR, WARN] multiple 
+secondary states are legal as well, e.g., an error has not only been 
+ACKNOWLEDGED (and is therefore not sending out alerts anymore) but it 
+has been deemed serious and ESCALATED to an engineer. Upon escalation, 
+ACKNOWLEDGED will be removed from it's secondary state so that whoever 
+is now responsible receives alerts, and if they want, *they* can mark it 
+ACKNOWLEDGED so they don't receive alerts while working on it.
+
+Admittedly, it wouldn't make much sense for a FAILED service that is in 
+MAINTENANCE to be ACKNOWLEDGED since it's not sending out alerts while 
+in the window. But there's not reason that should be forbidden.
+

@@ -15,6 +15,7 @@ from zope.interface import Interface, implements
 
 #from imagination.text import english
 #from imagination import errors
+from pymon.config import cfg
 
 import interfaces
 import shellparser
@@ -102,10 +103,9 @@ class ShellServer(telnet.Telnet):
         # XXX
         #d = defer.maybeDeferred(english.IThinker(self.avatar).parse, cmd)
         parser = shellparser.ShellParser()
-        parser.parse(cmd)
-        d = defer.maybeDeferred(parser.command)
-        d.addErrback(self._ebParsed)
+        d = defer.maybeDeferred(parser.parse, cmd)
         d.addCallback(self._cbParsed)
+        d.addErrback(self._ebParsed)
 
     def _ebParsed(self, failure):
         # XXX

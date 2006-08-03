@@ -1,11 +1,10 @@
 from twisted.web.client import HTTPPageGetter
 from twisted.web.http import HTTPClient
 
-from base import ClientMixin
-
 from pymon import utils
-from pymon.config import cfg
-from pymon.logger import log
+from pymon.utils import log
+
+from base import ClientMixin
 
 class HttpTextClient:
 
@@ -25,15 +24,14 @@ class HttpStatusClient(HTTPPageGetter, ClientMixin):
         log.debug(str(dir(self.factory)))
         log.debug(str(self.factory.headers))
         log.debug(str(self.factory.response_headers))
-        checked_resource = self.factory.service_cfg.uri
+        checked_resource = self.factory.checkConfig.uri
 
         # push the returned data through the threshold checks
         self.rules.check(status)
         self.rules.setMsg(checked_resource, status, self.factory.message)
         self.rules.setSubj(checked_resource, status)
-        if self.rules.isMessage():
-            if cfg.notifications.enabled:
-                self.rules.sendIt()
+        if self.rules.isSendMessage():
+            self.rules.sendIt()
 
         # dump info to log file
         log.debug('Service: %s' % self.factory.uid)
@@ -45,5 +43,5 @@ class HttpStatusClient(HTTPPageGetter, ClientMixin):
         self.updateState()
 
         # dump info to log file
-        log.debug(str(self.factory.state)+'\n')
+        log.debug('State Data: '+str(self.factory.state.data)+'\n')
 

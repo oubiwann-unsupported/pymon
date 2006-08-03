@@ -13,7 +13,12 @@ if sys.version_info[0:3] < (2,4):
 from twisted.application import app
 from twisted.scripts.twistd import runApp, ServerOptions
 
-from pymon.config import cfg
+try:
+    from pymon.config import cfg
+except ImportError:
+    from pkg_resources import require
+    require('PyMonitor')
+    from pymon.config import cfg
 
 uid = pwd.getpwnam(cfg.user)[2]
 gid = grp.getgrnam(cfg.group)[2]

@@ -1,3 +1,35 @@
+State and Workflow overhaul
+===========================
+* DONE - Get rid of application.State's current use of backing up
+    o DONE - have State subclass twisted.persisted.sob.Persistent
+    o DONE - for regular backups, call monitorStateInstance.save()
+        note: regular backups are called by a TimerService in the main loop
+    o DONE - for restoring data, simply use twisted.persisted.sob.load()
+* DONE - Rename application.State to application.BaseState (subclassing Persistent)
+* DONE - Create application.CheckData, a dictionary with default values
+* WON'T DO - Move workflow.ServiceState to application (this belongs where is is for now)
+* Plug rules processing into ServiceState methods
+* Have monitors subclass ServiceState and override appropriate methods
+* DONE - Revamp application.MonitorState
+    o DONE - __init__() instantiates a CheckState and assigns it to an attribute
+    o DONE - checkStateInstance gets updated with all service changes; it's the 
+        run-time data for the Monitor
+    o __init__() instantiates ServiceState and assigns it to an attribute
+    o ServiceState instance needs to subclass workflow.base.WorkflowAware
+    o serviceStateInstance needs to have access to checkStateInstance
+* Upon monitors parsing/proccessing returned network data:
+    o monitorStateInstance.workflow.doTrans(this_transition_name)
+    o doTran() will initiate the actions appropriate for that particular 
+        transition
+* DONE - Convert all dictionary access to set/get access:
+    o DONE - clients/base.py, line 36
+
+Workflow Customizations
+=======================
+
+
+
+o Move clients.rules.checkForMaintenanceWindow() to pymon.config.
 o Implement a very basic flap-guard: don't send out a notice until you 
 get x fails in a row, y warns in a row, or z errors in a row.
 
@@ -140,4 +172,69 @@ to something more like this:
     </check>
   </check_type>
 
+================
+Componentization
+================
 
+Adapters
+--------
+Adapt Client to Configuration?
+components.registerAdapter(Configuration, SomeClient, IConfigureable)
+
+Adapt Persistent State data to Configuration?
+components.registerAdapter(Configuration, State, IConfigureable)
+    then in the Client, do an interface lookup:
+    components.globalRegistry(...
+
+Subclassing components.Componentized will let you do stuff like the following:
+
+    myclass.setComponent(cfg, IConfigLoader)
+    myclass.getComponent(...)
+
+IConfigLoader will have to be a custom interface, since 
+ZConfig.loader.ConfigLoader() doesn't implement an interface. The
+Componentized machinery takes care of implementation 
+(in the fixClassImplements() function):
+
+    class IConfigLoader(Interface):
+        pass
+
+This would provide access to the configuration where ever myclass is 
+lives. However, this is just the loaded ZConfig configuration -- we want
+methods, too. So, we can adapt ZConfig to our config API:
+
+    class IPyMonConfigAPI(Interface):
+        pass
+
+    class PyMonConfigAPI(object):
+        getUri(...)
+        getServiceDefaults(...)
+        getAppDefaults(...)
+        ...
+
+    class AdaptZConfigToPyMon(object):
+        implements(IPyMonConfigAPI)
+
+        def __init__(self, cfg):
+            """
+            The ZConfig python API is perfect for pymon's needs. 
+            However, there may be other configurations we want to 
+            support in the future; an adaptor for those will have to be
+            written in order to present an API like ZConfig uses.
+
+            For this "adaptor", all we need to do is pass the 
+            configuration object.
+            """
+            self.cfg = cfg
+
+    class Configuration(object):
+        def adapt(self, cfg):
+            adapted = PyMonConfigAPI(cfg)
+            self = cfg
+
+Lookups
+-------
+
+We need to be able to get instances that implement 
+* IMonitor
+* 

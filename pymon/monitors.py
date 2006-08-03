@@ -1,7 +1,4 @@
-from datetime import datetime
 from email.MIMEText import MIMEText
-
-import dispatch
 
 from zope.interface import implements
 
@@ -12,15 +9,15 @@ from twisted.web.client import PartialDownloadError
 from twisted.internet.defer import TimeoutError
 from twisted.internet.protocol import ClientFactory
 
-from adytum.util.uri import Uri
-
-from config import cfg
-from registry import globalRegistry
-from application import MonitorState, History
-from workflow import service as workflow
-from clients import base, ping, http, ftp, smtp
-import utils
-from logger import log
+import config
+from utils import log
+import application
+#from application import History
+from application import MonitorState
+from application import globalRegistry
+#from workflow import service as workflow
+from clients.base import NullClient
+from clients import ping, http, ftp, smtp, rules
 
 class AbstractFactory(object):
     '''
@@ -30,133 +27,115 @@ class AbstractFactory(object):
     The monitors are really client factories, and hold configuration
     and other data that the clients need or have use for.
     '''
-    def __init__(self, uid):
+    def __init__(self, serviceName, uri):
 
-        self.uid = uid
-        self.type = utils.getTypeFromUri(uid)
+        self.uid = config.makeUID(serviceName, uri)
+        self.type = serviceName
+        self.monitor = None
 
-    [ dispatch.generic() ]
-    def makeMonitor(self):
+    def makeMonitor(self, cfg):
         '''
         Generic method for client creation.
         '''
+        if self.type == 'ping':
+            return self.makePingMonitor(cfg)
+        if self.type == 'http_status':
+            return self.makeHttpStatusMonitor(cfg)
+        if self.type == 'http_text':
+            return self.makeHttpTextMonitor(cfg)
+        if self.type == 'ftp':
+            return self.makeFtpMonitorMonitor(cfg)
+        if self.type == 'smtp_status':
+            return self.makeSmtpStatusMonitor(cfg)
+        if self.type == 'smtp_mail':
+            return self.makeSmtpMailMonitor(cfg)
 
-    [ makeMonitor.when("self.type == 'ping'") ]
-    def makePingMonitor(self):
-        monitor = PingMonitor(self.uid)
+    def makePingMonitor(self, cfg):
+        monitor = PingMonitor(self.uid, cfg)
         return monitor
 
-    [ makeMonitor.when("self.type == 'http_status'") ]
-    def makeHttpStatusMonitor(self):
-        monitor = HttpStatusMonitor(self.uid)
+    def makeHttpStatusMonitor(self, cfg):
+        monitor = HttpStatusMonitor(self.uid, cfg)
         return monitor
 
-    [ makeMonitor.when("self.type == 'http_text'") ]
-    def makeHttpTextMonitor(self):
-        monitor = HttpTextMonitor(self.uid)
-        return monitor
+    def makeHttpTextMonitor(self, cfg):
+        self.monitor = HttpTextMonitor(self.uid)
+        return self.configureMonitor(cfg)
 
-    [ makeMonitor.when("self.type == 'ftp'") ]
-    def makeFtpMonitorMonitor(self):
-        monitor = FtpMonitor(self.uid)
-        return monitor
+    def makeFtpMonitorMonitor(self, cfg):
+        self.monitor = FtpMonitor(self.uid)
+        return self.configureMonitor(config)
 
-    [ makeMonitor.when("self.type == 'smtp_status'") ]
-    def makeSmtpStatusMonitor(self):
-        monitor = SmtpStatusMonitor(self.uid)
-        return monitor
+    def makeSmtpStatusMonitor(self, cfg):
+        self.monitor = SmtpStatusMonitor(self.uid)
+        return self.configureMonitor(config)
 
-    [ makeMonitor.when("self.type == 'smtp_mail'") ]
-    def makeSmtpMailMonitor(self):
-        monitor = SmtpMailMonitor(self.uid)
-        return monitor
+    def makeSmtpMailMonitor(self, cfg):
+        self.monitor = SmtpMailMonitor(self.uid)
+        return self.configureMonitor(config)
 
 class MonitorMixin(object):
 
-    def __init__(self, uid):
-        # XXX why does all this stuff have to be stored in the object? 
-        # That's a lot of memory utilization... duplication. We've got a 
-        # global registry -- why not use it? We've got lookup function,
-        # and the lookups are operating against the in-memory registry.
-        # It may be a little slower, but I think it will be better to 
-        # decrease memory utilization of objects. pymon will scale 
-        # better... will be able to take on more service checks.
+    def __init__(self, uid, cfg):
         self.uid = uid
-        self.servicetype = utils.getTypeFromUri(self.uid)
-        self.service = getattr(cfg.services, self.servicetype)
-        self.workflow = workflow.ServiceState(workflow.state_wf)
-        self.history = History()
-        self.state = MonitorState(uid)
-        self.cfg = utils.getEntityFromUri(self.uid)
-        if getattr(self.cfg, 'interval'):
-            interval = self.cfg.interval
-        else:
-            interval = self.service.defaults.interval
-        self.interval = interval
+        self.cfg = cfg
+        self.interval = None
+        self.message = None
+        self.host = config.getHostFromURI(self.uid)
+        self.checkConfig = config.getCheckConfigFromURI(self.uid)
+        self.defaults = config.getDefaultsFromURI(self.uid)
+        #self.workflow = workflow.ServiceState(workflow.state_wf)
+        #self.history = History()
+        self.state = MonitorState(self.uid)
+        self.stateDefs = cfg.state_definitions
+        self.setInterval()
 
     def __repr__(self):
         return "<%s: %s>" % (self.__class__.__name__, self.uid)
 
     def __call__(self):
         # update the configuration in case it has changed
-        uri = Uri(self.uid)
-        self.cfg = utils.getEntityFromUri(self.uid)
-        self.type_defaults = utils.getDefaultsFromUri(self.uid)
-
-        self.state.backup()
-        maint_window = False
-        try:
-            if (self.cfg.scheduled_downtime['start'].timetuple() <
-                datetime.now().timetuple() <
-                self.cfg.scheduled_downtime['end'].timetuple()):
-                maint_window = True
-        except TypeError:
-            pass
-        except AttributeError:
-            if self.cfg == None:
-                log.error("Configuration should not be none!")
-                log.debug("MonitorMixin: \n%s\n%s\n%s" % (self, 
-                    dir(self), self.__dict__))
-        if maint_window:
+        #uri = Uri(self.uid)
+        #self.cfg = config.getCheckConfigFromURI(self.uid)
+        #self.defaults = config.getDefaultsFromURI(self.uid)
+        self.state.save()
+        if config.checkForMaintenanceWindow(self.checkConfig):
             # XXX These two chunks of state info access need to be moved 
             # out of here... and made less eyesoreingly redundant. 
             # There's another set of XXX's that discuss this in general
             # elsewhere. There are also notes in the TODO.
             msg = "Service %s has been disabled during maintenance."
             log.warning(msg % self.uid)
-            self.state['current status'] = cfg.state_definitions.maintenance
-            self.state['current status name'] = 'maintenance'
-            self.state['count maintenance'] = 1
-            self.state['node'] = uri.getAuthority().getHost()
-            self.state['service'] = uri.getScheme().replace('_', ' ')
-            org = self.cfg.org
-            if org:
-                self.state['org'] = org
+            self.state = application.setNonChangingState(self.state, 
+                self.stateDefs.maintenance, self.uid)
             globalRegistry.factories[self.uid].state = self.state            
-        elif self.cfg.enabled:
+        elif self.checkConfig.enabled:
             reactor.connectTCP(*self.reactor_params)
         else:
             msg = "Service %s has been disabled; not checking."
             log.warning(msg % self.uid)
-            self.state['current status'] = cfg.state_definitions.disabled
-            self.state['current status name'] = 'disabled'
-            self.state['count disabled'] = 1
-            self.state['node'] = uri.getAuthority().getHost()
-            self.state['service'] = uri.getScheme().replace('_', ' ')
-            org = self.cfg.org
-            if org:
-                self.state['org'] = org
+            self.state = application.setNonChangingState(self.state, 
+                self.stateDefs.disabled, self.uid)
             globalRegistry.factories[self.uid].state = self.state
 
     def setInterval(self, seconds=None):
+        def useDef():
+            interval = self.defaults.interval
+            log.debug('Set interval from service check defaults')
+            return interval
         if seconds:
-            self.interval = seconds
-        elif not self.interval:
+            interval = seconds
+            log.debug('Manually set interval')
+        else:
             try:
-                interval = utils.getEntityFromUri(self.uid).interval
+                interval = self.checkConfig.interval
+                if interval:
+                    log.debug('Set interval from service check config')
             except AttributeError:
-                interval = utils.getDefaultsFromUri(self.uid).interval
-            self.interval = interval
+                interval = useDef()
+        if not interval:
+            interval = useDef()
+        self.interval = interval
 
     def getInterval(self):
         return self.interval
@@ -164,28 +143,27 @@ class MonitorMixin(object):
 class HttpTextMonitor(HTTPClientFactory, MonitorMixin):
     
     def __init__(self, uid):
-        MonitorMixin.__init__(self, uid)
+        MonitorMixin.__init__(self, uid, cfg)
         self.page_url = ''
         self.text_check = ''
-        self.checkdata = self.service.entries.entry(uri=self.uid)
         self.reactor_params = ()
+        self.checkdata = self.service.entries.entry(uri=self.uid)
 
 class HttpStatusMonitor(HTTPClientFactory, MonitorMixin):
     
     protocol = http.HttpStatusClient
 
-    def __init__(self, uid):
-        MonitorMixin.__init__(self, uid)
-        self.page_url = 'http://%s' % self.cfg.uri
+    def __init__(self, uid, cfg):
+        MonitorMixin.__init__(self, uid, cfg)
+        self.page_url = 'http://%s' % self.checkConfig.uri
         # XXX write a getTimeout method
-        #timeout = self.service_cfg.timeout
-        #timeout = self.type_defaults.timeout
-        self.host = Uri(uid).getAuthority().getHost()
+        #timeout = self.checkConfig.timeout
+        #timeout = self.defaults.timeout
         self.agent = cfg.user_agent_string
         self.method = 'HEAD'
         self.status = None
         # XXX write a method to get the http port from defaults or service config
-        #port = self.service_cfg.http_port
+        #port = self.checkConfig.http_port
         port = self.defaults.remote_port
         self.reactor_params = (self.host, port, self)
 
@@ -197,9 +175,12 @@ class HttpStatusMonitor(HTTPClientFactory, MonitorMixin):
         return "<%s: %s>" % (self.__class__.__name__, self.uid)
 
     def __call__(self):
-        HTTPClientFactory.__init__(self, self.page_url, method=self.method, 
-            agent=self.agent, timeout=self.type_defaults.interval)
+        HTTPClientFactory.__init__(self, self.page_url, 
+            method=self.method, agent=self.agent, 
+            timeout=self.defaults.interval)
         MonitorMixin.__call__(self)
+        # this deferred is created above when 
+        # HTTPClientFactory.__init__() is called.
         d = self.deferred
         d.addCallback(self.logStatus)
         d.addErrback(self.errorHandlerPartialPage)
@@ -212,6 +193,7 @@ class HttpStatusMonitor(HTTPClientFactory, MonitorMixin):
 
     def logStatus(self):
         log.info('Return status: %s' % self.status)
+        self.message = "test message: ",self.status
 
     def errorHandlerPartialPage(self, failure):
         failure.trap(PartialDownloadError)
@@ -230,10 +212,10 @@ class HttpStatusMonitor(HTTPClientFactory, MonitorMixin):
         Rules processing occurs 
         '''
         self.status = '0'
-        log.debug('Config: %s' % self.cfg)
+        log.debug('Entered null client setup...')
         self.original_protocol = self.protocol
         log.debug('Original Protocol: %s' % self.original_protocol)
-        self.protocol = base.NullClient()
+        self.protocol = NullClient()
         log.debug('New Protocol: %s' % self.protocol)
         self.protocol.makeConnection(self)
         self.protocol = self.original_protocol
@@ -243,20 +225,19 @@ class PingMonitor(pb.PBClientFactory, MonitorMixin):
 
     protocol = ping.PingClient
 
-    def __init__(self, uid):
+    def __init__(self, uid, cfg):
         pb.PBClientFactory.__init__(self)
-        MonitorMixin.__init__(self, uid)
+        MonitorMixin.__init__(self, uid, cfg)
 
         # ping config options setup
         self.checkdata = self.cfg
 
         # get the info in order to make the next ping
-        self.binary = self.service.defaults.binary
-        count = '-c %s' % self.service.defaults.count
-        host = Uri(self.uid).getAuthority().getHost()
-        self.args = [count, host]
+        self.binary = self.defaults.binary
+        count = '-c %s' % self.defaults.count
+        self.args = [count, self.host]
 
-        #options = ['ping', '-c %s' % count, '%s' % host]
+        #options = ['ping', '-c %s' % count, '%s' % self.host]
         port = cfg.agents.port
         self.reactor_params = ('127.0.0.1', port, self)
 
@@ -291,7 +272,6 @@ class FtpMonitor(ClientFactory, MonitorMixin):
 
     def __init__(self, uid):
         MonitorMixin.__init__(self, uid)
-        self.host = Uri(uid).getAuthority().getHost()
         self.port = int(self.cfg.port)
         self.username = self.cfg.username
         self.password = self.cfg.password
@@ -311,7 +291,7 @@ class FtpMonitor(ClientFactory, MonitorMixin):
         log.error("Connection Failed:", reason.getErrorMessage())
         self.message = reason.getErrorMessage()
         self.status = 'NA'
-        self.protocol = base.NullClient()
+        self.protocol = NullClient()
         self.protocol.factory = self
         self.protocol.makeConnection()
 
@@ -321,7 +301,6 @@ class SmtpStatusMonitor(ClientFactory, MonitorMixin):
 
     def __init__(self, uid):
         MonitorMixin.__init__(self, uid)
-        self.host = Uri(uid).getAuthority().getHost()
         self.port = int(self.cfg.port)
         self.identity = self.cfg.identity 
         self.status = 0
@@ -339,7 +318,7 @@ class SmtpStatusMonitor(ClientFactory, MonitorMixin):
         log.error("Connection Failed: %s " % reason.getErrorMessage())
         self.message = reason.getErrorMessage()
         self.status = 'NA'
-        self.protocol = base.NullClient()
+        self.protocol = NullClient()
         self.protocol.factory = self
         self.protocol.makeConnection()
 
@@ -350,7 +329,6 @@ class SmtpMailMonitor(ClientFactory, MonitorMixin):
 
     def __init__(self, uid):
         MonitorMixin.__init__(self, uid)
-        self.host = Uri(uid).getAuthority().getHost()
         self.port = int(self.cfg.port)
         self.identity = self.cfg.identity
         self.status = 0
@@ -378,7 +356,7 @@ class SmtpMailMonitor(ClientFactory, MonitorMixin):
         log.error("Connection Failed: %s " % reason.getErrorMessage())
         self.message = reason.getErrorMessage()
         self.status = 'NA'
-        self.protocol = base.NullClient()
+        self.protocol = NullClient()
         self.protocol.factory = self
         self.protocol.makeConnection()
 

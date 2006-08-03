@@ -1,5 +1,2 @@
-svn stat|egrep -v '.swp|.pyc|lib/os|lib/net'
-for DIR in lib/config lib/os lib/net lib/patterns lib/util lib/workflow
-    do
-        svn stat $DIR|egrep -v '.swp|.pyc'
-    done
+LIB=pymon
+svn stat|egrep -v ".swp|.swo|.pyc|.pid|.egg|${LIB}/os|${LIB}/net|state/"

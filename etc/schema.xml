@@ -19,6 +19,8 @@
         <key name="interval" datatype="time-interval" default="500" />
         <key name="state-dir" default="state" 
             attribute="state_dir" />
+        <key name="application-state" default="application" 
+            attribute="application_state" />
         <key name="base-dir" default="data" 
             attribute="base_dir" />
     </sectiontype>
@@ -27,11 +29,20 @@
         <key name="interval" datatype="time-interval" default="60" />
     </sectiontype>
 
+    <sectiontype name="peering">
+        <key name="publish-interval" datatype="time-interval" default="60"
+            attribute="publish_interval" />
+        <key name="check-interval" datatype="time-interval" default="60"
+            attribute="check_interval" />
+    </sectiontype>
+
     <sectiontype name="admin">
         <section name="*" type="backups" 
             attribute="backups" />
         <section name="*" type="config-update" 
             attribute="config_update" />
+        <section name="*" type="peering"
+            attribute="peering" />
     </sectiontype>
 
     <sectiontype name="agents">
@@ -47,6 +58,8 @@
     </sectiontype>
 
     <sectiontype name="state-definitions">
+        <key name="initial-state" default="unknown" 
+            attribute="initial_state" />
         <key name="unknown" datatype="integer" default="-1" />
         <key name="failed" datatype="integer" default="10" />
         <key name="error" datatype="integer" default="20" />
@@ -217,6 +230,11 @@
     </sectiontype>
 
 
+    <!-- peer section: sub sections /-->
+    <sectiontype name="peers">
+        <multikey name="url" attribute="urls" />
+    </sectiontype>
+
     <!-- service section: sub sections /-->
     <sectiontype name="services">
         <section name="*" type="ping"
@@ -288,6 +306,10 @@
     <section name="*"
         type="services"
         attribute="services" />
+
+    <section name="*"
+        type="peers"
+        attribute="peers" />
 
 </schema>
 

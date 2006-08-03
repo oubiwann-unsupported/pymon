@@ -2,9 +2,73 @@
 
 * Added news item about the new pymon space at code.google.com.
 * Updated the home page menu links to reflect this change.
+* Merged (unfinished) branch r286 to trunk r301.
+
+2006.05.05
+
+* Added WORKFLOW.txt, based on an email to the mail list.
+
+2006.05.04
+
+* Changed the BaseState class to save the entire class, preserving all data
+instead of just the instance.data data.
+* Fixed the self-reassignment during application.BaseState.restore().
+* Removed dispatch from clients.rules and monitors.
+* Made BaseState a subclass of Persistent again (forgot to redo that last
+night after all the testing).
+* Created pymon.actions, which will hold such methods or functions as
+sendMessage, escalate issue, etc.
+* Added a state-definition directive for initial-state.
+* Moved workflow instantiation out of workflow.service and into application
+(since it depends upon configuration information).
+
+2006.05.03
+
+* Renamed application.State to application.BaseState, gutted it, and rewrote
+it to work as a subclass of twisted.sob.Persistent.
+* Reimplemented MonitorState as a subclass BaseState.
+* Moved globalRegistry setup out of pymon.registry and into pymon.application.
+* Added configuration directive and updated the schema for application state
+saving.
+* Added a get method to application.BaseState.
+
+2006.05.02
+
+* Moved maintenacen window check out of monitors.MonitorMixin.__call__() and
+put it in clients.rules.
+* Moved the state-setting chunks of monitors.MonitorMixin.__call__() into
+application.setNonChangingState() and removed the redundant code.
+* Added more convenience methods to clients.rules.ThresholdRules.
+* Moved checkForMaintenanceWindow() out of rules and into pymon.config, since
+that's what it's really related to.
+
+2006.05.01
+
+* Set a 'cfg' attribute on pymonsvc in pymon.tac for application
+configuration.
+* In engines, passed rootService.cfg to factory.makeMonitor().
+* In monitors, make*Monnitor() now also takes a config object as a parameter.
+* Added monitors.AbstractFactory.configureMonitor() which sets configuration
+attributes and returns the monitored that was created.
+* Added the missing peers section to the main section in schema.xml
+* Changed the lib directory to pymon so that testing without installation was 
+easier.
+* Moved config-oriented utilities out of utils and put them in config.
+* Removed all unnecessary reference to pymon.config.cfg and instead used the
+value as set in the .tac file.
+* Moved logger contents into utils.
+* Moved server callbacks out of utils and into servers.
+* Disabled refresh config for now... until it's more useful.
+* Commented out History and workflow, as these are not currently being used.
 
 2006.04.30
 
+* Started work on distributed pymon. This included adding a JSON publisher to
+pymon.servers, a peer checker to pymon.servers, a publish function
+(incomplete) to pymon.utils, a peer checking function to pymon.utils, and then
+the necessary configuration directives to etc/pymon.conf and etc/schema.xml.
+* This requires a new dependency: simplejson.
+* Started giving pymon.engines an overhaul.
 * Updated the new page on the sf.net site to reflect the latest work in branch
 on distributed pymon.
 
@@ -12,9 +76,35 @@ on distributed pymon.
 
 * Updated the news and menu items on the sf.net site.
 
+2006.03.06
+
+* Started working on some component tests in sandbox/oubiwann/components.
+
+2006.03.02
+
+* Added code for setting configuration in the grammar at a higher level (for
+now, from at least the parser level).
+* Grammar() has moved out of the sandbox and into it's own module at
+pymon.grammar.Grammar().
+* shellparser.ShellParser() has moved out of the sandbox and into
+pymon.parser.Shell().
+
+2006.03.01
+
+* Added support for "nodes" (hosts) to pymon shell grammar.
+* Finished the support for services and added an initial help stub to the
+grammar.
+
+2006.02.28
+
+* Updated the DEPENDENCIES to use pyparsing 1.4.1.
+* Renewed work on pymon shell.
+* Got new grammar working for services.
+
 2006.02.27
 
 * Created an admin directory and moved all the shell scripts in there.
+* Added run.sh and build_and_run.sh.
 * Removed the registry import from application.
 * Removed unnecessary references import from utils and substituted with
 config.cfg.

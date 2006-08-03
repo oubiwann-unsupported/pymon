@@ -2,17 +2,18 @@ import pwd, grp
 
 from twisted.application import service
 
-from pymon.registry import globalRegistry
+from pymon.application import globalRegistry
 from pymon.config import cfg
 from pymon import engines
 from pymon import servers
 
 # create application and application service container
-user        = pwd.getpwnam(cfg.user)[2]
-group       = grp.getgrnam(cfg.group)[2]
-appname     = cfg.instance_name
+user = pwd.getpwnam(cfg.user)[2]
+group = grp.getgrnam(cfg.group)[2]
+appname = cfg.instance_name
 application = service.Application(appname, uid=user, gid=group)
-pymonsvc    = service.IServiceCollection(application)
+pymonsvc = service.IServiceCollection(application)
+pymonsvc.cfg = cfg
 
 # add all the services that are going to be monitored. This is where you
 # add service engine; choose the right one for your architecture, for 
@@ -37,3 +38,7 @@ servers.addWebServer(pymonsvc)
 # maybe use their backups instead.
 servers.addConfigServer(pymonsvc)
 servers.addBackupServer(pymonsvc)
+
+# Support for distributed pymon
+servers.addJSONPublisher(pymonsvc)
+servers.addPeerChecker(pymonsvc)

@@ -3,8 +3,6 @@ from pyparsing import Group, Optional, ZeroOrMore
 from pyparsing import nums, alphas, alphanums, oneOf
 from pyparsing import Literal, CaselessLiteral, Forward
 
-import dispatch
-
 from pkg_resources import require
 require('Adytum-PyMonitor >= 1.0.4')
 from adytum.config import zconfig
@@ -262,36 +260,9 @@ class Grammar(object):
 
         self.bnf = command
 
-class ShellParser:
-
-    services = None
-
-    def __init__(self):
-        """init method"""
-        self.tokens = None
-
-    def __call__(self, command_string):
-        self.parse(command_string)
-
-    def buildGrammar(self):
-        self.grammar = Grammar()
-        self.grammar.parser = self
-        self.grammar.makeBNF()
-        return self.grammar
-
-    def parse(self, cmd):
-        tokens = grammar.parseString(cmd)
-        out = """
-            command: %s
-            service type: %s
-            action: %s
-        """ % (tokens.commandtype, tokens.servicetype, tokens.action)
-        self.tokens = tokens
-        return out
-
 def _test():
-    import doctest, shellparser
-    doctest.testmod(shellparser)
+    import doctest, grammar
+    doctest.testmod(grammar)
 
 if __name__ == '__main__':
     _test()

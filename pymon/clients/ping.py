@@ -1,8 +1,7 @@
 from twisted.spread import pb
 
-from pymon.registry import globalRegistry
 from pymon import utils
-from pymon.logger import log
+from pymon.utils import log
 
 from base import ClientMixin
 
@@ -22,13 +21,12 @@ class PingClient(pb.Broker, ClientMixin):
         loss = parse.getPingLoss()
         gain = parse.getPingGain()
         host = self.getHost()
-
  
         # push the returned data through the threshold checks
         self.rules.check(gain)
         self.rules.setMsg(gain, host)
         self.rules.setSubj(host, loss)
-        if self.rules.isMessage():
+        if self.rules.isSendMessage():
             self.rules.sendIt()
 
         # dump info to log file
@@ -41,5 +39,5 @@ class PingClient(pb.Broker, ClientMixin):
         self.updateState()
 
         # dump info to log file
-        log.debug(str(self.factory.state)+'\n')
+        log.debug('State Data: '+str(self.factory.state.data)+'\n')
 

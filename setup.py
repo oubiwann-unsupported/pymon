@@ -65,7 +65,7 @@ setup(name="PyMonitor",
         'pymon.workflow',
     ],
     package_dir = {
-        'pymon': 'lib',
+        'pymon': 'pymon',
     },
     zip_safe=False,
     data_files=[

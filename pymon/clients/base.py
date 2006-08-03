@@ -4,9 +4,8 @@ from twisted.internet import protocol
 
 from adytum.util.uri import Uri
 
-from pymon import utils
-from pymon.logger import log
-from pymon.config import cfg
+from pymon import config
+from pymon.utils import log
 
 from rules import ThresholdRules
 
@@ -18,7 +17,7 @@ class ClientMixin(object):
 
     def buildRules(self):
         rules = ThresholdRules()
-        rules.setType(self.factory.type_defaults.threshold_type)
+        rules.setType(self.factory.defaults.threshold_type)
         rules.factory = self.factory
         self.rules = rules
 
@@ -28,38 +27,38 @@ class ClientMixin(object):
     def updateState(self):
         state = self.factory.state
         now = datetime.now().strftime("%Y.%m.%d %H:%M:%S")
-        uri = Uri(self.factory.uid)
+        uid = self.factory.uid
         
         prev = state.get('current status')
-        org = self.factory.service_cfg.org
+        org = self.factory.checkConfig.org
         if org:
-            state['org'] = org
-        state['previous status'] = prev
-        state['previous status name'] = utils.getStateNameFromNumber(prev)
-        state['current status'] = self.rules.status
-        state['node'] = uri.getAuthority().getHost()
-        state['service'] = uri.getScheme().replace('_', ' ')
-        if state['previous status'] == state['current status']:
-            state['count'] = state['count'] + 1
+            state.set('org', org)
+        state.set('previous status', prev)
+        state.set('previous status name', config.getStateNameFromNumber(prev))
+        state.set('current status', self.rules.status)
+        state.set('node', config.getHostFromURI(uid))
+        state.set('service', config.getFriendlyTypeFromURI(uid))
+        if state.get('previous status') == state.get('current status'):
+            state.set('count', state.get('count') + 1)
         else:
-            state['count'] = 1
+            state.set('count', 1)
         status = self.rules.status
-        #if status == self.factory.statedefs.recovering:
-        #    status = self.factory.statedefs.ok 
-        status = utils.getStateNameFromNumber(status)
+        #if status == self.factory.stateDefs.recovering:
+        #    status = self.factory.stateDefs.ok 
+        status = config.getStateNameFromNumber(status)
         try:
-            state['desc'] = self.rules.msg
+            state.set('desc', self.rules.msg)
         except AttributeError:
             # mo msg set
             pass
-        state['current status name'] = status
-        state['last check'] = now
+        state.set('current status name', status)
+        state.set('last check', now)
         if status not in ['recovering', 'maintenance', 'disabled'
             'acknowledged']:
             count_index = 'count %s' % status
-            state[count_index] = state[count_index] + 1
+            state.set(count_index, state.get(count_index) + 1)
             state_index = 'last %s' % status
-            state[state_index] = now
+            state.set(state_index, now)
 
 class NullClient(protocol.Protocol, ClientMixin):
     '''
@@ -91,16 +90,15 @@ class NullClient(protocol.Protocol, ClientMixin):
         '''
         ClientMixin.connectionMade(self)
         log.debug("Factory in NullClient: %s" % self.factory)
-        self.service_cfg = self.factory.service_cfg
-        status = self.factory.statedefs.failed
-        checked_resource = self.factory.service_cfg.uri
+        self.checkConfig = self.factory.checkConfig
+        status = self.factory.stateDefs.failed
+        checked_resource = self.factory.checkConfig.uri
         log.debug("Starting rules processing...")
         self.rules.check(status)
         self.rules.setMsg(checked_resource, self.factory.status, self.factory.message)
         self.rules.setSubj(checked_resource)
-        if self.rules.isMessage():
-            if cfg.notifications.enabled:
-                self.rules.sendIt()
+        if self.rules.isSendMessage():
+            self.rules.sendIt()
         log.debug("Finished rules processing.")
 
         # dump info to log file
