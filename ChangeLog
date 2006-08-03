@@ -9,6 +9,7 @@
 * Moved trunk/sandbox into its own top-level dir.
 * Moved etc/old and etc/tests into extras.
 * Removed old MochiKit.
+* Added new (packed) MochiKit.
 
 2006.05.05
 
