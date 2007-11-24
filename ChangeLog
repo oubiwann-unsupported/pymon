@@ -3,6 +3,8 @@
 * Did some work on configuration crap.
 * Had to temporarily disable saving state due to pickle problems.
 * Added an adaptor for the HTTP status monitor.
+* Merged changes from Google project code.
+* Cleaned up top-level dir.
 
 2007.05.01
 
