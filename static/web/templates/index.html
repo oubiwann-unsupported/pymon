@@ -1,0 +1,71 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:nevow="http://nevow.com/ns/nevow/0.1"
+    nevow:render="allSlots">
+<nevow:slot name="html_head" />
+<body>
+    <nevow:slot name="page_header" />
+
+    <table border="0" cellpadding="0" cellspacing="0">
+		<tr valign="top">
+            <td width="200" class="sidebar">
+                <nevow:slot name="nav_menu" />
+            </td>
+			<td class="sidebarborder" width="1">
+				<img src="/images/spacer.gif" width="1" height="1" border="0" alt=""/>
+			</td>
+			<td>
+                <table cellpadding="10" cellspacing="0" width="100%">
+                <tr>
+                <td valign="top">
+                    <!-- main content -->
+
+                    <h1>Combined Service States</h1>
+                    These are links for viewing the status of all monitored
+                    services. If peering is enabled, these states are the combination of all peers'
+                    states.
+                    <ul>
+                        <li><a href="/combined/states">Overview</a></li>
+                        <li><a href="/combined/statesdetail">Detailed View</a></li>
+                        <li><a href="/json/combinedStates">Data as JSON</a></li>
+                    </ul>
+                    <h1>States by pymon Server</h1>
+                    <h2>Local instance</h2>
+                    The state information for this pymon instance
+                    <ul>
+                        <li><a href="/local/states">Overview</a></li>
+                        <li><a href="/local/statesdetail">Detailed View</a></li>
+                        <li><a href="/json/localStates">Data as JSON</a></li>
+                    </ul>
+                    <h2>Peers</h2>
+                    A list of peers; click the links to view the state information for that pymon instance
+                    <ul nevow:data="getPeers" nevow:render="sequence">
+                        <li nevow:pattern="item" nevow:render="mapping">
+                            <a><nevow:attr name="href"><nevow:slot name="pymonURL" /></nevow:attr><nevow:slot name="pymonHost">pymon Instance</nevow:slot></a>
+                            (<a><nevow:attr name="href"><nevow:slot name="jsonURL" /></nevow:attr>JSON Data</a>)
+                        </li>
+                    </ul>
+
+                    <!-- 
+                    <h1>pymon Server Status</h1>
+                    <ul>
+                        <li><a href="">pymon Overview</a></li>
+                        <li><a href="">View HTTP info</a></li>
+                        <li><a href="">View Telnet/SSH info</a></li>
+                        <li><a href="">kernel status</a></li>
+                    </ul>
+                    /-->
+
+                </td>
+                </tr>
+                </table>
+
+            </td>
+        </tr>
+    </table>
+
+    <nevow:slot name="page_footer" />
+
+</body>
+</html>

@@ -5,38 +5,51 @@ For each service that is being monitored, it's own workflow
 should exist, one that shares no session data with any other service,
 as each service is completely independent.
 '''
-from base import WorkflowAware
+from pymon import utils
+from pymon.config import cfg
 
+from base import Workflow, WorkflowAware
+
+states = cfg.state_definitions
+# Create a workflow for managing states
+stateWorkflow = Workflow()
+for state, stateName in cfg.stateLookup.items():
+    description = 'pymon is in %s state' % stateName.upper()
+    stateWorkflow.addState(state, description=description, fullName=stateName)
 # Setup workflow transitions -- the parameter passed to addTrans are:
 #  * Transition name
 #  * Legal source states
 #  * Destination state
 #  * Description
-states = cfg.state_definitions
-stateWorkflow.addTrans('Warning', 
-    [states.ok, states.warn, states.error], 
-    'Warn',
+stateWorkflow.addTrans('Warning',
+    [states.ok, states.warn, states.error, states.unknown, states.failed],
+    states.warn,
     description='pymon has gone from OK to WARN')
-stateWorkflow.addTrans('Erring', 
-    ['Normal', 'Warn', 'Error'], 
-    'Error',
+stateWorkflow.addTrans('Erring',
+    [states.ok, states.warn, states.error, states.unknown, states.failed],
+    states.error,
     description='pymon has gone to state ERROR')
-stateWorkflow.addTrans('Recovering', 
-    ['Warn', 'Error'], 
-    'Normal',
-    description='pymon has resumed normal operation, but the previous '+ \ 
+stateWorkflow.addTrans('Failing',
+    [states.ok, states.warn, states.error, states.unknown, states.failed],
+    states.failed,
+    description='pymon has gone to state FAILED')
+stateWorkflow.addTrans('Recovering',
+    [states.warn, states.error, states.unknown, states.failed],
+    states.ok,
+    description='pymon has resumed normal operation, but the previous '+ \
         'state was either WARN or ERROR')
-stateWorkflow.addTrans('Escalating', 
-    ['Warn', 'Error', 'Escalate'], 
-    'Escalate',
+stateWorkflow.addTrans('Escalating',
+    [states.warn, states.error, states.escallated],
+    states.escallated,
     description='pymon has received too many counts of a certain kind')
+stateWorkflow.setInitState(states.unknown)
 
 # define a workflow-aware for mangaging state
 class ServiceState(WorkflowAware):
     '''
     '''
-    def __init__(self, workflow=None):
-        self.enterWorkflow(workflow, None, "Just Created")
+    def __init__(self, workflow):
+        self.enterWorkflow(workflow)
 
     def onEnterNormal(self):
         print '+ Entering normal state...'
@@ -69,6 +82,4 @@ class ServiceState(WorkflowAware):
         print '* Issue unaddressed: escalating...'
 
 # this is what should get imported by the pymon application:
-serviceState = ServiceState(workflow=stateWorkflow)
-
-
+serviceState = ServiceState(stateWorkflow)

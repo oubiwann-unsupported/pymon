@@ -23,7 +23,11 @@ daemontools installed, all you have to do is the following:
     twistd and pymon.tac, and
     * ln -s PREFIX/service /service/pymond
 
-And you should be up and running.
+If you are running a development version of pymon in your working directory
+(svn co), then run the following:
+    sudo ./bin/pymond
+
+Now you should be up and running.
 
 Apache Virtual Hosts
 ----------------------

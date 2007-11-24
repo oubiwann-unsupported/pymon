@@ -2,6 +2,7 @@ from email.MIMEText import MIMEText
 
 from zope.interface import implements
 
+from twisted.python import components
 from twisted.spread import pb
 from twisted.internet import reactor
 from twisted.web.client import HTTPClientFactory
@@ -9,15 +10,14 @@ from twisted.web.client import PartialDownloadError
 from twisted.internet.defer import TimeoutError
 from twisted.internet.protocol import ClientFactory
 
-import config
-from utils import log
-import application
-#from application import History
-from application import MonitorState
-from application import globalRegistry
-#from workflow import service as workflow
-from clients.base import NullClient
-from clients import ping, http, ftp, smtp, rules
+from pymon import utils
+from pymon.logger import log
+from pymon.interfaces import IState
+from pymon import application
+from pymon.application import MonitorState
+from pymon.application import globalRegistry
+from pymon.clients.base import NullClient
+from pymon.clients import ping, http, ftp, smtp, rules
 
 class AbstractFactory(object):
     '''
@@ -29,7 +29,7 @@ class AbstractFactory(object):
     '''
     def __init__(self, serviceName, uri):
 
-        self.uid = config.makeUID(serviceName, uri)
+        self.uid = utils.makeUID(serviceName, uri)
         self.type = serviceName
         self.monitor = None
 
@@ -58,35 +58,16 @@ class AbstractFactory(object):
         monitor = HttpStatusMonitor(self.uid, cfg)
         return monitor
 
-    def makeHttpTextMonitor(self, cfg):
-        self.monitor = HttpTextMonitor(self.uid)
-        return self.configureMonitor(cfg)
-
-    def makeFtpMonitorMonitor(self, cfg):
-        self.monitor = FtpMonitor(self.uid)
-        return self.configureMonitor(config)
-
-    def makeSmtpStatusMonitor(self, cfg):
-        self.monitor = SmtpStatusMonitor(self.uid)
-        return self.configureMonitor(config)
-
-    def makeSmtpMailMonitor(self, cfg):
-        self.monitor = SmtpMailMonitor(self.uid)
-        return self.configureMonitor(config)
-
-class MonitorMixin(object):
+class BaseMonitor(object):
 
     def __init__(self, uid, cfg):
         self.uid = uid
         self.cfg = cfg
         self.interval = None
         self.message = None
-        self.host = config.getHostFromURI(self.uid)
-        self.checkConfig = config.getCheckConfigFromURI(self.uid)
-        self.defaults = config.getDefaultsFromURI(self.uid)
-        #self.workflow = workflow.ServiceState(workflow.state_wf)
-        #self.history = History()
-        self.state = MonitorState(self.uid)
+        self.host = utils.getHostFromURI(self.uid)
+        self.checkConfig = cfg.getCheckConfigFromURI(self.uid)
+        self.defaults = cfg.getDefaultsFromURI(self.uid)
         self.stateDefs = cfg.state_definitions
         self.setInterval()
 
@@ -95,28 +76,29 @@ class MonitorMixin(object):
 
     def __call__(self):
         # update the configuration in case it has changed
-        #uri = Uri(self.uid)
-        #self.cfg = config.getCheckConfigFromURI(self.uid)
-        #self.defaults = config.getDefaultsFromURI(self.uid)
-        self.state.save()
-        if config.checkForMaintenanceWindow(self.checkConfig):
+        IState(self).save()
+        self.state = IState(self)
+        if self.cfg.checkForMaintenanceWindow(self.checkConfig):
             # XXX These two chunks of state info access need to be moved 
             # out of here... and made less eyesoreingly redundant. 
             # There's another set of XXX's that discuss this in general
             # elsewhere. There are also notes in the TODO.
             msg = "Service %s has been disabled during maintenance."
             log.warning(msg % self.uid)
-            self.state = application.setNonChangingState(self.state, 
+            self.state = application.setNonChangingState(self.state,
                 self.stateDefs.maintenance, self.uid)
-            globalRegistry.factories[self.uid].state = self.state            
+            globalRegistry.factories[self.uid].state = self.state
         elif self.checkConfig.enabled:
             reactor.connectTCP(*self.reactor_params)
         else:
             msg = "Service %s has been disabled; not checking."
             log.warning(msg % self.uid)
-            self.state = application.setNonChangingState(self.state, 
+            self.state = application.setNonChangingState(self.state,
                 self.stateDefs.disabled, self.uid)
             globalRegistry.factories[self.uid].state = self.state
+
+    def __getstate__(self):
+        return self.__dict__
 
     def setInterval(self, seconds=None):
         def useDef():
@@ -140,21 +122,21 @@ class MonitorMixin(object):
     def getInterval(self):
         return self.interval
 
-class HttpTextMonitor(HTTPClientFactory, MonitorMixin):
+class HttpTextMonitor(HTTPClientFactory, BaseMonitor):
     
     def __init__(self, uid):
-        MonitorMixin.__init__(self, uid, cfg)
+        BaseMonitor.__init__(self, uid, cfg)
         self.page_url = ''
         self.text_check = ''
         self.reactor_params = ()
         self.checkdata = self.service.entries.entry(uri=self.uid)
 
-class HttpStatusMonitor(HTTPClientFactory, MonitorMixin):
+class HttpStatusMonitor(HTTPClientFactory, BaseMonitor):
     
     protocol = http.HttpStatusClient
 
     def __init__(self, uid, cfg):
-        MonitorMixin.__init__(self, uid, cfg)
+        BaseMonitor.__init__(self, uid, cfg)
         self.page_url = 'http://%s' % self.checkConfig.uri
         # XXX write a getTimeout method
         #timeout = self.checkConfig.timeout
@@ -170,15 +152,15 @@ class HttpStatusMonitor(HTTPClientFactory, MonitorMixin):
     def __repr__(self):
         """
         We need to override the __repr__ in HTTPClientFactory; 
-        inheriting from MonitorMixin won't do it.
+        inheriting from BaseMonitor won't do it.
         """
         return "<%s: %s>" % (self.__class__.__name__, self.uid)
 
     def __call__(self):
-        HTTPClientFactory.__init__(self, self.page_url, 
-            method=self.method, agent=self.agent, 
+        HTTPClientFactory.__init__(self, self.page_url,
+            method=self.method, agent=self.agent,
             timeout=self.defaults.interval)
-        MonitorMixin.__call__(self)
+        BaseMonitor.__call__(self)
         # this deferred is created above when 
         # HTTPClientFactory.__init__() is called.
         d = self.deferred
@@ -221,13 +203,15 @@ class HttpStatusMonitor(HTTPClientFactory, MonitorMixin):
         self.protocol = self.original_protocol
         log.debug('Reverted Protocol: %s' % self.protocol)
 
-class PingMonitor(pb.PBClientFactory, MonitorMixin):
+components.registerAdapter(MonitorState, HttpStatusMonitor, IState)
+
+class PingMonitor(pb.PBClientFactory, BaseMonitor):
 
     protocol = ping.PingClient
 
     def __init__(self, uid, cfg):
         pb.PBClientFactory.__init__(self)
-        MonitorMixin.__init__(self, uid, cfg)
+        BaseMonitor.__init__(self, uid, cfg)
 
         # ping config options setup
         self.checkdata = self.cfg
@@ -242,7 +226,7 @@ class PingMonitor(pb.PBClientFactory, MonitorMixin):
         self.reactor_params = ('127.0.0.1', port, self)
 
     def __call__(self):
-        MonitorMixin.__call__(self)
+        BaseMonitor.__call__(self)
         d = self.getRootObject()
         d.addCallback(self.pingHost)
         d.addCallback(self.getPingReturn)
@@ -264,99 +248,6 @@ class PingMonitor(pb.PBClientFactory, MonitorMixin):
             self._broker = None
             self._root = None
         else:
-            self._failAll(reason) 
+            self._failAll(reason)
 
-class FtpMonitor(ClientFactory, MonitorMixin):
-
-    protocol = ftp.FtpStatusClient
-
-    def __init__(self, uid):
-        MonitorMixin.__init__(self, uid)
-        self.port = int(self.cfg.port)
-        self.username = self.cfg.username
-        self.password = self.cfg.password
-        self.passive = self.cfg.passive
-        self.return_code = 0
-        self.reactor_params = (self.host, self.port, self)
-
-    def __call__(self):
-        MonitorMixin.__call__(self)
-
-
-    def clientConnectionLost(self, connector, reason):
-        log.debug("Connection Lost:", reason)
-
-    def clientConnectionFailed(self, connector, reason):
-        self.return_code = 100
-        log.error("Connection Failed:", reason.getErrorMessage())
-        self.message = reason.getErrorMessage()
-        self.status = 'NA'
-        self.protocol = NullClient()
-        self.protocol.factory = self
-        self.protocol.makeConnection()
-
-class SmtpStatusMonitor(ClientFactory, MonitorMixin):
-
-    protocol = smtp.SmtpStatusClient
-
-    def __init__(self, uid):
-        MonitorMixin.__init__(self, uid)
-        self.port = int(self.cfg.port)
-        self.identity = self.cfg.identity 
-        self.status = 0
-        self.reactor_params = (self.host, self.port, self)
-
-    def buildProtocol(self, addr):
-        p = self.protocol(identity=self.identity, logsize=10)
-        p.factory = self
-        return p
-
-    def __call__(self):
-        MonitorMixin.__call__(self)
-
-    def clientConnectionFailed(self, connector, reason):
-        log.error("Connection Failed: %s " % reason.getErrorMessage())
-        self.message = reason.getErrorMessage()
-        self.status = 'NA'
-        self.protocol = NullClient()
-        self.protocol.factory = self
-        self.protocol.makeConnection()
-
-
-class SmtpMailMonitor(ClientFactory, MonitorMixin):
-
-    protocol = smtp.SmtpMailClient
-
-    def __init__(self, uid):
-        MonitorMixin.__init__(self, uid)
-        self.port = int(self.cfg.port)
-        self.identity = self.cfg.identity
-        self.status = 0
-        self.mail_from = cfg.mail_from
-        self.mail_to = self.cfg.mail_to
-        self.reactor_params = (self.host, self.port, self)
-    
-        # Construct an email message with the appropriate headers
-        msg = MIMEText("Pymon SMTP server mail check email")
-        msg['Subject'] = "Pymon Test Email"
-        msg['From'] = self.mail_from
-        msg['To'] = self.mail_to
-    
-        self.mail_data = msg.as_string()
-
-    def buildProtocol(self, addr):
-        p = self.protocol(identity=self.identity, logsize=10)
-        p.factory = self
-        return p
-
-    def __call__(self):
-        MonitorMixin.__call__(self)
-
-    def clientConnectionFailed(self, connector, reason):
-        log.error("Connection Failed: %s " % reason.getErrorMessage())
-        self.message = reason.getErrorMessage()
-        self.status = 'NA'
-        self.protocol = NullClient()
-        self.protocol.factory = self
-        self.protocol.makeConnection()
-
+components.registerAdapter(MonitorState, PingMonitor, IState)

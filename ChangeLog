@@ -1,3 +1,50 @@
+2007.11.24
+
+* Did some work on configuration crap.
+* Had to temporarily disable saving state due to pickle problems.
+* Added an adaptor for the HTTP status monitor.
+
+2007.05.01
+
+* Removed configuation-setting from .tac and put it in engines.
+* Pulled config-agnostic code out of config and put it in utils.
+* Pulled exceptions out of application and put them in their own file.
+* Created an interfaces file.
+* Made MonitorState an adaptor for monitors and IState.
+* Changed config.cfg to be a wrapper class instance with custom pymon config
+methods.
+* Incremented version.
+
+2006.09.04
+
+* Updated THANKS, CONTRIBUTORS, INSTALL, and README.
+* Started revamping the web ui, templates, etc.
+* Added a new section to DEPENDENCIES for installing software from Cheeseshop.
+* Updated presetup.py with the changes to DEPENDENCIES.
+* Fixed bugs in workflow.service.
+* Fixed bin/pymond to run from current directory.
+* Started fixing the web resource code for running from either local directory
+or installed directory.
+* Created a new templates directory and moved template files.
+* Changed the default of the admin "commit.sh" script to not run tests.
+* Renamed static/web/styles to static/web/css.
+* Renamed static/web/javascript to static/web/js.
+* Updated pymon.ui.web.pages to use getResource() to locate files on a relative
+or install path as well as a new template() function to set the docFactory
+attribute.
+* Added an index template composed of nevow slots.
+* Added template pages for the various new slots defined in index.html.
+* Added slot classes and fillSlots() calls to pymon.ui.web.pages.
+* Added simplejson to DEPENDENCIES.
+* Added a root page child called "json" which, in turn, publishes JSON data
+under various children.
+* Forgot to add new JSON nevow template to last commit.
+* Added links on the main page for viewing the JSON data.
+* Fixed workflow state transition code to use method names based on the state
+name instead of the state number.
+* Added links for peers to the main page.
+* Added code for generating peer data for the main page.
+
 2006.08.03
 
 * Added news item about the new pymon space at code.google.com.
@@ -12,6 +59,7 @@
 * Added new (packed) MochiKit.
 * Updated the templates to point to the new MochiKit location.
 * Moved diagrams into extras.
+* Fixed the news on the home page.
 
 2006.05.05
 
@@ -944,3 +992,9 @@ remote host set
 * removed the binary parameter from the read/write methods and created a new
 property 'binary_pickle' that is checked before reading or writing pickles
 files
+
+2001 - 2004: Historic Note:
+
+* During this time period, I had created a series of UIX shell scripts, which
+were then ported to perl. After a few years of frustration, I ported them
+again, but this time to python.

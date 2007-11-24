@@ -2,7 +2,7 @@ from twisted.web.client import HTTPPageGetter
 from twisted.web.http import HTTPClient
 
 from pymon import utils
-from pymon.utils import log
+from pymon.logger import log
 
 from base import ClientMixin
 

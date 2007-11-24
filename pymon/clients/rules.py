@@ -1,5 +1,5 @@
-from pymon import config
-from pymon.utils import log
+from pymon.config import cfg
+from pymon.logger import log
 
 class ThresholdRules(object):
     # XXX need checks for state and separate checks for
@@ -125,7 +125,7 @@ class ThresholdRules(object):
         self.msg = self.factory.defaults.message_template % args
 
     def setSubj(self, *args):
-        status = config.getStateNameFromNumber(self.status)
+        status = cfg.getStateNameFromNumber(self.status)
         if status == 'unknown':
             self.subj = "Unknown status"
         else:
@@ -145,7 +145,7 @@ class ThresholdRules(object):
         
         if self.status == self.factory.stateDefs.recovering:
             status_id = self.factory.state.get('current status')
-            status = config.getStateNameFromNumber(status_id)
+            status = cfg.getStateNameFromNumber(status_id)
             self.msg = self.msg + "\r\nRecovering from '%s'." % status
         sendmail = self.factory.cfg.sendmail
         frm = self.factory.cfg.mail_from
@@ -153,7 +153,7 @@ class ThresholdRules(object):
         # non-blocking. Dererreds anyone?
         # XXX modify this when support for escalation and different 
         # group levels is added to python
-        for address in config.getMailList(self.factory.uid):
+        for address in cfg.getMailList(self.factory.uid):
             email = LocalMail()
             email.setSendmailBinary(sendmail)
             email.setSubject(self.subj)

@@ -31,23 +31,39 @@ def pyInstall(url, unpak, unpakt):
         sys.executable))
     time.sleep(2)
 
+def pyPIInstall(url):
+    os.system('sudo easy_install %s' % url)
+
+def doInstall(deps, packagesType):
+    for package in deps.get(packagesType):
+        if packagesType == 'python_packages':
+            name, url, unpak, unpakt, force = package
+            installer = pyInstall
+            params = [url, unpak, unpakt]
+        elif packagesType == 'easy_install_packages':
+            name, url = package
+            force = False
+            installer = pyPIInstall
+            params = [url]
+        # Do we need to install it?
+        try:
+            exec("import %s" % name)
+            print "%s is installed." % name
+        except ImportError:
+            print "%s not installed." % name
+            installer(*params)
+        if force:
+            installer(*params)
+
 # Process all the dependencies
 deps = eval(open('DEPENDENCIES').read())
-for name, url, unpak, unpakt, force in deps['python_packages']:
-    # Do we need to install it?
-    try:
-        exec("import %s" % name)
-        print "%s is installed." % name
-    except ImportError:
-        print "%s not installed." % name
-        pyInstall(url, unpak, unpakt)
-    if force:
-        pyInstall(url, unpak, unpakt)
+for packageType in ['python_packages', 'easy_install_packages']:
+    doInstall(deps, packageType)
 
 # Make sure that the most recent version of the support modules are 
 # loaded
 from pkg_resources import require
-require('Adytum-PyMonitor >= 1.0.4')
+require('Adytum-PyMonitor >= 1.0.5')
 from adytum.config import zconfig
 
 # Now that we have all the stuff we need, we can procede
@@ -87,20 +103,18 @@ SENSITIVE_FILES = [
     'etc/pymon.conf',
     ]
 
-for filename in SENSITIVE_FILES:
-    # Get data
-    data = open(filename).read()
-    # Check if file exists
-    outfile = os.path.join(cfg.prefix, filename)
-    if os.path.exists(outfile):
-        if not filecmp.cmp(filename, outfile, False):
-            print "File '%s' already exists and is different." % outfile
-            outfile = outfile + ".new"
-            print "Creating file '%s'." % outfile
-    # Write file
-    out = open(outfile, 'w+')
-    out.write(data)
-    out.close()
-
-
-
+if os.path.exists(cfg.prefix):
+    for filename in SENSITIVE_FILES:
+        # Get data
+        data = open(filename).read()
+        # Check if file exists
+        outfile = os.path.join(cfg.prefix, filename)
+        if os.path.exists(outfile):
+            if not filecmp.cmp(filename, outfile, False):
+                print "File '%s' already exists and is different." % outfile
+                outfile = outfile + ".new"
+                print "Creating file '%s'." % outfile
+        # Write file
+        out = open(outfile, 'w+')
+        out.write(data)
+        out.close()

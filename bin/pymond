@@ -23,13 +23,20 @@ except ImportError:
 uid = pwd.getpwnam(cfg.user)[2]
 gid = grp.getgrnam(cfg.group)[2]
 
+tac = os.path.join('bin', 'pymon.tac')
+if not os.path.exists(tac):
+    tac = os.path.join(cfg.prefix, tac)
+
 sys.argv[0] = 'twistd'
+if os.path.exists(cfg.prefix):
+    sys.argv.extend([
+        '--rundir=%s' % cfg.prefix])
+    
 sys.argv.extend([
-    '--rundir=%s' % cfg.prefix,
     '--uid=%s' % uid,
     '--gid=%s' % gid,
     '-noy',
-    os.path.join(cfg.prefix, 'bin', 'pymon.tac')
+    tac
 ])
 print ' '.join(sys.argv)
 app.run(runApp, ServerOptions)

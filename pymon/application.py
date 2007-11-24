@@ -1,23 +1,25 @@
 import re
 import os
 from Queue import Queue
+try:
+    import cPickle as pickle
+except ImportError:
+    import pickle
+
+from zope.interface import implements
 
 from twisted.persisted import sob
+from twisted.persisted.sob import Persistent
 
-import config
-from utils import log
-from workflow.base import Workflow
-from workflow.service import ServiceState
+from pymon import utils
+from pymon.config import cfg
+from pymon.logger import log
+from pymon.workflow.base import Workflow
+from pymon.workflow.service import ServiceState, stateWorkflow
 
-from registry import Registry
-
-cfg = config.cfg
-
-# set up the workflow definitions that will be used by all monitors and 
-# accessed via the monitor state objects
-stateWorkflow = Workflow()
-for stateNum in config.getStateNumbers():
-    stateWorkflow.addState(stateNum)
+from pymon import exceptions
+from pymon.interfaces import IState
+from pymon.registry import Registry
 
 initialCheckData = {
     'org': '',
@@ -45,16 +47,14 @@ initialCheckData = {
     'last failed': '',
     }
 
-class Error(Exception):
-    pass
+class InitialCheckData(dict):
+    '''
+    The data structure for the data that monitors will set.
+    '''
+    def __init__(self):
+        self.update(initialCheckData)
 
-class StateSaveError(Error):
-    pass
-
-class StateRestoreError(Error):
-    pass
-
-class BaseState(sob.Persistent):
+class BaseState(Persistent):
     '''
     # create a state and add some test data
     >>> s = BaseState()
@@ -65,12 +65,12 @@ class BaseState(sob.Persistent):
     # try to restore it
     >>> s.restore()
     Traceback (most recent call last):
-    StateRestoreError: It appears that state was never saved; cannot restore
+    exceptions.StateRestoreError: It appears that state was never saved; cannot restore
 
     # try to save without a filename
     >>> s.save()
     Traceback (most recent call last):
-    StateSaveError: You have not yet saved this instance and so must provide a filename.
+    exceptions.StateSaveError: You have not yet saved this instance and so must provide a filename.
 
     # save it
     >>> saveFile = 'tmppckl_pkl'
@@ -108,12 +108,16 @@ class BaseState(sob.Persistent):
     #False
     '''
     def __init__(self, data={}):
-        sob.Persistent.__init__(self, self, '')
+        Persistent.__init__(self, self, '')
         self.data = data
         self.filename = None
 
+    def __getstate__(self):
+        return self.__dict__
+
     def set(self, key, value):
         self.data[key] = value
+        self.__dict__[key] = value
 
     def get(self, key):
         return self.data[key]
@@ -125,33 +129,39 @@ class BaseState(sob.Persistent):
         return self.filename
 
     def save(self, filename=None):
-        if not self.filename:
-            if not filename:
-                raise StateSaveError, "You have not yet saved this " + \
-                    "instance and so must provide a filename."
+        if not filename:
+            filename = self.filename
+        else:
             self.filename = filename
-        p = sob.Persistent.save(self, filename=self.filename)
+        #p = Persistent.save(self, filename=filename)
+        #fh = open(filename, 'w+')
+        #import pdb;pdb.set_trace()
+        #pickle.dump(self, fh)
+        #fh.close()
 
     def restore(self):
         if not self.filename:
-            raise StateRestoreError, \
+            raise exceptions.StateRestoreError, \
                 "It appears that state was never saved; cannot restore"
         if os.path.exists(self.filename):
             s = sob.load(self.filename, 'pickle')
             for key, val in s.__dict__.items():
                 setattr(self, key, val)
 
-class CheckData(dict):
-    '''
-    The data structure for the data that monitors will set.
-    '''
-    def __init__(self):
-        self.update(initialCheckData)
+    def items(self):
+        return self.data.items()
 
 class MonitorState(BaseState):
     '''
+    This is a state machine and adapter. It adapts a monitor instance to a
+    state object. The state for a given monitor is retrieved by callint the
+    interface:
+        state = IState(monitorInstance)
+    The associated monitor is accessed via the monitor attribute:
+        cfg = state.monitor.cfg
+
     Monitors need to have their own state data files, named according to
-    a convention. MonitorState provied a method to do this:
+    a convention. MonitorState provides a method to do this:
 
     >>> m = MonitorState('http status://adytum.us')
     >>> m.data.get('current status')
@@ -170,29 +180,28 @@ class MonitorState(BaseState):
     >>> m.data.get('current status')
     3
     '''
-    def __init__(self, uid):
-        BaseState.__init__(self, data=CheckData())
-        self.uid = uid
-        self.setFilename(filename=uid)
-        self.workflow = ServiceState(workflow=stateWorkflow)
+    implements(IState)
+
+    def __init__(self, monitor):
+        self.monitor = monitor
+        BaseState.__init__(self, data=InitialCheckData())
+        self.setFilename()
+        self.workflow = ServiceState(stateWorkflow)
 
     def setFilename(self, filename=None):
+        backupDir = self.monitor.cfg.admin.backups.state_dir
         if not filename:
-            filename = self.uid
-        self.filename = os.path.join(
-            cfg.admin.backups.state_dir,
+            filename = self.monitor.uid
+        self.filename = os.path.join(backupDir,
             re.sub('[^0-9A-Za-z_]', '_', filename))
         self.data.filename = self.filename
         log.debug("Backup file named '%s'." % self.filename)
 
-    def restore(self):
-        BaseState.restore(self)
-
 def setNonChangingState(state, stateNum, uid):
-    stateName = config.getStateNameFromNumber(stateNum)
-    type = config.getFriendlyTypeFromURI(uid)
-    host = config.getHostFromURI(uid)
-    org = config.getCheckConfigFromURI(uid).org
+    stateName = cfg.getStateNameFromNumber(stateNum)
+    type = utils.getFriendlyTypeFromURI(uid)
+    host = utils.getHostFromURI(uid)
+    org = cfg.getCheckConfigFromURI(uid).org
     state.set('current status', stateNum)
     state.set('current status name', stateName)
     state.set('count '+stateName, 1)
@@ -255,7 +264,7 @@ state       = BaseState()
 history     = History()
 factories   = {}
 
-app_state = os.path.join(cfg.admin.backups.state_dir, 
+app_state = os.path.join(cfg.admin.backups.state_dir,
     cfg.admin.backups.application_state)
 state.setFilename(app_state)
 

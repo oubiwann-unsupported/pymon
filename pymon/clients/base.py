@@ -2,17 +2,16 @@ from datetime import datetime
 
 from twisted.internet import protocol
 
-from adytum.util.uri import Uri
-
-from pymon import config
-from pymon.utils import log
+from pymon import utils
+from pymon.config import cfg
+from pymon.logger import log
 
 from rules import ThresholdRules
 
 class ClientMixin(object):
 
     def getHost(self):
-        uri = Uri(self.factory.uid)
+        uri = utils.Uri(self.factory.uid)
         return uri.getAuthority().getHost()
 
     def buildRules(self):
@@ -34,10 +33,10 @@ class ClientMixin(object):
         if org:
             state.set('org', org)
         state.set('previous status', prev)
-        state.set('previous status name', config.getStateNameFromNumber(prev))
+        state.set('previous status name', cfg.getStateNameFromNumber(prev))
         state.set('current status', self.rules.status)
-        state.set('node', config.getHostFromURI(uid))
-        state.set('service', config.getFriendlyTypeFromURI(uid))
+        state.set('node', utils.getHostFromURI(uid))
+        state.set('service', utils.getFriendlyTypeFromURI(uid))
         if state.get('previous status') == state.get('current status'):
             state.set('count', state.get('count') + 1)
         else:
@@ -45,7 +44,7 @@ class ClientMixin(object):
         status = self.rules.status
         #if status == self.factory.stateDefs.recovering:
         #    status = self.factory.stateDefs.ok 
-        status = config.getStateNameFromNumber(status)
+        status = cfg.getStateNameFromNumber(status)
         try:
             state.set('desc', self.rules.msg)
         except AttributeError:

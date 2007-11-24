@@ -1,5 +1,3 @@
-import pwd, grp
-
 from twisted.application import service
 
 from pymon.application import globalRegistry
@@ -8,10 +6,10 @@ from pymon import engines
 from pymon import servers
 
 # create application and application service container
-user = pwd.getpwnam(cfg.user)[2]
-group = grp.getgrnam(cfg.group)[2]
+user, group = cfg.getPymonUserGroup()
 appname = cfg.instance_name
-application = service.Application(appname, uid=user, gid=group)
+#application = service.Application(appname, uid=user, gid=group)
+application = service.Application(appname)
 pymonsvc = service.IServiceCollection(application)
 pymonsvc.cfg = cfg
 

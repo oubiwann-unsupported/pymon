@@ -1,3 +1,9 @@
+Global Registry Overhaul
+========================
+review monitors.BaseMonitor's maintenance window check and try to stop using
+the global reg.
+
+
 State and Workflow overhaul
 ===========================
 * DONE - Get rid of application.State's current use of backing up
@@ -23,6 +29,7 @@ State and Workflow overhaul
         transition
 * DONE - Convert all dictionary access to set/get access:
     o DONE - clients/base.py, line 36
+* Renable the pickling (state-saving).
 
 Workflow Customizations
 =======================
@@ -51,7 +58,7 @@ time to check hosts, max checks in a given interval, etc.)
 
 o Start putting example configurations in the examples directory.
 
-o Renamed etc/example-pymon.conf to etc/default-pymon.conf.
+o Rename etc/example-pymon.conf to etc/default-pymon.conf.
 
 o Clean up the print statements (convert to log) in stmp, ftp, and http 
 text client code.

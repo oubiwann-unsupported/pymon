@@ -53,13 +53,25 @@ You must create a copy of etc/example-pymon.conf and name it
 without it.
 
 You don't have to have your whole monitoring scheme planned out and
-configured -- but you do need to indicate prefix (install location),
-user, and group. After installation, you can then edit your installed
-pymon.conf file (PREFIX/etc/pymon.conf) for all the services that
-you want to monitor.
+configured in your pymon.conf -- but you do need to indicate prefix (install
+location), user, and group. After installation, you can then edit your
+installed pymon.conf file (PREFIX/etc/pymon.conf) for all the services
+that you want to monitor.
 
 Installation
 ----------------------
+NOTE: during the current development phase, we are not testing the complete
+installation process, and we are probably breaking it in places. As a result,
+if you wish to run pymon, do the following:
+
+  * define PYTHONPATH to include the current directory
+  * check out the latest pymon from svn
+  * cd to the pymon trunk directory
+  * run "python presetup.py" to install the dependencies
+
+(The rest of the install instructions will eventually be applicable, but are
+currently not supported)
+
 To install the application with all the defaults, simply run the
 usual:
 

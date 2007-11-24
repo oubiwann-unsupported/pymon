@@ -3,16 +3,16 @@ from twisted.application import internet
 from nevow import vhost
 from nevow import appserver
 
-import utils
-import agents
-from ui.web import pages
-from application import globalRegistry
+from pymon import utils
+from pymon import agents
+from pymon.logger import log
+from pymon.ui.web import pages
+from pymon.application import globalRegistry
 
-log = utils.log
 
 def refreshConfig():
     log.info("Checking for config file changes...")
-    conf_file = getResource(['etc', 'pymon.conf'])
+    conf_file = utils.getResource(['etc', 'pymon.conf'])
     conf = open(conf_file).read()
     new_md5 = md5.new(conf).hexdigest()
     old_md5 = globalRegistry.state.get('config_md5')
@@ -21,7 +21,7 @@ def refreshConfig():
     if new_md5 != old_md5:
         log.warning("Config MD5 signatures do not match; loading new config...")
         # get and load schema, load config
-        schema_file = getResource(['etc', 'schema.xml'])
+        schema_file = utils.getResource(['etc', 'schema.xml'])
         schema = ZConfig.loadSchema(schema_file)
         cfg, nil = ZConfig.loadConfig(schema, conf_file)
         # set global config to newly loaded config
@@ -50,11 +50,11 @@ def checkPeers(cfg):
     # to simply make XHR's from JavaScript to the pymon peers.
     log.info("Checking peers...")
     for peer in cfg.peers.urls:
+        log.info("Cheeking peer '%s'..." % peer) 
         # get file?
         # copy file?
         # or just let JS do it in the web client?
         # to let the client do it, we'll need to use nevow to set a cookie
-        log.info("Cheeking peer '%s'..." % peer) 
 
 def addWebServer(rootService):
     factories = globalRegistry.factories

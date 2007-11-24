@@ -19,7 +19,7 @@
 """
 The workflow module simplifies the task of writing workflow systems.
 
-The development of a workflow system can be splitted in three steps:
+The development of a workflow system can be split in three steps:
 
  1. Define the workflow as a graph with the 'Workflow' class:
     1.1 Create an instance of the 'Workflow' class;
@@ -37,8 +37,55 @@ The development of a workflow system can be splitted in three steps:
       private;
     - send an email to a user or a mailing list;
 """
+from pymon.config import cfg
+
+states = cfg.state_definitions
+
 class WorkflowError(Exception):
     pass
+
+class WorkflowState(object):
+    """
+    This class is used to describe a state. A state has transitions
+    to other states.
+    """
+    def __init__(self, **kw):
+        """
+        Initialize the state.
+        """
+        self.transitions = {}
+        self.metadata = kw
+
+    def __getitem__(self, key):
+        """
+        Access to the metadata as a mapping.
+        """
+        return self.metadata.get(key)
+
+    def addTrans(self, name, transition):
+        """
+        Adds a new transition.
+        """
+        self.transitions[name] = transition
+
+class Transition(object):
+    """
+    This class is used to describe transitions. Transitions come from
+    one state and go to another.
+    """
+    def __init__(self, stateFrom, stateTo, **kw):
+        """
+        Initialize the transition.
+        """
+        self.stateFrom = stateFrom
+        self.stateTo = stateTo
+        self.metadata = kw
+
+    def __getitem__(self, key):
+        """
+        Access to the metadata as a mapping.
+        """
+        return self.metadata.get(key)
 
 class Workflow(object):
     """
@@ -86,58 +133,15 @@ class Workflow(object):
         for sf in stateFrom:
             for st in stateTo:
                 transition = Transition(sf, st, **kw)
-                try:    
+                try:
                     sf = self.states[sf]
                 except KeyError:
-                    raise WorkflowError, "unregistered state: '%s'" % sf
+                    raise WorkflowError, "unregistered state (from): '%s'" % sf
                 try:
                     st = self.states[st]
                 except KeyError:
-                    raise WorkflowError, "unregistered state: '%s'" % st
+                    raise WorkflowError, "unregistered state (to): '%s'" % st
                 sf.addTrans(name, transition)
-
-class WorkflowState(object):
-    """
-    This class is used to describe a state. A state has transitions
-    to other states.
-    """
-    def __init__(self, **kw):
-        """
-        Initialize the state.
-        """
-        self.transitions = {}
-        self.metadata = kw
-
-    def __getitem__(self, key):
-        """
-        Access to the metadata as a mapping.
-        """
-        return self.metadata.get(key)
-
-    def addTrans(self, name, transition):
-        """
-        Adds a new transition.
-        """
-        self.transitions[name] = transition
-
-class Transition(object):
-    """
-    This class is used to describe transitions. Transitions come from
-    one state and go to another.
-    """
-    def __init__(self, stateFrom, stateTo, **kw):
-        """
-        Initialize the transition.
-        """
-        self.stateFrom = stateFrom
-        self.stateTo = stateTo
-        self.metadata = kw
-
-    def __getitem__(self, key):
-        """
-        Access to the metadata as a mapping.
-        """
-        return self.metadata.get(key)
 
 class WorkflowAware(object):
     """
@@ -288,6 +292,9 @@ class WorkflowAware(object):
     * Issue unaddressed: escalating...
     * Issue unaddressed: escalating...
     """
+    def __getstate__(self):
+        return self.__dict__
+
     def enterWorkflow(self, workflow=None, initialState=None, *args, **kw):
         """
         [Re-]Bind this object to a specific workflow, if the 'workflow'
@@ -316,13 +323,24 @@ class WorkflowAware(object):
         if not self.workflow.states.has_key(initialState):
             raise WorkflowError, "invalid initial state: '%s'" % initialState
 
-        self.thisWorkflowState = initialState
+        self.setState(initialState)
+        self.thisWorkflowStateName = cfg.getStateNameFromNumber(initialState)
         self.lastWorkflowState = None
 
         # Call app-specific enter-state handler for initial state, if any
-        name = 'onenter_%s' % initialState
+        name = 'onEnter%s' % self.thisWorkflowStateName.title()
         if hasattr(self, name):
             getattr(self, name)(*args, **kw)
+
+    def setState(self, number):
+        try:
+            self.lastWorkflowState = self.thisWorkflowState
+            self.lastWorkflowStateName = self.thisWorkflowStateName
+        except AttributeError:
+            self.lastWorkflowState = states.unknown
+            self.lastWorkflowStateName = cfg.getStateNameFromNumber(states.unknown)
+        self.thisWorkflowState = number
+        self.thisWorkflowStateName = cfg.getStateNameFromNumber(number)
 
     def doTrans(self, transname, *args, **kw):
         """
@@ -340,40 +358,44 @@ class WorkflowAware(object):
             # Get the new state name
             self.lastWorkflowState = state.transitions[transname].stateFrom
             state = state.transitions[transname].stateTo
+            stateName = cfg.getStateNameFromNumber(state)
         except KeyError:
             raise WorkflowError, \
                   "transition '%s' is invalid from state '%s'" \
                   % (transname, self.thisWorkflowState)
         
         # call app-specific leave- state  handler if any
-        name = 'onLeave%s' % self.thisWorkflowState
+        name = 'onLeave%s' % self.thisWorkflowStateName.title()
+        print "Checking for '%s()' method..." % name
         if hasattr(self, name):
             getattr(self, name)(*args, **kw)
 
         # Set the new state
-        self.thisWorkflowState = state
+        self.setState(state)
 
         # call app-specific transition handler if any
-        name = 'onTrans%s' % transname
+        name = 'onTrans%s' % transname.title()
+        print "Checking for '%s()' method..." % name
         if hasattr(self, name):
             getattr(self, name)(*args, **kw)
 
         # call app-specific enter-state handler if any
-        name = 'onEnter%s' % state
+        name = 'onEnter%s' % stateName.title()
+        print "Checking for '%s()' method..." % name
         if hasattr(self, name):
             getattr(self, name)(*args, **kw)
 
     def getStatename(self):
         """Return the name of the current state."""
-        return self.thisWorkflowState
+        return self.thisWorkflowStateName
 
     def getLastStatename(self):
-        return self.lastWorkflowState
+        return self.lastWorkflowStateName
 
     def getState(self):
         """Returns the current state instance."""
-        statename = self.getStatename()
-        return self.workflow.states.get(statename)
+        state = self.thisWorkflowStateName
+        return self.workflow.states.get(state)
 
     # Implements a stack that could be used to keep a record of the
     # object way through the workflow.

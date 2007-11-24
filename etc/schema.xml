@@ -69,6 +69,7 @@
         <key name="maintenance" datatype="integer" default="60" />
         <key name="ok" datatype="integer" default="70" />
         <key name="disabled" datatype="integer" default="80" />
+        <key name="escallated" datatype="integer" default="90" />
     </sectiontype>
 
     <sectiontype name="global-names">
