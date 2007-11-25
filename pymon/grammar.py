@@ -3,15 +3,13 @@ from pyparsing import Group, Optional, ZeroOrMore
 from pyparsing import nums, alphas, alphanums, oneOf
 from pyparsing import Literal, CaselessLiteral, Forward
 
-from pkg_resources import require
-require('Adytum-PyMonitor >= 1.0.4')
-from adytum.config import zconfig
+from pymon.zconfig import getDateRange
 
 legalPathChars = Word(alphanums + "~/_-().?,;")
 
 def getDateRange(orig, location, tokens):
     key = tokens.keys()[0]
-    date = zconfig.getDateRange(tokens[key])
+    date = getDateRange(tokens[key])
     return [date]
 
 def makeInt(orig, location, tokens):

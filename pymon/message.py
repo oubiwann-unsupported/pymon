@@ -4,12 +4,16 @@ class Email(object):
         self.to = to
         self.subj = subj
         self.msg = data
+
     def setFrom(self, frm):
         self.frm = frm
+
     def setTo(self, to):
         self.to = to
+
     def setSubject(self, subj):
         self.subj = subj
+
     def setData(self, data):
         self.msg = data
 

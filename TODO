@@ -1,3 +1,178 @@
+============
+REQUIREMENTS
+============
+
+* Monitor first 100s then 1000s and then millions of resources without falling
+  over.
+* Provide a simple web iterface with query results that get updated dynamically
+  (AJAX).
+* Provide a clean and clear way for writing plugins.
+* Put workflow at the core of all event-based heuristics.
+
+
+Scalability
+-----------
+
+In order for pymon to be so highly scalable, the following need to be
+satisfied:
+ * No code must block (use deferreds!), including database code.
+   - use Axiom
+   - use Storm with Twisted support
+   - use queues and/or threads (deferToThread)
+
+ * Service configuration (and anything else that needs to be confgured per
+   host) need to be easily generated, updated, etc.
+
+ * Current state info for each process needs to be accessible via a URL so the
+   object publishing for that data also needs to be well enough thought-out
+   that accessing 1000s to millions of monitored service states is "easy" and
+   intuitive.
+
+    Scalable Configuration
+    ----------------------
+
+     * Scan directories and locate configuration files
+       - load in order of increasing depth, sorted alpha-numericly
+     * Load config files and amalgamate into a single string
+     * Create a ZConfig object based on that string
+
+    It seems that ZConfig.schemaless might be just the thing. This is somethig
+    that would work well for plugins, too:
+
+     * plugins could provide the defaults
+     * etc/services/*.conf would be scanned for services
+     * then all services of that type could be concatenated into a single
+       string and a config "file" created from this
+
+    Service configuration would be inserted into pymon.conf, replacing a string
+    such as %(SERVICES)s.
+
+    The content of that string would be built from scanning all plugin
+    directories for offered services and then building appropriate ZConfig
+    config file strings. For instance, for a service, the following template
+    could be used:
+
+        <service-name>
+            %(DEFAULTS)s
+            %(CHECKS)s
+        </service-name>
+
+    where %(DEFAULTS)s would have the following form:
+
+        <service-name-defaults>
+            key1 value1
+            key2 value2
+        </service-name-defaults>
+
+    and %(CHECKS)s would be a group of notes with the following form:
+
+        <service-name-check>
+            uri     myhost1.com
+            enabled true
+        </service-name-check>
+        <service-name-check>
+            uri     myhost2.com
+            enabled true
+        </service-name-check>
+        <service-name-check>
+            uri     myhost3.com
+            enabled true
+        </service-name-check>
+
+    The next question is how to scale etc/services/*.conf. The following are
+    options, not necessarily mutually exclusive:
+
+     * one huge single file for each service type (etc/services/ping.conf)
+     * mutlple files that split groups of a single service over several files
+       (etc/services/ping/*.conf)
+     * one file for each service (etc/services/ping/x/y/z.conf); subdirectories
+       would need to be automatically managed based on number (probably not
+       more than 1000 files per directory); ideal for generated conf files, not
+       manually managed service configuration
+
+    All of those could actually be used together at the same time, as long as
+    each file has not wrapping tags, only the service tags. For example, each
+    file would have one or more of the following:
+
+        <ping-check>
+            key1 value1
+            key2 value3
+        </ping-check>
+
+    This collection of service check configuration tags would be assembled,
+    post-pended to the content of plugins/ping/defaults.conf (the contents
+    would be the sibling tag, <ping-defaults>) and then wrapped with the <ping>
+    service tag.
+
+    Naming standards for directories under etc/services need to be strictly
+    adhered to, otherwise user configuration will go overlooked or misread. All
+    service configurations should follow this form:
+
+     * etc/services/service-name.conf
+     * etc/services/service-name/*.conf
+     * etc/services/service-name/*/[*/...]*.conf
+
+    For example:
+     * etc/services/ping.conf
+     * etc/services/ping/myhost.conf
+     * etc/services/ping/myhosts.conf
+     * etc/services/ping/group1.conf
+     * etc/services/ping/group2.conf
+     * etc/services/ping/EasternSeaboard/Financial/hosts.conf
+     * etc/services/ping/WestCoast/Research/hosts.conf
+
+    In addition to the current <service-name-defaults>, we are probably also
+    going to need <service-name-all> for configuration options that apply to
+    all of a given service type. This becomes necessary when moving defaults
+    into the plugins, as:
+
+     * it was previously conceived that the defaults would be manually edited
+       by users to provide configuration options used by all services of that
+       type, and
+     * plugin code is not intended for user configuration
+
+    Documentation needs to be supplied for plugin developers. Specifically,
+    they would need to know about the following:
+    
+     * how to add notification lists (emails)
+     * how to support maintenance windows
+     * how to ... ?
+
+    We will want to provide convenience scripts that can do something like the
+    following:
+     1. portscan a network
+     2. create host files from the discovered hosts
+
+    Scalabale Database Access
+    -------------------------
+
+    Scalable JSON State URLs
+    ------------------------
+
+Workflow
+--------
+
+
+Plugins
+-------
+
+ * Adding a new monitor to pymon needs to be easy and intuitive (for a python
+   programmer familiar with Twisted, that is)
+ * All service monitors (even the bundled ones) should be in the plugins
+   directory
+
+
+AJAX
+----
+
+
+
+
+========
+Old TODO
+========
+
+
 Global Registry Overhaul
 ========================
 review monitors.BaseMonitor's maintenance window check and try to stop using

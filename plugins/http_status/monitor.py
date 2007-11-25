@@ -1,3 +1,7 @@
+from email.MIMEText import MIMEText
+
+from zope.interface import implements
+
 from twisted.python import components
 from twisted.spread import pb
 from twisted.internet import reactor

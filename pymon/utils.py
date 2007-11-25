@@ -1,10 +1,4 @@
 import re
-import md5
-import subprocess
-
-import ZConfig
-
-import simplejson
 
 URI_REGEX = r'^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?'
 URI_RE = re.compile(URI_REGEX)
@@ -206,8 +200,8 @@ class Query(dict):
 
 class LocalTools:
 
-  def getPasswdFromFile(self, filename):
-    return file(filename).readline()
+    def getPasswdFromFile(self, filename):
+        return file(filename).readline()
 
 def getService(db_type):
     from pymon.api import storage

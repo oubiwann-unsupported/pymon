@@ -1,41 +1,12 @@
 import os
 import sys
-from subprocess import call
-
-if not os.path.exists('etc/pymon.conf'):
-    print """
-Um, you have *obviously* not read the INSTALL carefully enough.
-Don't make me slap you from back in time, through your monitor. 
-I swear I'll do it. Read the INSTALL again, make the appropriate
-changes, and then rerun setup.py.
-
-Yes, you still have to do this if you are updating/reinstalling.
-We don't know where you installed it, so you have to tell us
-by providing an 'etc/pymon.conf' with a prefix. Sooner or later,
-we'll get around to using a --prefix option in the install...
-"""
-    sys.exit()
-
-# Dependency Checks
-ret = call([sys.executable, 'presetup.py'])
-if ret != 0:
-    print "\nThere was a problem running the pre-setup script.\n"
-    sys.exit()
-
-import twisted
-if twisted.__version__ < '2.1.0':
-    print "Sorry, you need to have Twisted 2.1.0 or greater installed."
-    sys.exit()
 
 import glob
-import pwd, grp
-import ez_setup
-ez_setup.use_setuptools()
-from setuptools import setup
+from distutils.core import setup
 
 version = open('VERSION').read().strip()
 
-plugins = glob.glob(os.path.join('plugins', '*.py'))
+plugins = glob.glob(os.path.join('plugins', '*'))
 schemas = glob.glob(os.path.join('etc', 'schema*.xml'))
 
 setup(name="PyMonitor",
@@ -50,9 +21,6 @@ setup(name="PyMonitor",
         conifiguration is designed to be easily and rapidly deployed,
         saving on time and overhead often associated with other 
         monitoring solutions.''',
-    install_requires=[
-        'Adytum-PyMonitor >= 1.0.4',
-    ],
     packages=[
         'pymon',
         'pymon.clients',
@@ -95,12 +63,3 @@ setup(name="PyMonitor",
     """.splitlines() if f.strip()],
 
 )
-
-# finish up
-ret = call([sys.executable, 'postsetup.py'])
-if ret != 0:
-    print "\nThere was a problem running the post-setup script.\n"
-    sys.exit()
-
-
-

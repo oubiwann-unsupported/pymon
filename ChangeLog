@@ -5,6 +5,8 @@
 * Added an adaptor for the HTTP status monitor.
 * Merged changes from Google project code.
 * Cleaned up top-level dir.
+* Removed support for setuptools.
+* Added plugin directories.
 
 2007.05.01
 

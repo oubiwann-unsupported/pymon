@@ -5,7 +5,6 @@ class ShellParser(object):
     services = None
 
     def __init__(self):
-        """init method"""
         self.tokens = None
 
     def __call__(self, command_string):
