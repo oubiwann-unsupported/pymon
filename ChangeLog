@@ -1,3 +1,9 @@
+2007.11.25
+
+* Updated the site content/news/links.
+* Added a TCP ping tool to my sandbox that will soon be included in pymon
+trunk, replacing the PB-based tool (which uses the command-line ping program).
+
 2007.11.24
 
 * Did some work on configuration crap.
