@@ -3,10 +3,9 @@ from datetime import datetime
 from twisted.internet import protocol
 
 from pymon import utils
+from pymon.utils.logger import log
 from pymon.config import cfg
-from pymon.logger import log
-
-from rules import ThresholdRules
+from pymon.workflow.rules import ThresholdRules
 
 class ClientMixin(object):
 
@@ -27,7 +26,7 @@ class ClientMixin(object):
         state = self.factory.state
         now = datetime.now().strftime("%Y.%m.%d %H:%M:%S")
         uid = self.factory.uid
-        
+
         prev = state.get('current status')
         org = self.factory.checkConfig.org
         if org:
@@ -43,7 +42,7 @@ class ClientMixin(object):
             state.set('count', 1)
         status = self.rules.status
         #if status == self.factory.stateDefs.recovering:
-        #    status = self.factory.stateDefs.ok 
+        #    status = self.factory.stateDefs.ok
         status = cfg.getStateNameFromNumber(status)
         try:
             state.set('desc', self.rules.msg)
@@ -61,17 +60,17 @@ class ClientMixin(object):
 
 class NullClient(protocol.Protocol, ClientMixin):
     '''
-    This is a client to be used when there is no actual connection to a 
+    This is a client to be used when there is no actual connection to a
     service.
     '''
     factory = None
 
     def __init__(self):
         pass
-   
+
     def __call__(self):
         pass
- 
+
     def makeConnection(self, factory):
         '''
         This is the client "init()" method.
@@ -83,8 +82,8 @@ class NullClient(protocol.Protocol, ClientMixin):
 
     def connectionMade(self):
         '''
-        We never got a connection, and therefore can't get a connection 
-        lost, so we need to do the things here that would normally get 
+        We never got a connection, and therefore can't get a connection
+        lost, so we need to do the things here that would normally get
         done in connectionLost.
         '''
         ClientMixin.connectionMade(self)

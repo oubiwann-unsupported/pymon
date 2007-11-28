@@ -12,14 +12,13 @@ from twisted.persisted import sob
 from twisted.persisted.sob import Persistent
 
 from pymon import utils
+from pymon.utils.logger import log
+from pymon.utils.registry import Registry
 from pymon.config import cfg
-from pymon.logger import log
 from pymon.workflow.base import Workflow
 from pymon.workflow.service import ServiceState, stateWorkflow
-
 from pymon import exceptions
 from pymon.interfaces import IState
-from pymon.registry import Registry
 
 initialCheckData = {
     'org': '',

@@ -9,7 +9,7 @@ AUTH_RE = re.compile(AUTH_REGEX)
 
 class Uri(object):
     '''
-    A convenience class for access parts of a URI as defined by 
+    A convenience class for access parts of a URI as defined by
     RFC 2396 (see http://www.faqs.org/rfcs/rfc2396.html).
 
     >>> u = Uri("ping://hostname")
@@ -87,7 +87,7 @@ class Authority(object):
     '''
     A custom URI Authority section parser.
 
-    This section is parsed according to the spec for URLs in 
+    This section is parsed according to the spec for URLs in
     RFC 1738, section 3.1 (http://www.faqs.org/rfcs/rfc1738.html):
         <user>:<password>@<host>:<port>/<url-path>
 
@@ -150,7 +150,7 @@ class Authority(object):
             self.port = hostport.pop(0)
         except:
             self.port = None
-            
+
 
     def getUser(self):
         return self.user
@@ -164,11 +164,11 @@ class Authority(object):
     def getPort(self):
         if self.port:
             return int(self.port)
-        
+
 class Query(dict):
     '''
     A custom URI Query section parser.
-    
+
     >>> q = Query('state=ME&city=Bangor&st=Husson+Ave.&number=1320')
     >>> q['state']
     'ME'
@@ -197,55 +197,6 @@ class Query(dict):
             self.update(query_dict)
             for key, val in query_dict.items():
                 self.__setattr__(key, val)
-
-class LocalTools:
-
-    def getPasswdFromFile(self, filename):
-        return file(filename).readline()
-
-def getService(db_type):
-    from pymon.api import storage
-    return eval('storage.%s.Service' % db_type)
-
-def updateDatabase(data):
-    pass
-
-def isInRange(datum, incl_range):
-    minimum, maximum = incl_range.split(',')
-    if int(minimum) <= int(datum) <= int(maximum):
-        return True
-    return False
-
-def isInList(datum, in_list):
-    '''
-    >>> test_list = [200, 303, 304, 401]
-    >>> isInList(200, test_list)
-    True
-    >>> isInList('200', test_list)
-    True
-    >>> isInList('405', test_list)
-    False
-    '''
-    list = [ x.strip() for x in list_string.split(',') ]
-    if str(datum) in list:
-        return True
-    return False
-
-def makeUID(scheme, uri_remainder):
-    return (('%s://%s') % (scheme, uri_remainder)).replace(' ', '+')
-
-def getTypeFromURI(uri):
-    # parse URI
-    uri = Uri(uri)
-    # get scheme
-    scheme = uri.getScheme()
-    return scheme.replace('+', ' ')
-
-def getFriendlyTypeFromURI(uri):
-    return getTypeFromURI(uri).replace('_', ' ')
-
-def getHostFromURI(uri):
-    return Uri(uri).getAuthority().getHost()
 
 def _test():
     import doctest, utils

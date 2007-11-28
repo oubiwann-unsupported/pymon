@@ -1,5 +1,4 @@
 import os
-
 from urllib2 import urlparse
 
 import simplejson
@@ -12,18 +11,17 @@ from nevow import inevow
 
 from formless import webform
 
-from pymon.config import cfg, getResource
+from pymon.config import cfg
 from pymon.application import globalRegistry
 
-pref = cfg.prefix
 web = os.path.join(*cfg.web.doc_root.split('/'))
 
 staticPath = os.path.join(*cfg.web.doc_root.split('/'))
-templates = getResource([staticPath, 'templates'])
-styles = getResource([staticPath, 'css'])
-images = getResource([staticPath, 'images'])
-icons = getResource([staticPath, 'icons'])
-javascript = getResource([staticPath, 'js'])
+templates = "%s/%s" % (staticPath, 'templates')
+styles = "%s/%s" % (staticPath, 'css')
+images = "%s/%s" % (staticPath, 'images')
+icons = "%s/%s" % (staticPath, 'icons')
+javascript = "%s/%s" % (staticPath, 'js')
 
 # convenience function
 def template(filename):
@@ -100,7 +98,7 @@ class Root(BasePage):
 
     def data_getPeers(self, context, data):
         peers = []
-        for peer in cfg.peers.urls:
+        for peer in cfg.peers.url:
             peerData = {}
             schema, hostAndPort, path, d1, d2, d3 = urlparse.urlparse(peer)
             peerData['jsonURL'] = peer

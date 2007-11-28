@@ -4,15 +4,15 @@ from twisted.internet.protocol import ClientFactory
 
 from pymon.logger import log
 from pymon.interfaces import IState
-from pymon.clients import ping
 from pymon.application import MonitorState
 from pymon.application import globalRegistry
-
 from pymon.monitors import BaseMonitor
 
-class PingMonitor(pb.PBClientFactory, BaseMonitor):
+from client import LocalAgentPingClient
 
-    protocol = ping.PingClient
+class LocalAgentPingMonitor(ClientFactory, BaseMonitor):
+
+    protocol = LocalAgentPingClient
 
     def __init__(self, uid, cfg):
         pb.PBClientFactory.__init__(self)

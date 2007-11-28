@@ -1,5 +1,5 @@
 from pymon.config import cfg
-from pymon.logger import log
+from pymon.utils.logger import log
 
 class ThresholdRules(object):
     # XXX need checks for state and separate checks for
@@ -41,7 +41,7 @@ class ThresholdRules(object):
         if self.isIn(datum, self.getOkThreshold()):
             log.debug("Status data is in 'ok' threshold.")
             status = self.factory.stateDefs.ok
-            # The 'current status' index hasn't been updated yet, so 
+            # The 'current status' index hasn't been updated yet, so
             # 'current status' is really 'last status', and 'last status'
             # is really the run prior to last.
             if self.factory.state.get('current status') not in (
@@ -116,7 +116,7 @@ class ThresholdRules(object):
         return False
 
     def isSendMessage(self):
-        if (self.isMessage and self.msgEnabled 
+        if (self.isMessage and self.msgEnabled
             and not self.cutOffReached):
             return True
         return False
@@ -130,19 +130,19 @@ class ThresholdRules(object):
             self.subj = "Unknown status"
         else:
             msg = getattr(self.factory.defaults, '%s_message' % status)
-            # XXX This try/except is a quick hack that REALLY needs to 
+            # XXX This try/except is a quick hack that REALLY needs to
             # be done right... just because it's so ugly... and...
             # ugly.
             try:
                 self.subj = msg % args
             except TypeError:
-                # for "not all arguments converted during string 
+                # for "not all arguments converted during string
                 # formatting"
                 self.subj = msg % args[0]
-                
+
     def sendIt(self):
         from pymon.message import LocalMail
-        
+
         if self.status == self.factory.stateDefs.recovering:
             status_id = self.factory.state.get('current status')
             status = cfg.getStateNameFromNumber(status_id)
@@ -151,7 +151,7 @@ class ThresholdRules(object):
         frm = self.factory.cfg.mail_from
         # XXX we probably want to make the actual sending of emails
         # non-blocking. Dererreds anyone?
-        # XXX modify this when support for escalation and different 
+        # XXX modify this when support for escalation and different
         # group levels is added to python
         for address in cfg.getMailList(self.factory.uid):
             email = LocalMail()

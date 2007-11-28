@@ -1,22 +1,15 @@
 from twisted.web.client import HTTPPageGetter
-from twisted.web.http import HTTPClient
 
-from pymon import utils
-from pymon.logger import log
+from pymon.client import ClientMixin
+from pymon.workflow import rules
+from pymon.utils.logger import log
 
-from base import ClientMixin
-
-class HttpTextClient:
-
-    def connectionLost(self, reason):
-        pass
-    
 class HttpStatusClient(HTTPPageGetter, ClientMixin):
 
     def connectionMade(self):
         HTTPPageGetter.connectionMade(self)
         ClientMixin.connectionMade(self)
-    
+
     def connectionLost(self, reason):
         status = self.factory.status
         if status:

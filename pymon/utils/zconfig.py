@@ -16,7 +16,7 @@ class ValidateCaseInsensitiveList(object):
         self.formatted_list = "'%s or '%s'" % (format, self.legal_values[-1])
 
     def validate(self, value):
-        if value.lower() in self.legal_values:    
+        if value.lower() in self.legal_values:
             return value
         raise ValueError, (
             "Value must be one of: %s" % self.formatted_list)
@@ -33,14 +33,14 @@ def checkBy(value):
 def _int(value):
     try:
         return int(value)
-        
+
     except ValueError:
         raise ValueError, "Value must be coercable to an integer."
 
 def rangedValues(range_string):
     '''
-    Validator human-readable, easily/commonly understood format 
-    representing ranges of values. At it's most basic, the following 
+    Validator human-readable, easily/commonly understood format
+    representing ranges of values. At it's most basic, the following
     is a good example:
         25-30
     A more complicated range value would be something like:
@@ -65,6 +65,17 @@ def rangedValues(range_string):
 
     return values
 
+def logLevel(log_level):
+    log_level = log_level.upper()
+    legal_values = ['FATAL', 'CRITICAL', 'ERROR',
+        'WARNING', 'INFO', 'DEBUG']
+    lvls = ', '.join(legal_values)
+    if log_level in legal_values:
+        return log_level
+    else:
+        raise ValueError, ('Values for log level' + \
+            'must be one of the following: %s' % lvls)
+
 def _parseDate(yyyymmdd_hhmmss_string):
     date, time = yyyymmdd_hhmmss_string.split()
     y, m, d = date.strip().split('.')
@@ -80,7 +91,7 @@ def getDateRange(range_string):
          'end': datetime}
     The range_string itself must be of the form:
         YYYY.MM.DD HH:MM:SS - YYYY.MM.DD HH:MM:SS
-    The range_string is split by "-" and stripped of trailing/leading 
+    The range_string is split by "-" and stripped of trailing/leading
     spaces.
     '''
     date_start, date_end = range_string.split('-')
@@ -88,7 +99,7 @@ def getDateRange(range_string):
     date_end = _parseDate(date_end.strip())
 
     return {
-        'start': date_start, 
+        'start': date_start,
         'end': date_end,
     }
-    
+

@@ -1,8 +1,28 @@
+2007.11.27
+
+* Moved all clients into plugins.
+* Moved clients.rules into workflow (for now).
+* Added missing zconfig function (copied from adytyum.config.zconfig).
+* Added code for assembling configuration from spread-out and/or generated
+config files.
+
+2007.11.26
+
+* Moved most of the clients into their own plugins directories.
+* Gave the pymon shell a name (MOS) and grouped related lib files into a new
+subpackage by that name.
+* Consolidated utility code into their own subpackage.
+
 2007.11.25
 
 * Updated the site content/news/links.
 * Added a TCP ping tool to my sandbox that will soon be included in pymon
 trunk, replacing the PB-based tool (which uses the command-line ping program).
+* Removed unused function.
+* Added a note about dispatching monitor factories with information from
+plugins.
+* Moved new PingClient out of pymon.clients.ping and into plugins.ping.client.
+* Added a version of the sandbox pinger for use in pymon.
 
 2007.11.24
 

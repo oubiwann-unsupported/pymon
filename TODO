@@ -158,8 +158,10 @@ Plugins
 
  * Adding a new monitor to pymon needs to be easy and intuitive (for a python
    programmer familiar with Twisted, that is)
- * All service monitors (even the bundled ones) should be in the plugins
+ * DONE - All service monitors (even the bundled ones) should be in the plugins
    directory
+ * Dispatching needs to work with configuration files and plugins, not just
+   python code (pymon.monitors.AbstractFactory.makeMonitor)
 
 
 AJAX
@@ -167,10 +169,16 @@ AJAX
 
 
 
+========
+New TODO
+========
 
-========
-Old TODO
-========
+* examine the reasons for having pymon.utils.LocalTools.
+* fix broken links in web ui (probelms with relative URLs?)
+
+====
+TODO
+====
 
 
 Global Registry Overhaul

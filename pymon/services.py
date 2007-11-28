@@ -3,31 +3,13 @@ from twisted.application import internet
 from nevow import vhost
 from nevow import appserver
 
-from pymon import utils
 from pymon import agents
-from pymon.logger import log
+from pymon import utils
+from pymon.utils.logger import log
+from pymon.config import refreshConfig
 from pymon.ui.web import pages
 from pymon.application import globalRegistry
 
-
-def refreshConfig():
-    log.info("Checking for config file changes...")
-    conf_file = utils.getResource(['etc', 'pymon.conf'])
-    conf = open(conf_file).read()
-    new_md5 = md5.new(conf).hexdigest()
-    old_md5 = globalRegistry.state.get('config_md5')
-    globalRegistry.state['config_md5'] = new_md5
-    # check against MD5 in state
-    if new_md5 != old_md5:
-        log.warning("Config MD5 signatures do not match; loading new config...")
-        # get and load schema, load config
-        schema_file = utils.getResource(['etc', 'schema.xml'])
-        schema = ZConfig.loadSchema(schema_file)
-        cfg, nil = ZConfig.loadConfig(schema, conf_file)
-        # set global config to newly loaded config
-        globalRegistry.config = cfg
-        #if cfg.daemontools_enabled:
-        #    subprocess.call('svc', '-t %s' % cfg.daemontools_service)
 
 def publishJSON():
     '''
@@ -49,8 +31,8 @@ def checkPeers(cfg):
     # XXX This function may not ever get used. It may be more economical
     # to simply make XHR's from JavaScript to the pymon peers.
     log.info("Checking peers...")
-    for peer in cfg.peers.urls:
-        log.info("Cheeking peer '%s'..." % peer) 
+    for peer in cfg.peers.url:
+        log.info("Cheeking peer '%s'..." % peer)
         # get file?
         # copy file?
         # or just let JS do it in the web client?
@@ -74,7 +56,7 @@ def addConfigServer(rootService):
 
 def addBackupServer(rootService):
     interval = int(rootService.cfg.admin.backups.interval)
-    backups = internet.TimerService(interval, 
+    backups = internet.TimerService(interval,
         globalRegistry.state.save)
     backups.setServiceParent(rootService)
 

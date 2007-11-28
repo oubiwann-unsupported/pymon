@@ -1,13 +1,11 @@
 from twisted.spread import pb
-
-from pymon import utils
-from pymon.logger import log
-
-from base import ClientMixin
-
 from twisted.internet.protocol import Protocol
 
-class PingClient(Protocol):
+from pymon.logger import log
+from pymon.clients.base import ClientMixin
+
+
+class PingClient(Protocol, ClientMixin):
 
     def connectionMade(self):
         self.factory.deferred.callback("success")
@@ -17,6 +15,7 @@ class PingClient(Protocol):
     def connectionLost(self, reason):
         results = self.factory.data
         log.debug(results)
+        # XXX this needs to be done in workflow
         self.rules.check(results['gain'])
         self.rules.setMsg(results['gain'], self.getHost())
         self.rules.setSubj(self.getHost(), results['loss'])
@@ -35,6 +34,7 @@ class PingClient(Protocol):
         # dump info to log file
         log.debug('State Data: '+str(self.factory.state.data)+'\n')
 
+
 class LocalAgentPingClient(pb.Broker, ClientMixin):
 
     def connectionMade(self):
@@ -44,14 +44,14 @@ class LocalAgentPingClient(pb.Broker, ClientMixin):
     def connectionLost(self, reason):
 
         from pymon.pingparser import OutputParser
-        
+
         # parse returned data
         log.debug(self.factory.data)
         parse = OutputParser(self.factory.data)
         loss = parse.getPingLoss()
         gain = parse.getPingGain()
         host = self.getHost()
- 
+
         # push the returned data through the threshold checks
         self.rules.check(gain)
         self.rules.setMsg(gain, host)
@@ -70,4 +70,3 @@ class LocalAgentPingClient(pb.Broker, ClientMixin):
 
         # dump info to log file
         log.debug('State Data: '+str(self.factory.state.data)+'\n')
-
