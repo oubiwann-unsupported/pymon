@@ -5,6 +5,7 @@
 * Added missing zconfig function (copied from adytyum.config.zconfig).
 * Added code for assembling configuration from spread-out and/or generated
 config files.
+* Updated TODO.
 
 2007.11.26
 

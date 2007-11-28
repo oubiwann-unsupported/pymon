@@ -175,6 +175,9 @@ New TODO
 
 * examine the reasons for having pymon.utils.LocalTools.
 * fix broken links in web ui (probelms with relative URLs?)
+* add dispatching support
+* add ./plugins to the python path
+* add factory configuration options to config files 
 
 ====
 TODO
