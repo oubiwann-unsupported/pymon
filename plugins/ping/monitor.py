@@ -2,7 +2,7 @@ from twisted.python import components
 from twisted.spread import pb
 from twisted.internet.protocol import ClientFactory
 
-from pymon.logger import log
+from pymon.utils.logger import log
 from pymon.interfaces import IState
 from pymon.application import MonitorState
 from pymon.application import globalRegistry
@@ -10,7 +10,7 @@ from pymon.monitors import BaseMonitor
 
 from client import LocalAgentPingClient
 
-class LocalAgentPingMonitor(ClientFactory, BaseMonitor):
+class LocalAgentPingMonitor(pb.PBClientFactory, BaseMonitor):
 
     protocol = LocalAgentPingClient
 
@@ -57,5 +57,5 @@ class LocalAgentPingMonitor(ClientFactory, BaseMonitor):
         else:
             self._failAll(reason)
 
-components.registerAdapter(MonitorState, PingMonitor, IState)
+components.registerAdapter(MonitorState, LocalAgentPingMonitor, IState)
 

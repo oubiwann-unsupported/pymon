@@ -1,8 +1,8 @@
 from twisted.spread import pb
 from twisted.internet.protocol import Protocol
 
-from pymon.logger import log
-from pymon.clients.base import ClientMixin
+from pymon.utils.logger import log
+from pymon.clients import ClientMixin
 
 
 class PingClient(Protocol, ClientMixin):

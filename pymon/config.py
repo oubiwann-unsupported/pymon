@@ -231,53 +231,47 @@ class SchemalessSection(object):
         return val
 
     def _getSection(self, name):
-        #name = name.replace('-', '_')
         for section in self.config.sections:
             if section.type == name:
-                #return section
                 return SchemalessSection(section, name)
+
+    def _getSections(self, name):
+        sections = []
+        for section in self.config.sections:
+            if section.type == name:
+                sections.append(SchemalessSection(section, name))
+        return sections
 
     def keys(self):
         return self.config.keys()
+    getSectionAttributes = keys
 
-class SchemalessConfig(BaseConfig):
+    def getName(self):
+        return self.config.type
+
+    def checks(self):
+        name = "%s-check" % self.config.type
+        return self._getSections(name)
+    checks = property(checks)
+
+    def default(self):
+        name = "%s-defaults" % self.config.type
+        return self._getSections(name)[0]
+    default = property(default)
+
+class SchemalessConfig(BaseConfig, SchemalessSection):
     """
     A wrapper for schemaless ZConfig.
     """
     def __init__(self, config):
         self.config = config
-        #self.stateLookup = self.state_definitions
         #import pdb;pdb.set_trace()
         self.stateLookup = dict([
             (getattr(self.state_definitions, x), x)
             for x in self.state_definitions.keys()])
 
     def __getattr__(self, attr):
-        attr = attr.replace('_', '-')
-        val = None
-        try:
-            val = self.__dict__[attr]
-        except KeyError:
-            try:
-                val = self.config[attr]
-            except KeyError:
-                val = self._getSection(attr)
-        if isinstance(val, SchemalessSection):
-            return val
-        try:
-            if val != None and len(val) == 1:
-                val = val[0]
-        except Exception, err:
-            import pdb;pdb.set_trace()
-        return val
-
-    def _getSection(self, name):
-        #name = name.replace('-', '_')
-        for section in self.config.sections:
-            if section.type == name:
-                #return section
-                s = SchemalessSection(section, name)
-                return s
+        return SchemalessSection.__getattr__(self, attr)
 
     def getEnabledNames(self):
         '''
@@ -293,9 +287,27 @@ class SchemalessConfig(BaseConfig):
         A set-powered means of geting the services.
         '''
         enabled = set(self.getEnabledNames())
-        pymonServices = set(self.services.keys())
-        return enabled.intersection(pymonServices)
+        # let's see if there are any configured for each enabled type
+        for name in enabled:
+            yield getattr(self.services, name)
 
+    def getCheckConfigFromURI(self, uri):
+        type = getTypeFromURI(uri)
+        uri = uri.split('://')[1]
+        checks = getattr(self.services, type).checks
+        for check in checks:
+            if check.uri == uri:
+                return check
+
+    def getDefaultsFromURI(self, uri):
+        type = getTypeFromURI(uri)
+        uri = uri.split('://')[1]
+        return getattr(self.services, type).defaults
+
+    def getServiceConfigFromURI(self, uri):
+        type = getTypeFromURI(uri)
+        uri = uri.split('://')[1]
+        return getattr(self.services, type)
 
 cfg = SchemalessConfig(config)
 

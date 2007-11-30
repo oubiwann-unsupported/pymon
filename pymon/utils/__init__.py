@@ -1,3 +1,5 @@
+from uri import Uri
+
 class LocalTools:
 
     def getPasswdFromFile(self, filename):

@@ -1,3 +1,11 @@
+2007.11.29
+
+* Fixed some bugs in the schemaless ZConfig wrapper.
+* Fixed some old import statements.
+* Fixed the agent-based ping monitor inheritance.
+* Updated pymon.engines to use the new configuration.
+* Added support for dispatching from a config file.
+
 2007.11.27
 
 * Moved all clients into plugins.

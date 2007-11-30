@@ -1,6 +1,6 @@
 from twisted.web.client import HTTPPageGetter
 
-from pymon.client import ClientMixin
+from pymon.clients import ClientMixin
 from pymon.workflow import rules
 from pymon.utils.logger import log
 

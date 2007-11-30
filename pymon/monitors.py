@@ -1,3 +1,5 @@
+import sys
+
 from twisted.internet import reactor
 
 from pymon import utils
@@ -8,6 +10,8 @@ from pymon.application import MonitorState
 from pymon.application import globalRegistry
 from pymon.clients import NullClient
 
+sys.path.append('./plugins')
+
 class AbstractFactory(object):
     '''
     A class for generating a specific type of monitor, depending
@@ -16,40 +20,26 @@ class AbstractFactory(object):
     The monitors are really client factories, and hold configuration
     and other data that the clients need or have use for.
     '''
-    def __init__(self, serviceName, uri):
+    def __init__(self, factoryName, serviceName, uri):
 
         self.uid = utils.makeUID(serviceName, uri)
         self.type = serviceName
-        self.moduleGuess = utils.guessMonitorFactoryNameFromType(serviceName)
         self.monitor = None
+        self.factoryName = factoryName
+
+    def getMonitorClass(self):
+        subMod = 'monitor'
+        dottedName = '%s.%s' % (self.type, subMod)
+        plugin = __import__(dottedName)
+        monitor = getattr(plugin, subMod)
+        return getattr(monitor, self.factoryName)
 
     def makeMonitor(self, cfg):
         '''
         Generic method for client creation.
         '''
-        # XXX enable loading the monitors from plugins or library; need to have
-        # plugins in the path first and need to work on some kind of path
-        # searching (e.g., ['plugins.%s' % self.type, 'pymon.monitors']).
-        if self.type == 'ping':
-            return self.makePingMonitor(cfg)
-        if self.type == 'http_status':
-            return self.makeHttpStatusMonitor(cfg)
-        if self.type == 'http_text':
-            return self.makeHttpTextMonitor(cfg)
-        if self.type == 'ftp':
-            return self.makeFtpMonitorMonitor(cfg)
-        if self.type == 'smtp_status':
-            return self.makeSmtpStatusMonitor(cfg)
-        if self.type == 'smtp_mail':
-            return self.makeSmtpMailMonitor(cfg)
+        return self.getMonitorClass()(self.uid, cfg)
 
-    def makePingMonitor(self, cfg):
-        monitor = PingMonitor(self.uid, cfg)
-        return monitor
-
-    def makeHttpStatusMonitor(self, cfg):
-        monitor = HttpStatusMonitor(self.uid, cfg)
-        return monitor
 
 class BaseMonitor(object):
 
