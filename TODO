@@ -175,6 +175,10 @@ New TODO
 
 * fix the *FromURI methods in the schemaless ZConfig wrapper to properly use
   self.services and self.default.
+* write a script that uses nmap to:
+  1. locate hosts on a network
+  2. identify running services for each host
+  3. create service check configs for each service on each host
 * examine the reasons for having pymon.utils.LocalTools.
 * fix broken links in web ui (probelms with relative URLs?)
 * DONE - add dispatching support
