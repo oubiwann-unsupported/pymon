@@ -173,6 +173,14 @@ AJAX
 New TODO
 ========
 
+* create a pymon-dev mail list on google groups
+* start work on defining RPC for pymon
+* give more consideration to the following features:
+  - events (state transitions that meet the notification theshold requirements)
+  - event hisory
+  - event acknowledgement
+  - services states web UI (AJAX, batching results, etc.)
+  - front page/dashboard and graphs
 * fix the *FromURI methods in the schemaless ZConfig wrapper to properly use
   self.services and self.default.
 * write a script that uses nmap to:
