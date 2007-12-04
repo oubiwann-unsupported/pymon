@@ -14,7 +14,6 @@ def runTwistedFactoryEngine(rootService):
     cfg = rootService.cfg
     enabledServices = cfg.getEnabledServices()
     # iterate through the enabled services
-    import pdb;pdb.set_trace()
     for pymonService in enabledServices:
         serviceName = pymonService.getName()
         log.debug("Service name: " + serviceName)

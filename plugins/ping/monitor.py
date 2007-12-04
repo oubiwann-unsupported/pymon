@@ -27,7 +27,7 @@ class LocalAgentPingMonitor(pb.PBClientFactory, BaseMonitor):
         self.args = [count, self.host]
 
         #options = ['ping', '-c %s' % count, '%s' % self.host]
-        port = cfg.agents.port
+        port = int(cfg.agents.port)
         self.reactor_params = ('127.0.0.1', port, self)
 
     def __call__(self):

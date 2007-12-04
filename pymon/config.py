@@ -17,19 +17,6 @@ def getConfigFiles():
             if name.endswith('.conf'):
                 yield "%s/%s" % (base, name)
 
-def assembleConfig_old():
-    fh = open("etc/pymon.conf")
-    data = fh.read() + '<services>'
-    fh.close()
-    for path in getConfigFiles():
-        fh = open(path)
-        data += fh.read()
-        fh.close()
-    data += '</services>'
-    configFile = StringIO(data)
-    print configFile.getvalue()
-    return configFile
-
 legalEndings = ['-check', '-defaults']
 
 def getBaseName(name):
@@ -70,7 +57,6 @@ def assembleConfig():
     return configFile
 
 config = loadConfigFile(assembleConfig())
-#import pdb;pdb.set_trace()
 
 def refreshConfig():
     log.info("Checking for config file changes...")
@@ -191,7 +177,7 @@ class BaseConfig(object):
         return self.stateLookup.keys()
 
     def getStateNameFromNumber(self, num):
-        return self.stateLookup[num]
+        return self.stateLookup[str(num)]
 
     def getStateNumberFromName(self, name):
         return getattr(self.state_definitions, name.lower())
@@ -302,9 +288,7 @@ class SchemalessConfig(BaseConfig, SchemalessSection):
         type = getTypeFromURI(uri)
         svc = self.getServiceConfigFromURI(uri)
         uri = uri.split('://')[1]
-        checks = getattr(svc, '%s_check' % type)
-        import pdb;pdb.set_trace()
-        for check in checks:
+        for check in svc.checks:
             if check.uri == uri:
                 return check
 

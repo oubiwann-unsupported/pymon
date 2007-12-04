@@ -24,12 +24,14 @@ class AbstractFactory(object):
 
         self.uid = utils.makeUID(serviceName, uri)
         self.type = serviceName
+        self.typeClean = serviceName.replace('-', '_')
+        self.typeHuman = serviceName.replace('-', ' ')
         self.monitor = None
         self.factoryName = factoryName
 
     def getMonitorClass(self):
         subMod = 'monitor'
-        dottedName = '%s.%s' % (self.type, subMod)
+        dottedName = '%s.%s' % (self.typeClean, subMod)
         plugin = __import__(dottedName)
         monitor = getattr(plugin, subMod)
         return getattr(monitor, self.factoryName)
@@ -92,15 +94,14 @@ class BaseMonitor(object):
             interval = seconds
             log.debug('Manually set interval')
         else:
-            try:
-                interval = self.checkConfig.interval
-                if interval:
-                    log.debug('Set interval from service check config')
-            except AttributeError:
+            interval = self.checkConfig.interval
+            if interval:
+                log.debug('Set interval from service check config')
+            else:
                 interval = useDef()
         if not interval:
             interval = useDef()
-        self.interval = interval
+        self.interval = int(interval)
 
     def getInterval(self):
         return self.interval

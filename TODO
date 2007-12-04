@@ -173,9 +173,6 @@ AJAX
 New TODO
 ========
 
-* Fix the fact that only one check config is getting saved in the StringIO
-  config.
-* DONE - create a pymon-dev mail list on google groups
 * start work on defining RPC for pymon
 * give more consideration to the following features:
   - events (state transitions that meet the notification theshold requirements)
@@ -195,6 +192,9 @@ New TODO
 * DONE - add dispatching support
 * DONE - add ./plugins to the python path
 * DONE - add factory configuration options to config files
+* DONE - create a pymon-dev mail list on google groups
+* DONE - Fix the fact that only one check config is getting saved in the StringIO
+  config.
 
 ====
 TODO

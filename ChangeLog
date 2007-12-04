@@ -1,6 +1,9 @@
 2007.12.04
 
 * Fixed the bugs in the config assembly.
+* Removed old config function.
+* A few more application fixes (part of the new config refactor).
+* Updated plugin configs with message defaults.
 
 2007.12.03
 

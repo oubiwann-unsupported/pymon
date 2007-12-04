@@ -3,6 +3,7 @@ from twisted.internet.protocol import Protocol
 
 from pymon.utils.logger import log
 from pymon.clients import ClientMixin
+from pymon.utils.pingparser import OutputParser
 
 
 class PingClient(Protocol, ClientMixin):
@@ -42,8 +43,6 @@ class LocalAgentPingClient(pb.Broker, ClientMixin):
         ClientMixin.connectionMade(self)
 
     def connectionLost(self, reason):
-
-        from pymon.pingparser import OutputParser
 
         # parse returned data
         log.debug(self.factory.data)

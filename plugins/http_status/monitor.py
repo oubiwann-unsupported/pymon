@@ -6,7 +6,8 @@ from twisted.internet.defer import TimeoutError
 from pymon.utils.logger import log
 from pymon.interfaces import IState
 from pymon.application import MonitorState
-from pymon.clients.base import NullClient
+from pymon.clients import NullClient
+from pymon.monitors import BaseMonitor
 
 from client import HttpStatusClient
 
@@ -27,7 +28,8 @@ class HttpStatusMonitor(HTTPClientFactory, BaseMonitor):
         # XXX write a method to get the http port from defaults or service
         # config
         #port = self.checkConfig.http_port
-        port = self.defaults.remote_port
+        #import pdb;pdb.set_trace()
+        port = int(self.defaults.remote_port)
         self.reactor_params = (self.host, port, self)
 
     def __repr__(self):
