@@ -30,11 +30,18 @@ def assembleConfig_old():
     print configFile.getvalue()
     return configFile
 
+legalEndings = ['-check', '-defaults']
+
+def getBaseName(name):
+    for end in legalEndings:
+        if name.endswith(end):
+            return name.split(end)[0]
+
 # we need to iterate through the files and keep track of their opening tags so
 # that we can group services together under their own tags
 def assembleConfig():
-    # first, let's gather all the data so that we can sort by tag name
-    data = []
+    # first, let's gather all the data, grouped by tag
+    groups = {}
     for path in getConfigFiles():
         fh = open(path)
         raw = fh.read()
@@ -42,28 +49,23 @@ def assembleConfig():
         tag = raw.split('\n')[0].strip()
         tag = tag.replace('<', '').replace('>', '')
         if tag:
-            data.append((tag, raw))
-    data.sort()
-    import pdb;pdb.set_trace()
-    from pprint import pprint
-    [x for x in data]
-    # next we need to group service configs according to type
-    wrapped = {}
-    for tag, data in dict(data).items():
-        print tag
-        container = '-'.join(tag.split('-')[:-1])
-        wrapped.setdefault(container, '')
-        wrapped[container] += data
+            groups.setdefault(tag, [])
+            groups[tag].append(raw)
+    # next, reduce all the tags to their base names
+    containers = set([getBaseName(x) for x in groups.keys()])
+    # now we need to group service configs according to type
+    sections = ''
+    for container in containers:
+        sections += '<%s>\n' % container
+        for tag, data in groups.items():
+            if tag in [container+x for x in legalEndings]:
+                for entry in data:
+                    sections += entry
+        sections += '</%s>\n' % container
     # now let's assemble the thing
     fh = open("etc/pymon.conf")
-    conf = fh.read() + '<services>\n'
+    conf = fh.read() + '<services>\n%s</services>\n' % sections
     fh.close()
-    for tag, data in wrapped.items():
-        group = ''
-        for item in data:
-            group += item
-        conf += '<%s>\n%s\n</%s>\n' % (tag, group, tag)
-    conf += '\n</services>'
     configFile = StringIO(conf)
     return configFile
 
