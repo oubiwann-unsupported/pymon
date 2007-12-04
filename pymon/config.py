@@ -44,9 +44,13 @@ def assembleConfig():
         if tag:
             data.append((tag, raw))
     data.sort()
+    import pdb;pdb.set_trace()
+    from pprint import pprint
+    [x for x in data]
     # next we need to group service configs according to type
     wrapped = {}
     for tag, data in dict(data).items():
+        print tag
         container = '-'.join(tag.split('-')[:-1])
         wrapped.setdefault(container, '')
         wrapped[container] += data
@@ -238,6 +242,7 @@ class SchemalessSection(object):
     def _getSections(self, name):
         sections = []
         for section in self.config.sections:
+            print section.type
             if section.type == name:
                 sections.append(SchemalessSection(section, name))
         return sections
@@ -293,16 +298,18 @@ class SchemalessConfig(BaseConfig, SchemalessSection):
 
     def getCheckConfigFromURI(self, uri):
         type = getTypeFromURI(uri)
+        svc = self.getServiceConfigFromURI(uri)
         uri = uri.split('://')[1]
-        checks = getattr(self.services, type).checks
+        checks = getattr(svc, '%s_check' % type)
+        import pdb;pdb.set_trace()
         for check in checks:
             if check.uri == uri:
                 return check
 
     def getDefaultsFromURI(self, uri):
         type = getTypeFromURI(uri)
-        uri = uri.split('://')[1]
-        return getattr(self.services, type).defaults
+        svc = self.getServiceConfigFromURI(uri)
+        return getattr(svc, '%s_defaults' % type)
 
     def getServiceConfigFromURI(self, uri):
         type = getTypeFromURI(uri)

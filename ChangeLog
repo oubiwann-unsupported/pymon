@@ -1,3 +1,9 @@
+2007.12.03
+
+* Added a "resources" directory for none-code references.
+* Added the new pymon.conf file.
+* Added demo services configuration.
+
 2007.11.30
 
 * Updated news and TODO.

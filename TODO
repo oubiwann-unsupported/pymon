@@ -173,7 +173,9 @@ AJAX
 New TODO
 ========
 
-* create a pymon-dev mail list on google groups
+* Fix the fact that only one check config is getting saved in the StringIO
+  config.
+* DONE - create a pymon-dev mail list on google groups
 * start work on defining RPC for pymon
 * give more consideration to the following features:
   - events (state transitions that meet the notification theshold requirements)
@@ -187,11 +189,12 @@ New TODO
   1. locate hosts on a network
   2. identify running services for each host
   3. create service check configs for each service on each host
+* do the same for a twisted-based script (no nmap).
 * examine the reasons for having pymon.utils.LocalTools.
 * fix broken links in web ui (probelms with relative URLs?)
 * DONE - add dispatching support
 * DONE - add ./plugins to the python path
-* DONE - add factory configuration options to config files 
+* DONE - add factory configuration options to config files
 
 ====
 TODO
