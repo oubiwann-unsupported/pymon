@@ -173,6 +173,12 @@ AJAX
 New TODO
 ========
 
+* create a doc/wiki page on pymon plugins (what they are, what they're based
+  on, how they work)
+* create a doc/wiki on how to *write* a pymon plugin
+* create a doc/wiki on how adaptors are used in pymon (e.g., IState)
+* services seem to stay in RECOVERING continuously, and this is obviously
+  wrong
 * start work on defining RPC for pymon
 * give more consideration to the following features:
   - events (state transitions that meet the notification theshold requirements)
@@ -180,8 +186,6 @@ New TODO
   - event acknowledgement
   - services states web UI (AJAX, batching results, etc.)
   - front page/dashboard and graphs
-* fix the *FromURI methods in the schemaless ZConfig wrapper to properly use
-  self.services and self.default.
 * write a script that uses nmap to:
   1. locate hosts on a network
   2. identify running services for each host
@@ -195,6 +199,8 @@ New TODO
 * DONE - create a pymon-dev mail list on google groups
 * DONE - Fix the fact that only one check config is getting saved in the StringIO
   config.
+* DONE - fix the *FromURI methods in the schemaless ZConfig wrapper to properly use
+  self.services and self.default.
 
 ====
 TODO
