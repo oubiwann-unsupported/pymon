@@ -45,7 +45,12 @@ class LocalAgentPingClient(pb.Broker, ClientMixin):
     def connectionLost(self, reason):
 
         # parse returned data
-        log.debug(self.factory.data)
+        try:
+            log.debug(self.factory.data)
+        except Exception, e:
+            # something has gone terribly wrong ...
+            log.error(e)
+            return
         parse = OutputParser(self.factory.data)
         loss = parse.getPingLoss()
         gain = parse.getPingGain()
@@ -69,3 +74,4 @@ class LocalAgentPingClient(pb.Broker, ClientMixin):
 
         # dump info to log file
         log.debug('State Data: '+str(self.factory.state.data)+'\n')
+

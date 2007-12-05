@@ -68,11 +68,11 @@ class ThresholdRules(object):
         Generic method for checking data against thresholds
         '''
         if self.threshold_type == 'ranged':
-            self.rangedIsIn(datum, threshold)
+            return self.rangedIsIn(datum, threshold)
         elif self.threshold_type == 'listed':
-            self.listedIsIn(datum, threshold)
+            return self.listedIsIn(datum, threshold)
         elif self.threshold_type == 'exact':
-            self.isExactly(datum, threshold)
+            return self.isExactly(datum, threshold)
 
     def rangedIsIn(self, datum, threshold):
         log.debug("Using method 'rangedIsIn'...")
@@ -80,7 +80,9 @@ class ThresholdRules(object):
         log.debug("datum type: %s" % type(datum))
         log.debug("threshold: %s" % threshold)
         log.debug("threshold type: %s" % type(threshold))
-        if datum in threshold:
+        threshold = [int(x) for x in threshold.split('-')]
+        threshold[1] += 1
+        if datum in xrange(*threshold):
             return True
         else:
             return False

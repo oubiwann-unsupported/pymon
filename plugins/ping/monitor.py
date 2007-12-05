@@ -34,7 +34,9 @@ class LocalAgentPingMonitor(pb.PBClientFactory, BaseMonitor):
         BaseMonitor.__call__(self)
         d = self.getRootObject()
         d.addCallback(self.pingHost)
+        d.addErrback(log.error)
         d.addCallback(self.getPingReturn)
+        d.addErrback(log.error)
 
     def pingHost(self, pbobject):
         return pbobject.callRemote('call', self.binary, self.args)

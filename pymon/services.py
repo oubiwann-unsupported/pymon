@@ -76,3 +76,4 @@ def addPeerChecker(rootService):
     peerChecker = internet.TimerService(interval, checkPeers,
         rootService.cfg)
     peerChecker.setServiceParent(rootService)
+

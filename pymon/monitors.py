@@ -105,3 +105,4 @@ class BaseMonitor(object):
 
     def getInterval(self):
         return self.interval
+

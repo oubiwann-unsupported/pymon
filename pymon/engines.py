@@ -28,7 +28,7 @@ def runTwistedFactoryEngine(rootService):
             # XXX this next line could be a potential memory hog
             globalRegistry.factories.update({monitor.uid:monitor})
             interval = monitor.getInterval()
-            log.debug("Service interval: "+str(interval))
+            log.debug("Service interval: %s" % interval)
             service = internet.TimerService(interval, monitor)
             service.setServiceParent(rootService)
 

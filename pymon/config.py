@@ -203,6 +203,12 @@ class SchemalessSection(object):
         #self.stateLookup = self.state_definitions
         #import pdb;pdb.set_trace()
 
+    def __repr__(self):
+        name = self.config.type
+        if not name:
+            name = 'main'
+        return "<%s: %s>" % (self.__class__.__name__, name)
+
     def __getattr__(self, attr):
         attr = attr.replace('_', '-')
         val = None
@@ -230,7 +236,6 @@ class SchemalessSection(object):
     def _getSections(self, name):
         sections = []
         for section in self.config.sections:
-            print section.type
             if section.type == name:
                 sections.append(SchemalessSection(section, name))
         return sections
@@ -273,7 +278,10 @@ class SchemalessConfig(BaseConfig, SchemalessSection):
         '''
         # XXX this is ugly and wrong... replacing characters like this
         # shouldn't happen at this level. This should be enforced elsewhere.
-        return [ x.replace(' ', '_') for x in self.monitor_status.enable ]
+        enabled = self.monitor_status.enable
+        if isinstance(enabled, str):
+            enabled = [enabled]
+        return [ x.replace(' ', '_') for x in enabled ]
 
     def getEnabledServices(self):
         '''

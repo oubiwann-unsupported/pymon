@@ -4,6 +4,14 @@
 * Removed old config function.
 * A few more application fixes (part of the new config refactor).
 * Updated plugin configs with message defaults.
+* Added a repr to the config classes.
+* Cleaned up some whitespace.
+* Added missing configuration directives.
+* Added some error checking (try/excepts and addErrbacks).
+* Updated the pb-based agent with a new required attribute.
+* Added code for the new config that properly processes ranged values.
+* Fixed a bug in rules.ThresholdRules.isIn() so that it now actually returns a
+value.
 
 2007.12.03
 

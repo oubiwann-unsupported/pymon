@@ -1,4 +1,7 @@
+import os
+
 from twisted.spread import pb
+from twisted.spread.jelly import globalSecurity
 from twisted.spread.flavors import IPBRoot
 from twisted.internet import utils
 
@@ -15,17 +18,16 @@ class ProcessServer(pb.Root):
     client can be connected to it in order to run a local process and have
     all the benefits of using twisted factories/clients/servers.
 
-	Note that the "remote_" is from the point of view of this perspective
-	broker server and has nothing to do with pymon's perspective of
-	"remote" or "local". If this process server runs on the local host,
-	it will run the local binary, but to the perspective broker client,
-	it will be remote.
+    Note that the "remote_" is from the point of view of this perspective
+    broker server and has nothing to do with pymon's perspective of
+    "remote" or "local". If this process server runs on the local host,
+    it will run the local binary, but to the perspective broker client,
+    it will be remote.
     '''
     def remote_call(self, cmd, args):
         '''
         Execute a 'remote' binary.
         '''
-        import os
         d = utils.getProcessOutput(cmd, args, env=os.environ, errortoo=1)
         return d
 
@@ -38,3 +40,5 @@ class ProcessServerFactory(pb.PBServerFactory):
     def __init__(self):
         self.root = IPBRoot(ProcessServer())
         self.unsafeTracebacks = False
+        self.security = globalSecurity
+
