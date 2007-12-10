@@ -133,7 +133,7 @@ satisfied:
 
     Documentation needs to be supplied for plugin developers. Specifically,
     they would need to know about the following:
-    
+
      * how to add notification lists (emails)
      * how to support maintenance windows
      * how to ... ?
@@ -151,6 +151,14 @@ satisfied:
 
 Workflow
 --------
+ Currently:
+ * Rules are 'built' when a monnitor client makes a connection (buildRules())
+ * Rules are 'checked' when a monitor client connection is lost (sules.check())
+
+ Needed:
+ * Define an exact relationship between rules (x is WARN if status is between b
+   and c) and workflow (perform tasks i and j when state transitions from m
+   to n)
 
 
 Plugins
@@ -173,6 +181,8 @@ AJAX
 New TODO
 ========
 
+* look into BaseMonitor.__call__ more closely (see XXX comment).
+* is pymon.clients.BaseClient.updateState doing its job?
 * rename all occurances of reactor_params to reactorArgs.
 * clean up old crap in pymon.monitors.
 * clean up old crap in pymon.clients.
@@ -242,8 +252,8 @@ State and Workflow overhaul
     o serviceStateInstance needs to have access to checkStateInstance
 * Upon monitors parsing/proccessing returned network data:
     o monitorStateInstance.workflow.doTrans(this_transition_name)
-    o doTran() will initiate the actions appropriate for that particular 
-        transition
+    o doTran() will initiate the actions appropriate for that particular
+      transition
 * DONE - Convert all dictionary access to set/get access:
     o DONE - clients/base.py, line 36
 * Renable the pickling (state-saving).

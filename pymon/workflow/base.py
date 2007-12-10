@@ -150,11 +150,11 @@ class WorkflowAware(object):
     this means that they keep track of the current state of the object.
 
     Specific application semantics for states and transitions can be
-    implemented as methods of the WorkflowAware-derived "developer 
+    implemented as methods of the WorkflowAware-derived "developer
     class". These methods get associated with the individual
-    states and transitions by a simple naming scheme. For example, 
-    if a workflow has two states 'Private' and 'Public', and a 
-    transition 'Publish' that goes from 'Private' to 'Public', 
+    states and transitions by a simple naming scheme. For example,
+    if a workflow has two states 'Private' and 'Public', and a
+    transition 'Publish' that goes from 'Private' to 'Public',
     the following happens when the transition is executed:
 
       1. if implemented, the method 'onLeavePrivate' is called
@@ -166,14 +166,14 @@ class WorkflowAware(object):
 
     These state/transition "handlers" can also be passed arguments
     from the caller of the transition; for instance, in a web-based
-    system it might be useful to have the HTTP request that triggered 
+    system it might be useful to have the HTTP request that triggered
     the current transition available in the handlers.
 
     A simple stack with three methods, 'pushdata', 'popdata' adn 'getdata',
     is implemented. It can be used, for example, to keep record of the states
     the object has been in.
 
-    # Lets test this puppy in action. 
+    # Lets test this puppy in action.
     # Instantiate and setup workflow states:
     >>> wf = Workflow()
     >>> wf.addState('Normal',
@@ -184,7 +184,7 @@ class WorkflowAware(object):
     ...   description='App is in ERROR state')
     >>> wf.addState('Escalate',
     ...   description='App is escalating')
-    
+
     # setup workflow transitions
     >>> wf.addTrans('Normaling', ['Normal', 'Escalate', 'Warn', 'Error'], 'Normal',
     ...   description='The app has gone to OK')
@@ -307,7 +307,7 @@ class WorkflowAware(object):
         a default initial state).
 
         Extra arguments args are passed to the enter-state handler (if any)
-        of the initial state. 
+        of the initial state.
         """
         # Set the associated workflow
         if workflow is not None:
@@ -345,7 +345,7 @@ class WorkflowAware(object):
     def doTrans(self, transname, *args, **kw):
         """
         Performs a transition, changes the state of the object and
-        runs any defined state/transition handlers. Extra 
+        runs any defined state/transition handlers. Extra
         arguments are passed down to all handlers called.
         """
         # Get the workflow
@@ -353,7 +353,7 @@ class WorkflowAware(object):
 
         # Get the current state
         state = self.workflow.states[self.thisWorkflowState]
-        
+
         try:
             # Get the new state name
             self.lastWorkflowState = state.transitions[transname].stateFrom
@@ -363,7 +363,7 @@ class WorkflowAware(object):
             raise WorkflowError, \
                   "transition '%s' is invalid from state '%s'" \
                   % (transname, self.thisWorkflowState)
-        
+
         # call app-specific leave- state  handler if any
         name = 'onLeave%s' % self.thisWorkflowStateName.title()
         print "Checking for '%s()' method..." % name

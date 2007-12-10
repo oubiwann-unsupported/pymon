@@ -54,6 +54,7 @@ class BaseMonitor(object):
 
     def __call__(self):
         # update the configuration in case it has changed
+        # XXX not sure if this is doing what we expect it to be doing...
         IState(self).save()
         self.state = IState(self)
         if self.cfg.app.checkForMaintenanceWindow(self.cfg.check):

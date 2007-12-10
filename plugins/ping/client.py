@@ -73,5 +73,5 @@ class LocalAgentPingClient(pb.Broker, ClientMixin):
         self.updateState()
 
         # dump info to log file
-        log.debug('State Data: '+str(self.factory.state.data)+'\n')
+        log.info('State Data: '+str(self.factory.state.data)+'\n')
 

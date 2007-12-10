@@ -1,6 +1,8 @@
 2007.12.09
 
 * Cleaned up pymon.monitors.BaseMonitor (and affected code).
+* Took some notes for starting on cleaning up current rules by integrating
+workflow.
 
 2007.12.04
 
