@@ -173,6 +173,7 @@ AJAX
 New TODO
 ========
 
+* rename all occurances of reactor_params to reactorArgs.
 * clean up old crap in pymon.monitors.
 * clean up old crap in pymon.clients.
 * add support for twisted-based TCP pinger.

@@ -41,8 +41,8 @@ class ClientMixin(object):
         else:
             state.set('count', 1)
         status = self.rules.status
-        #if status == self.factory.stateDefs.recovering:
-        #    status = self.factory.stateDefs.ok
+        if status == self.factory.cfg.app.state_definitions.recovering:
+            status = self.factory.cfg.app.state_definitions.ok
         status = cfg.getStateNameFromNumber(status)
         try:
             state.set('desc', self.rules.msg)
