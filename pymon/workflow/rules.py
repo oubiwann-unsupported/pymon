@@ -10,28 +10,28 @@ class ThresholdRules(object):
     # messages sent? When are they NOT sent? Who gets what?
 
     def getOkThreshold(self):
-        if self.factory.checkConfig.ok_threshold:
-            return self.factory.checkConfig.ok_threshold
+        if self.factory.cfg.check.ok_threshold:
+            return self.factory.cfg.check.ok_threshold
         else:
-            return self.factory.defaults.ok_threshold
+            return self.factory.cfg.defaults.ok_threshold
 
     def getWarnThreshold(self):
-        if self.factory.checkConfig.warn_threshold:
-            return self.factory.checkConfig.warn_threshold
+        if self.factory.cfg.check.warn_threshold:
+            return self.factory.cfg.check.warn_threshold
         else:
-            return self.factory.defaults.warn_threshold
+            return self.factory.cfg.defaults.warn_threshold
 
     def getErrorThreshold(self):
-        if self.factory.checkConfig.error_threshold:
-            return self.factory.checkConfig.error_threshold
+        if self.factory.cfg.check.error_threshold:
+            return self.factory.cfg.check.error_threshold
         else:
-            return self.factory.defaults.error_threshold
+            return self.factory.cfg.defaults.error_threshold
 
     def getFailedThreshold(self):
-        if self.factory.checkConfig.failed_threshold:
-            return self.factory.checkConfig.failed_threshold
+        if self.factory.cfg.check.failed_threshold:
+            return self.factory.cfg.check.failed_threshold
         else:
-            return self.factory.defaults.failed_threshold
+            return self.factory.cfg.defaults.failed_threshold
 
     def setType(self, type):
         self.threshold_type = type
@@ -40,28 +40,28 @@ class ThresholdRules(object):
         log.debug("Got check data '%s'." % datum)
         if self.isIn(datum, self.getOkThreshold()):
             log.debug("Status data is in 'ok' threshold.")
-            status = self.factory.stateDefs.ok
+            status = self.factory.cfg.app.state_definitions.ok
             # The 'current status' index hasn't been updated yet, so
             # 'current status' is really 'last status', and 'last status'
             # is really the run prior to last.
             if self.factory.state.get('current status') not in (
-                self.factory.stateDefs.ok,
-                self.factory.stateDefs.recovering):
-                status = self.factory.stateDefs.recovering
+                self.factory.cfg.app.state_definitions.ok,
+                self.factory.cfg.app.state_definitions.recovering):
+                status = self.factory.cfg.app.state_definitions.recovering
             self.status = status
         elif self.isIn(datum, self.getWarnThreshold()):
             log.debug("Status data is in 'warn' threshold.")
-            self.status = self.factory.stateDefs.warn
+            self.status = self.factory.cfg.app.state_definitions.warn
         elif self.isIn(datum, self.getErrorThreshold()):
             log.debug("Status data is in 'error' threshold.")
-            self.status = self.factory.stateDefs.error
+            self.status = self.factory.cfg.app.state_definitions.error
         elif self.isIn(datum, self.getFailedThreshold()):
             log.debug("Status data is in 'failed' threshold.")
-            self.status = self.factory.stateDefs.failed
-        elif datum == self.factory.stateDefs.failed:
-            self.status = self.factory.stateDefs.failed
+            self.status = self.factory.cfg.app.state_definitions.failed
+        elif datum == self.factory.cfg.app.state_definitions.failed:
+            self.status = self.factory.cfg.app.state_definitions.failed
         else:
-            self.status = self.factory.stateDefs.unknown
+            self.status = self.factory.cfg.app.state_definitions.unknown
 
     def isIn(self, datum, threshold):
         '''
@@ -100,7 +100,7 @@ class ThresholdRules(object):
         return False
 
     def isMessage(self):
-        if self.status == self.factory.stateDefs.ok:
+        if self.status == self.factory.cfg.app.state_definitions.ok:
             return False
         return True
 
@@ -124,14 +124,14 @@ class ThresholdRules(object):
         return False
 
     def setMsg(self, *args):
-        self.msg = self.factory.defaults.message_template % args
+        self.msg = self.factory.cfg.defaults.message_template % args
 
     def setSubj(self, *args):
         status = cfg.getStateNameFromNumber(self.status)
         if status == 'unknown':
             self.subj = "Unknown status"
         else:
-            msg = getattr(self.factory.defaults, '%s_message' % status)
+            msg = getattr(self.factory.cfg.defaults, '%s_message' % status)
             # XXX This try/except is a quick hack that REALLY needs to
             # be done right... just because it's so ugly... and...
             # ugly.
@@ -145,7 +145,7 @@ class ThresholdRules(object):
     def sendIt(self):
         from pymon.message import LocalMail
 
-        if self.status == self.factory.stateDefs.recovering:
+        if self.status == self.factory.cfg.app.state_definitions.recovering:
             status_id = self.factory.state.get('current status')
             status = cfg.getStateNameFromNumber(status_id)
             self.msg = self.msg + "\r\nRecovering from '%s'." % status
@@ -163,5 +163,5 @@ class ThresholdRules(object):
             email.setFrom(frm)
             email.setData(self.msg)
             email.send()
-            log.info(self.factory.defaults.sent_message % address)
+            log.info(self.factory.cfg.defaults.sent_message % address)
 

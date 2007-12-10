@@ -263,7 +263,6 @@ class SchemalessConfig(BaseConfig, SchemalessSection):
     """
     def __init__(self, config):
         self.config = config
-        #import pdb;pdb.set_trace()
         self.stateLookup = dict([
             (getattr(self.state_definitions, x), x)
             for x in self.state_definitions.keys()])
@@ -310,5 +309,37 @@ class SchemalessConfig(BaseConfig, SchemalessSection):
         uri = uri.split('://')[1]
         return getattr(self.services, type)
 
+    def configFactory(self, uri):
+        return CheckConfig(uri)
+
+
 cfg = SchemalessConfig(config)
+
+
+class CheckConfig(object):
+    """
+    The purpse of this class is clarity and convenience. In particular, it
+    provides three attributes, each for the three different types of configs
+    needed by any given pymon monitor:
+        1. the general, application-wide configuration
+        2. the defaults for the given monitor type, and
+        3. the monitor-specific confniguration (e.g., hostname to check)
+    """
+    def __init__(self, uri):
+        self.uri = uri
+
+    def app(self):
+        return cfg
+    app = property(app)
+
+    def defaults(self):
+        return cfg.getDefaultsFromURI(self.uri)
+    defaults = property(defaults)
+
+    def check(self):
+        return cfg.getCheckConfigFromURI(self.uri)
+    check = property(check)
+
+
+
 

@@ -24,7 +24,7 @@ def runTwistedFactoryEngine(rootService):
             log.debug("Service check uri: "+check.uri)
             factory = monitors.AbstractFactory(factoryName, serviceName,
                                                check.uri)
-            monitor = factory.makeMonitor(cfg)
+            monitor = factory.makeMonitor(cfg.configFactory(factory.uid))
             # XXX this next line could be a potential memory hog
             globalRegistry.factories.update({monitor.uid:monitor})
             interval = monitor.getInterval()

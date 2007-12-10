@@ -15,7 +15,7 @@ class ClientMixin(object):
 
     def buildRules(self):
         rules = ThresholdRules()
-        rules.setType(self.factory.defaults.threshold_type)
+        rules.setType(self.factory.cfg.defaults.threshold_type)
         rules.factory = self.factory
         self.rules = rules
 
@@ -28,7 +28,7 @@ class ClientMixin(object):
         uid = self.factory.uid
 
         prev = state.get('current status')
-        org = self.factory.checkConfig.org
+        org = self.factory.cfg.check.org
         if org:
             state.set('org', org)
         state.set('previous status', prev)
@@ -88,9 +88,8 @@ class NullClient(protocol.Protocol, ClientMixin):
         '''
         ClientMixin.connectionMade(self)
         log.debug("Factory in NullClient: %s" % self.factory)
-        self.checkConfig = self.factory.checkConfig
-        status = self.factory.stateDefs.failed
-        checked_resource = self.factory.checkConfig.uri
+        status = self.factory.cfg.app.state_definitions.failed
+        checked_resource = self.factory.cfg.checks.uri
         log.debug("Starting rules processing...")
         self.rules.check(status)
         self.rules.setMsg(checked_resource, self.factory.status, self.factory.message)

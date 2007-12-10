@@ -18,16 +18,13 @@ class LocalAgentPingMonitor(pb.PBClientFactory, BaseMonitor):
         pb.PBClientFactory.__init__(self)
         BaseMonitor.__init__(self, uid, cfg)
 
-        # ping config options setup
-        self.checkdata = self.cfg
-
         # get the info in order to make the next ping
-        self.binary = self.defaults.binary
-        count = '-c %s' % self.defaults.count
+        self.binary = self.cfg.defaults.binary
+        count = '-c %s' % self.cfg.defaults.count
         self.args = [count, self.host]
 
         #options = ['ping', '-c %s' % count, '%s' % self.host]
-        port = int(cfg.agents.port)
+        port = int(cfg.app.agents.port)
         self.reactor_params = ('127.0.0.1', port, self)
 
     def __call__(self):

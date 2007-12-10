@@ -24,14 +24,12 @@ class AbstractFactory(object):
 
         self.uid = utils.makeUID(serviceName, uri)
         self.type = serviceName
-        self.typeClean = serviceName.replace('-', '_')
-        self.typeHuman = serviceName.replace('-', ' ')
         self.monitor = None
         self.factoryName = factoryName
 
     def getMonitorClass(self):
         subMod = 'monitor'
-        dottedName = '%s.%s' % (self.typeClean, subMod)
+        dottedName = '%s.%s' % (self.type.replace('-', '_'), subMod)
         plugin = __import__(dottedName)
         monitor = getattr(plugin, subMod)
         return getattr(monitor, self.factoryName)
@@ -48,12 +46,7 @@ class BaseMonitor(object):
     def __init__(self, uid, cfg):
         self.uid = uid
         self.cfg = cfg
-        self.interval = None
         self.message = None
-        self.host = utils.getHostFromURI(self.uid)
-        self.checkConfig = cfg.getCheckConfigFromURI(self.uid)
-        self.defaults = cfg.getDefaultsFromURI(self.uid)
-        self.stateDefs = cfg.state_definitions
         self.setInterval()
 
     def __repr__(self):
@@ -63,7 +56,7 @@ class BaseMonitor(object):
         # update the configuration in case it has changed
         IState(self).save()
         self.state = IState(self)
-        if self.cfg.checkForMaintenanceWindow(self.checkConfig):
+        if self.cfg.app.checkForMaintenanceWindow(self.cfg.check):
             # XXX These two chunks of state info access need to be moved
             # out of here... and made less eyesoreingly redundant.
             # There's another set of XXX's that discuss this in general
@@ -71,38 +64,45 @@ class BaseMonitor(object):
             msg = "Service %s has been disabled during maintenance."
             log.warning(msg % self.uid)
             self.state = application.setNonChangingState(self.state,
-                self.stateDefs.maintenance, self.uid)
+                self.cfg.app.state_definitions.maintenance, self.uid)
             globalRegistry.factories[self.uid].state = self.state
-        elif self.checkConfig.enabled:
+        elif self.cfg.check.enabled:
             reactor.connectTCP(*self.reactor_params)
         else:
             msg = "Service %s has been disabled; not checking."
             log.warning(msg % self.uid)
             self.state = application.setNonChangingState(self.state,
-                self.stateDefs.disabled, self.uid)
+                self.cfg.app.state_definitions.disabled, self.uid)
             globalRegistry.factories[self.uid].state = self.state
 
     def __getstate__(self):
         return self.__dict__
 
+    def host(self):
+        return utils.getHostFromURI(self.uid)
+    host = property(host)
+
     def setInterval(self, seconds=None):
+        #import pdb;pdb.set_trace()
         def useDef():
-            interval = self.defaults.interval
+            interval = self.cfg.defaults.interval
             log.debug('Set interval from service check defaults')
             return interval
         if seconds:
             interval = seconds
             log.debug('Manually set interval')
         else:
-            interval = self.checkConfig.interval
+            interval = self.cfg.check.interval
             if interval:
                 log.debug('Set interval from service check config')
             else:
                 interval = useDef()
         if not interval:
             interval = useDef()
-        self.interval = int(interval)
+        self._interval = int(interval)
 
     def getInterval(self):
-        return self.interval
+        return self._interval
+
+    interval = property(getInterval, setInterval)
 

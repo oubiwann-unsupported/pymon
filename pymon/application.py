@@ -188,7 +188,7 @@ class MonitorState(BaseState):
         self.workflow = ServiceState(stateWorkflow)
 
     def setFilename(self, filename=None):
-        backupDir = self.monitor.cfg.admin.backups.state_dir
+        backupDir = self.monitor.cfg.app.admin.backups.state_dir
         if not filename:
             filename = self.monitor.uid
         self.filename = os.path.join(backupDir,

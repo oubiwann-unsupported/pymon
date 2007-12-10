@@ -173,6 +173,9 @@ AJAX
 New TODO
 ========
 
+* clean up old crap in pymon.monitors.
+* clean up old crap in pymon.clients.
+* add support for twisted-based TCP pinger.
 * create a doc/wiki page on pymon plugins (what they are, what they're based
   on, how they work)
 * create a doc/wiki on how to *write* a pymon plugin
@@ -180,6 +183,10 @@ New TODO
 * services seem to stay in RECOVERING continuously, and this is obviously
   wrong
 * start work on defining RPC for pymon
+* migrate to database-stored data (ditch pickled data).
+* explore the use of references (weak?) for memory-intensive things like
+  monitor configurations (don't want to copy 1 config 1000s of times when each
+  one is identical and static).
 * give more consideration to the following features:
   - events (state transitions that meet the notification theshold requirements)
   - event hisory
