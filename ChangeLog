@@ -1,3 +1,9 @@
+2007.12.11
+
+* More notes about workflow (as well as other features).
+* Workflow cleanup and bug fixes, of particular note, the unit tests are better
+and the configuration code has been moved out of the base workflow module.
+
 2007.12.09
 
 * Cleaned up pymon.monitors.BaseMonitor (and affected code).

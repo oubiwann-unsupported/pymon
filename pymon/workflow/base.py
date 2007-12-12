@@ -37,10 +37,6 @@ The development of a workflow system can be split in three steps:
       private;
     - send an email to a user or a mailing list;
 """
-from pymon.config import cfg
-
-states = cfg.state_definitions
-
 class WorkflowError(Exception):
     pass
 
@@ -186,14 +182,15 @@ class WorkflowAware(object):
     ...   description='App is escalating')
 
     # setup workflow transitions
-    >>> wf.addTrans('Normaling', ['Normal', 'Escalate', 'Warn', 'Error'], 'Normal',
+    >>> wf.addTrans('Okay', ['Normal', 'Escalate', 'Warn', 'Error'], 'Normal',
     ...   description='The app has gone to OK')
     >>> wf.addTrans('Warning', ['Normal', 'Warn', 'Error'], 'Warn',
     ...   description='The app has gone from OK to WARN')
     >>> wf.addTrans('Erring', ['Normal', 'Warn', 'Error'], 'Error',
     ...   description='The app has gone to state ERROR')
     >>> wf.addTrans('Recovering', ['Warn', 'Error', 'Escalate'], 'Normal',
-    ...   description='The app has resumed normal operation, but the previous state was either WARN or ERROR')
+    ...   description=('The app has resumed normal operation, but the '+
+    ...     'previous state was either WARN or ERROR'))
     >>> wf.addTrans('Escalating', ['Warn', 'Error', 'Escalate'], 'Escalate',
     ...   description='The app has received too many counts of a certain kind')
 
@@ -203,7 +200,7 @@ class WorkflowAware(object):
     # define a workflow-aware class
     >>> class AppState(WorkflowAware):
     ...   def __init__(self, workflow=None):
-    ...     self.enterWorkflow(workflow, None, "Just Created")
+    ...     self.enterWorkflow(workflow, None)
     ...   def onEnterNormal(self):
     ...     print '+ Entering normal state...'
     ...   def onLeaveNormal(self):
@@ -224,6 +221,16 @@ class WorkflowAware(object):
     ...     print '* Transitioning in recovering state...'
     ...   def onTransEscalating(self):
     ...     print '* Issue unaddressed: escalating...'
+    ...   def setState(self, number):
+    ...     try:
+    ...       self.lastWorkflowState = self.thisWorkflowState
+    ...       self.lastWorkflowStateName = self.thisWorkflowStateName
+    ...     except AttributeError:
+    ...       self.lastWorkflowState = 'Normal'
+    ...       self.lastWorkflowStateName = 'Normal'
+    ...     self.lastWorkflowState = number
+    ...     self.lastWorkflowStateName = number
+    ...   def getStateName(self, id): return id
 
     # constants
     >>> OK = 'Normal'
@@ -324,7 +331,8 @@ class WorkflowAware(object):
             raise WorkflowError, "invalid initial state: '%s'" % initialState
 
         self.setState(initialState)
-        self.thisWorkflowStateName = cfg.getStateNameFromNumber(initialState)
+        self.thisWorkflowState = initialState
+        self.thisWorkflowStateName = self.getStateName(initialState)
         self.lastWorkflowState = None
 
         # Call app-specific enter-state handler for initial state, if any
@@ -332,20 +340,22 @@ class WorkflowAware(object):
         if hasattr(self, name):
             getattr(self, name)(*args, **kw)
 
-    def setState(self, number):
+    def setState(self, stateID):
+        """
+        Subclasses must define this method.
+        """
         # XXX this shouldn't depend on application-level configuration or other
         # definitions. One option is to provide the ability to pass a lookup
         # function or to set one as an object attribute. Another option is to
         # raise a NotImplemented error, requiring subclasses to write it as
         # needed, complete with configuration code, if that's what they need.
-        try:
-            self.lastWorkflowState = self.thisWorkflowState
-            self.lastWorkflowStateName = self.thisWorkflowStateName
-        except AttributeError:
-            self.lastWorkflowState = states.unknown
-            self.lastWorkflowStateName = cfg.getStateNameFromNumber(states.unknown)
-        self.thisWorkflowState = number
-        self.thisWorkflowStateName = cfg.getStateNameFromNumber(number)
+        raise Exception, NotImplemented
+
+    def getStateName(self, stateID):
+        """
+        Subclasses must define this method.
+        """
+        raise Exception, NotImplemented
 
     def doTrans(self, transname, *args, **kw):
         """
@@ -363,15 +373,15 @@ class WorkflowAware(object):
             # Get the new state name
             self.lastWorkflowState = state.transitions[transname].stateFrom
             state = state.transitions[transname].stateTo
-            stateName = cfg.getStateNameFromNumber(state)
-        except KeyError:
-            raise WorkflowError, \
-                  "transition '%s' is invalid from state '%s'" \
-                  % (transname, self.thisWorkflowState)
+            stateName = self.getStateName(state)
+        except KeyError, e:
+            msg = "transition '%s' is invalid from state '%s (%s)'"
+            raise WorkflowError, msg % (
+                transname, self.thisWorkflowState, e)
 
         # call app-specific leave- state  handler if any
         name = 'onLeave%s' % self.thisWorkflowStateName.title()
-        print "Checking for '%s()' method..." % name
+        #print "Checking for '%s()' method..." % name
         if hasattr(self, name):
             getattr(self, name)(*args, **kw)
 
@@ -380,13 +390,13 @@ class WorkflowAware(object):
 
         # call app-specific transition handler if any
         name = 'onTrans%s' % transname.title()
-        print "Checking for '%s()' method..." % name
+        #print "Checking for '%s()' method..." % name
         if hasattr(self, name):
             getattr(self, name)(*args, **kw)
 
         # call app-specific enter-state handler if any
         name = 'onEnter%s' % stateName.title()
-        print "Checking for '%s()' method..." % name
+        #print "Checking for '%s()' method..." % name
         if hasattr(self, name):
             getattr(self, name)(*args, **kw)
 

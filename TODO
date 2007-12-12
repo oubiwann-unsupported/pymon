@@ -221,6 +221,7 @@ allerts (as opposed to have alerts pushed to them via emails).
 New TODO
 ========
 
+* fix the newly exposed bugs in the workflow code (see the unit test results)
 * expose service resources
   * JSON state data for monitor
   * RSS feed for state transitions of a monitor

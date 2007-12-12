@@ -58,6 +58,19 @@ class ServiceState(WorkflowAware):
     def __init__(self, workflow):
         self.enterWorkflow(workflow)
 
+    def setState(self, number):
+        try:
+            self.lastWorkflowState = self.thisWorkflowState
+            self.lastWorkflowStateName = self.thisWorkflowStateName
+        except AttributeError:
+            self.lastWorkflowState = states.unknown
+            self.lastWorkflowStateName = cfg.getStateNameFromNumber(states.unknown)
+        self.thisWorkflowState = number
+        self.thisWorkflowStateName = cfg.getStateNameFromNumber(number)
+
+    def getStateName(self, stateID):
+        return cfg.getStateNameFromNumber(stateID)
+
     def onEnterNormal(self):
         print '+ Entering normal state...'
 
