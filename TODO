@@ -183,6 +183,8 @@ desired ways.
    OK|WARN|ERROR|FAIL out
  * state comparison - theshold check and last state in; workflow does this in
    doTrans()
+   * we shouldn't actually enter doTrans() unless there is, in fact, a
+     difference in current and previous state
    * we need to do more than compare states, e.g., 
    * detect flapping
    * 
@@ -221,7 +223,10 @@ allerts (as opposed to have alerts pushed to them via emails).
 New TODO
 ========
 
-* fix the newly exposed bugs in the workflow code (see the unit test results)
+* fix the newly exposed bugs in the workflow code (see the unit test results);
+  the issue is likely at least in Workflow.addTrans where self.states is set by
+  both state from and state to. The check for this could be wrong, too
+  (WorkflowAware.doTrans).
 * expose service resources
   * JSON state data for monitor
   * RSS feed for state transitions of a monitor

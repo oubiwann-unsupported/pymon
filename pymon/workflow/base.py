@@ -45,12 +45,13 @@ class WorkflowState(object):
     This class is used to describe a state. A state has transitions
     to other states.
     """
-    def __init__(self, **kw):
+    def __init__(self, name, **kwds):
         """
         Initialize the state.
         """
+        self.name = name
+        self.metadata = kwds
         self.transitions = {}
-        self.metadata = kw
 
     def __getitem__(self, key):
         """
@@ -69,13 +70,13 @@ class Transition(object):
     This class is used to describe transitions. Transitions come from
     one state and go to another.
     """
-    def __init__(self, stateFrom, stateTo, **kw):
+    def __init__(self, stateFrom, stateTo, **kwds):
         """
         Initialize the transition.
         """
         self.stateFrom = stateFrom
         self.stateTo = stateTo
-        self.metadata = kw
+        self.metadata = kwds
 
     def __getitem__(self, key):
         """
@@ -96,14 +97,14 @@ class Workflow(object):
         self.states = {}
         self.initialState = initialState
 
-    def addState(self, name, **kw):
+    def addState(self, name, **kwds):
         """
         Adds a new state.
 
-        The keywords argument lets to add arbitrary metadata to
+        The keywords argument lets one add arbitrary metadata to
         describe the transition.
         """
-        self.states[name] = WorkflowState(**kw)
+        self.states[name] = WorkflowState(name, **kwds)
 
     def setInitState(self, name):
         """
@@ -113,13 +114,13 @@ class Workflow(object):
             raise WorkflowError, "invalid initial state: '%s'" % name
         self.initialState = name
 
-    def addTrans(self, name, stateFrom, stateTo, **kw):
+    def addTrans(self, name, stateFrom, stateTo, **kwds):
         """
         Adds a new transition, 'stateFrom' and 'stateTo' are
         respectively the origin and destination states of the
         transition.
 
-        The keywords argument lets to add arbitrary metadata to
+        The keywords argument lets one add arbitrary metadata to
         describe the transition.
         """
         if not isinstance(stateFrom, list):
@@ -128,7 +129,7 @@ class Workflow(object):
             stateTo = [stateTo]
         for sf in stateFrom:
             for st in stateTo:
-                transition = Transition(sf, st, **kw)
+                transition = Transition(sf, st, **kwds)
                 try:
                     sf = self.states[sf]
                 except KeyError:
@@ -302,7 +303,7 @@ class WorkflowAware(object):
     def __getstate__(self):
         return self.__dict__
 
-    def enterWorkflow(self, workflow=None, initialState=None, *args, **kw):
+    def enterWorkflow(self, workflow=None, initialState=None, *args, **kwds):
         """
         [Re-]Bind this object to a specific workflow, if the 'workflow'
         parameter is omitted then the object associated workflow is kept.
@@ -336,9 +337,7 @@ class WorkflowAware(object):
         self.lastWorkflowState = None
 
         # Call app-specific enter-state handler for initial state, if any
-        name = 'onEnter%s' % self.thisWorkflowStateName.title()
-        if hasattr(self, name):
-            getattr(self, name)(*args, **kw)
+        self.dispatch('Enter', self.thisWorkflowStateName.title())(*args, **kwds)
 
     def setState(self, stateID):
         """
@@ -357,7 +356,7 @@ class WorkflowAware(object):
         """
         raise Exception, NotImplemented
 
-    def doTrans(self, transname, *args, **kw):
+    def doTrans(self, transname, *args, **kwds):
         """
         Performs a transition, changes the state of the object and
         runs any defined state/transition handlers. Extra
@@ -374,31 +373,36 @@ class WorkflowAware(object):
             self.lastWorkflowState = state.transitions[transname].stateFrom
             state = state.transitions[transname].stateTo
             stateName = self.getStateName(state)
-        except KeyError, e:
+        except KeyError:
+            e = "** %s ** :: %s :: %s" % (self.workflow.states, state.name, state.transitions)
             msg = "transition '%s' is invalid from state '%s (%s)'"
             raise WorkflowError, msg % (
                 transname, self.thisWorkflowState, e)
 
         # call app-specific leave- state  handler if any
-        name = 'onLeave%s' % self.thisWorkflowStateName.title()
-        #print "Checking for '%s()' method..." % name
-        if hasattr(self, name):
-            getattr(self, name)(*args, **kw)
+        self.dispatch('Leave', self.thisWorkflowStateName.title())(*args, **kwds)
 
         # Set the new state
         self.setState(state)
 
-        # call app-specific transition handler if any
-        name = 'onTrans%s' % transname.title()
-        #print "Checking for '%s()' method..." % name
-        if hasattr(self, name):
-            getattr(self, name)(*args, **kw)
+        # call app-specific transition handlers in order
+        self.dispatch('Trans', transname.title())(*args, **kwds)
 
         # call app-specific enter-state handler if any
-        name = 'onEnter%s' % stateName.title()
-        #print "Checking for '%s()' method..." % name
+        self.dispatch('Enter', stateName.title())(*args, **kwds)
+
+    def noOp(self, *args, **kwds):
+        return
+
+    def dispatch(self, type, name):
+        """
+        Return the method for the given type and name.
+        """
+        name = 'on%s%s' % (type, name)
         if hasattr(self, name):
-            getattr(self, name)(*args, **kw)
+            return getattr(self, name)
+        else:
+            return self.noOp
 
     def getStatename(self):
         """Return the name of the current state."""
