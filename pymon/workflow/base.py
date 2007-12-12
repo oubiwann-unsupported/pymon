@@ -299,7 +299,7 @@ class WorkflowAware(object):
         """
         [Re-]Bind this object to a specific workflow, if the 'workflow'
         parameter is omitted then the object associated workflow is kept.
-        This lets, for example, to specify the associate workflow with a
+        This lets us, for example, specify the associated workflow with a
         class varible instead of with an instance attribute.
 
         The 'initialState' parameter is the workflow state that should be
@@ -333,6 +333,11 @@ class WorkflowAware(object):
             getattr(self, name)(*args, **kw)
 
     def setState(self, number):
+        # XXX this shouldn't depend on application-level configuration or other
+        # definitions. One option is to provide the ability to pass a lookup
+        # function or to set one as an object attribute. Another option is to
+        # raise a NotImplemented error, requiring subclasses to write it as
+        # needed, complete with configuration code, if that's what they need.
         try:
             self.lastWorkflowState = self.thisWorkflowState
             self.lastWorkflowStateName = self.thisWorkflowStateName
