@@ -8,7 +8,7 @@ REQUIREMENTS
   (AJAX).
 * Provide a clean and clear way for writing plugins.
 * Put workflow at the core of all event-based heuristics.
-
+* Add user accounts in order to suport customization and subscriptions.
 
 Scalability
 -----------
@@ -160,6 +160,38 @@ Workflow
    and c) and workflow (perform tasks i and j when state transitions from m
    to n)
 
+Here's how the flow should work:
+ * Pre-workflow
+   * monitor queries source
+   * source responds
+   * monitor parses returned data
+ * Workflow
+   * monnitor checks parsed data against expected data
+   * monitor checks for state transitions
+   * changes result in a state update and a history update
+   * take action based on state transition
+
+So, for workflow, there are a few separate but related bits of functionality:
+ * threshold check
+ * state comparison
+ * state and history update
+ * state transition-based actions
+
+We need objects that represent these and allow them to interoperate in the
+desired ways.
+ * threshold check - a function should do the trick here: result in,
+   OK|WARN|ERROR|FAIL out
+ * state comparison - theshold check and last state in; workflow does this in
+   doTrans()
+   * we need to do more than compare states, e.g., 
+   * detect flapping
+   * 
+ * state update - workflow does this in doTrans()
+ * take action - probably in doTrans() as well as onEnter*() or onLeave*()
+   * sending messages (needs to take into account message preferences like
+     message count cut-offs)
+   * escalating
+   * 
 
 Plugins
 -------
@@ -175,16 +207,32 @@ Plugins
 AJAX
 ----
 
+User Accounts and Subscriptions
+-------------------------------
 
+If we introduce the idea of users/accounts in pymon, we can have subscriptions.
+People can choose the services for which they want to be notified in case of
+any state transitions that warrant notification.
+
+Hmm... each monitor needs to provide an RSS feed, allowing people to pull
+allerts (as opposed to have alerts pushed to them via emails).
 
 ========
 New TODO
 ========
 
+* expose service resources
+  * JSON state data for monitor
+  * RSS feed for state transitions of a monitor
+  * provide /services/<service type>/<hostname>/<JSON data>
+  * provide /services/<service type>/<hostname>/<RSS feed>
+  * provide /hosts/<hostname>/<service type>/<JSON data>
+  * provide /hosts/<hostname>/<service type>/<RSS feed>
+* pull messaging crap out of ThresholdCheck class
 * look into BaseMonitor.__call__ more closely (see XXX comment).
 * is pymon.clients.BaseClient.updateState doing its job?
 * rename all occurances of reactor_params to reactorArgs.
-* clean up old crap in pymon.monitors.
+* DONE - clean up old crap in pymon.monitors.
 * clean up old crap in pymon.clients.
 * add support for twisted-based TCP pinger.
 * create a doc/wiki page on pymon plugins (what they are, what they're based
