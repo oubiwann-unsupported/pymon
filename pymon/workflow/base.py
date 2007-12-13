@@ -500,6 +500,7 @@ class WorkflowAware(object):
         # Get the current state
         state = self.workflow.states[self.thisWorkflowState]
 
+        """
         try:
             # Get the new state name
             # XXX this is the source of the bug, since the current state may
@@ -513,18 +514,20 @@ class WorkflowAware(object):
             msg = tmpl % (transname, self.thisWorkflowState, e)
             #import pdb;pdb.set_trace()
             raise WorkflowError, msg
-
+        """
         # call app-specific leave-state  handler if any
         self.dispatch('Leave', self.thisWorkflowStateName.title())(*args, **kwds)
 
-        # Set the new state
+        # Set the new state - before this is called, the current state is the
+        # state prior to the transition; after this is called, that becomes the
+        # last state and the destination state becomes the current state.
         self.setState(state)
 
         # call app-specific transition handlers in order
         self.dispatch('Trans', transname.title())(*args, **kwds)
 
         # call app-specific enter-state handler if any
-        self.dispatch('Enter', stateName.title())(*args, **kwds)
+        self.dispatch('Enter', self.thisWorkflowStateName.title())(*args, **kwds)
 
     def noOp(self, *args, **kwds):
         return
