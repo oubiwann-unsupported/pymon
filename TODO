@@ -185,15 +185,15 @@ desired ways.
    doTrans()
    * we shouldn't actually enter doTrans() unless there is, in fact, a
      difference in current and previous state
-   * we need to do more than compare states, e.g., 
+   * we need to do more than compare states, e.g.,
    * detect flapping
-   * 
+   *
  * state update - workflow does this in doTrans()
  * take action - probably in doTrans() as well as onEnter*() or onLeave*()
    * sending messages (needs to take into account message preferences like
      message count cut-offs)
    * escalating
-   * 
+   *
 
 Plugins
 -------
@@ -223,6 +223,7 @@ allerts (as opposed to have alerts pushed to them via emails).
 New TODO
 ========
 
+* use bisect module to determine ranges more efficiently
 * fix the newly exposed bugs in the workflow code (see the unit test results);
   the issue is likely at least in Workflow.addTrans where self.states is set by
   both state from and state to. The check for this could be wrong, too

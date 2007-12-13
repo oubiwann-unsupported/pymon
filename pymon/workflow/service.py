@@ -89,12 +89,6 @@ class ServiceState(WorkflowAware):
     def onLeaveError(self):
         print '- Leaving error state...'
 
-    def onEnterRecover(self):
-        print '+ Entering recover state...'
-
-    def onLeaveRecover(self):
-        print '- Leaving recover state...'
-
     def onTransRecovering(self):
         print '* Transitioning in recovering state...'
 
