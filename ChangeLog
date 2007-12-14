@@ -2,6 +2,13 @@
 
 * Added more doctests to workflow.
 * Identified the source of the invalid-transition bug in workflow.
+* Added a worflow transition registry and related methods.
+* Added more custom workflow exceptions.
+* Fixed (known) workflow bugs.
+* Added additional methods to workflow.service.ServiceState.
+* Split up rules and messaging code.
+* Set plugin.ping.client.LocalAgentPingClient to use the new workflow code.
+* Lots of important changes/updates in TODO.
 
 2007.12.12
 

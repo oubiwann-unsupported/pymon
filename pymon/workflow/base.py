@@ -40,6 +40,12 @@ The development of a workflow system can be split in three steps:
 class WorkflowError(Exception):
     pass
 
+class WorkflowStateError(WorkflowError):
+    pass
+
+class WorkflowTransitionError(WorkflowError):
+    pass
+
 class WorkflowState(object):
     """
     This class is used to describe a state. A state has transitions
@@ -124,6 +130,36 @@ class Transition(object):
         """
         return self.metadata.get(key)
 
+class StatesCollection(dict):
+    """
+    A customized dict to keep track of workflow states.
+
+    >>> states = StatesCollection()
+    >>> states
+    {}
+    >>> states['state 1'] = object()
+    >>> states['state 2'] = object()
+    >>> states['state 3'] = object()
+    >>> keys = states.keys()
+    >>> keys.sort()
+    >>> keys
+    ['state 1', 'state 2', 'state 3']
+    >>> states['state 1'] != None
+    True
+    >>> states.get('state 1') != None
+    True
+    >>> states.get('state 4') != None
+    False
+    >>> states['state 4']
+    Traceback (most recent call last):
+    WorkflowStateError: Unknown state name 'state 4'
+    """
+    def __getitem__(self, stateName):
+        item = self.get(stateName)
+        if not item:
+            raise WorkflowStateError, "Unknown state name '%s'" % stateName
+        return item
+
 class Workflow(object):
     """
     This class is used to describe a workflow (actually it's just a
@@ -141,12 +177,12 @@ class Workflow(object):
     ['Error', 'Normal']
 
     # a simple workflow transitions
-    >>> wf.addTrans('Okay', 'Normal', 'Normal',
+    >>> wf.addTrans('SimpleOkay', 'Normal', 'Normal',
     ...   description='The app has gone to OK')
 
-    >>> t = wf.states['Normal'].transitions['Okay']
+    >>> t = wf.states['Normal'].transitions['SimpleOkay']
     >>> t.name
-    'Okay'
+    'SimpleOkay'
     >>> t.stateFrom
     'Normal'
     >>> t.stateTo
@@ -195,12 +231,12 @@ class Workflow(object):
     >>> wf.addTrans('Escalating', 'Error', 'Escalate',
     ...   description='The app has gone too long without acknowledgement')
     Traceback (most recent call last):
-    WorkflowError: unregistered state (to): 'Escalate'
+    WorkflowTransitionError: Can't transition for unregistered state (to): 'Escalate'
 
     >>> wf.addTrans('Recovering', ['Warn', 'Error'], 'Normal',
     ...   description='The app has resumed normal operation')
     Traceback (most recent call last):
-    WorkflowError: unregistered state (from): 'Warn'
+    WorkflowTransitionError: Can't transition for unregistered state (from): 'Warn'
 
     >>> wf.addTrans('Recovering', 'Error', 'Normal',
     ...   description='The app has resumed normal operation')
@@ -213,13 +249,45 @@ class Workflow(object):
     >>> t.stateTo
     'Normal'
 
-    # setup initial state
+    # can we register it again?
+    >>> wf.addTrans('Recovering', 'Error', 'Normal',
+    ...   description='The app has resumed normal operation')
+    Traceback (most recent call last):
+    WorkflowTransitionError: Transition 'Recovering' has already been registered
+
+    # test the transition registry and related methods
+    >>> index = wf.getTransIndex(wf.states['Normal'], 'Erring', wf.states['Error'])
+    >>> index
+    'Normal|Erring|Error'
+    >>> trans = wf.getTransByIndex(index)
+    >>> trans.stateFrom
+    'Normal'
+    >>> trans.name
+    'Erring'
+    >>> trans.stateTo
+    'Error'
+    >>> trans = wf.getTransByObjects(wf.states['Error'], 'Okay', wf.states['Normal'])
+    >>> trans.stateFrom
+    'Error'
+    >>> trans.name
+    'Okay'
+    >>> trans.stateTo
+    'Normal'
+    >>> trans = wf.getTransByObjects(wf.states['Error'], 'Bogus', wf.states['Normal'])
+    Traceback (most recent call last):
+    WorkflowTransitionError: Unknown transition name 'Bogus'
+    >>> trans = wf.getTransByObjects(wf.states['Doh'], 'Bogus', wf.states['Normal'])
+    Traceback (most recent call last):
+    WorkflowStateError: Unknown state name 'Doh'
+
+    # try setting up a bogus initial state
     >>> wf.setInitState('Recovering')
     Traceback (most recent call last):
     WorkflowError: invalid initial state: 'Recovering'
 
+    # setup initial state
     >>> wf.setInitState('Normal')
-    >>> wf.initialState
+    >>> wf.initialState.name
     'Normal'
 
     """
@@ -227,8 +295,9 @@ class Workflow(object):
         """
         Initialize the workflow.
         """
-        self.states = {}
-        self.initialState = initialState
+        self.states = StatesCollection()
+        self.transitionRegistry = {}
+        self.setInitState(initialState)
 
     def addState(self, name, **kwds):
         """
@@ -243,9 +312,12 @@ class Workflow(object):
         """
         Sets the default initial state.
         """
-        if name not in self.states:
+        if not self.states:
+            self.initialState = None
+        elif name not in self.states:
             raise WorkflowError, "invalid initial state: '%s'" % name
-        self.initialState = name
+        else:
+            self.initialState = self.states[name]
 
     def addTrans(self, name, stateFrom, stateTo, **kwds):
         """
@@ -265,13 +337,42 @@ class Workflow(object):
                 transition = Transition(name, sf, st, **kwds)
                 try:
                     sf = self.states[sf]
-                except KeyError:
-                    raise WorkflowError, "unregistered state (from): '%s'" % sf
+                except WorkflowStateError:
+                    msg = "Can't transition for unregistered state (from): '%s'"
+                    raise WorkflowTransitionError, msg % sf
                 try:
                     st = self.states[st]
-                except KeyError:
-                    raise WorkflowError, "unregistered state (to): '%s'" % st
+                except WorkflowStateError:
+                    msg = "Can't transition for unregistered state (to): '%s'"
+                    raise WorkflowTransitionError, msg % st
                 sf.addTrans(transition)
+                index = self.getTransIndex(sf, name, st)
+                result = self.transitionRegistry.setdefault(index, transition)
+                if result != transition:
+                    msg = "Transition '%s' has already been registered"
+                    raise WorkflowTransitionError, msg % transition.name
+
+    def getTransByIndex(self, index):
+        try:
+            return self.transitionRegistry[index]
+        except KeyError, e:
+            sf, name, st = str(e).split('|')
+            raise WorkflowTransitionError, "Unknown transition name '%s'" % name
+
+    def getTransIndex(self, stateFrom, name, stateTo=''):
+        stateToName = ''
+        if stateTo:
+            stateToName = stateTo.name
+        return "%s|%s|%s" % (stateFrom.name, name, stateToName)
+
+    def getTransByObjects(self, stateFrom, name, stateTo):
+        index = self.getTransIndex(stateFrom, name, stateTo)
+        return self.getTransByIndex(index)
+
+    def getTransByStateAndName(self, stateFrom, name):
+        indexPart = self.getTransIndex(stateFrom, name, '')
+        return [y for x,y in self.transitionRegistry.items()
+                if x.startswith(indexPart)][0]
 
 class WorkflowAware(object):
     """
@@ -330,9 +431,10 @@ class WorkflowAware(object):
     # setup initial state
     >>> wf.setInitState('Normal')
 
-    # define a workflow-aware class
-    >>> class AppState(WorkflowAware):
+    # define the actions for a workflow-aware class
+    >>> class StatusChecker(WorkflowAware):
     ...   def __init__(self, workflow=None):
+    ...     WorkflowAware.__init__(self)
     ...     self.enterWorkflow(workflow, None)
     ...   def onEnterNormal(self):
     ...     print '+ Entering normal state...'
@@ -346,30 +448,17 @@ class WorkflowAware(object):
     ...     print '+ Entering error state...'
     ...   def onLeaveError(self):
     ...     print '- Leaving error state...'
-    ...   def onEnterRecover(self):
-    ...     print '+ Entering recover state...'
-    ...   def onLeaveRecover(self):
-    ...     print '- Leaving recover state...'
     ...   def onTransRecovering(self):
     ...     print '* Transitioning in recovering state...'
     ...   def onTransEscalating(self):
     ...     print '* Issue unaddressed: escalating...'
-    ...   def setState(self, number):
-    ...     try:
-    ...       self.lastWorkflowState = self.thisWorkflowState
-    ...       self.lastWorkflowStateName = self.thisWorkflowStateName
-    ...     except AttributeError:
-    ...       self.lastWorkflowState = 'Normal'
-    ...       self.lastWorkflowStateName = 'Normal'
-    ...     self.lastWorkflowState = number
-    ...     self.lastWorkflowStateName = number
     ...   def getStateName(self, id): return id
+    ...   def getStateID(self, name): return name
 
     # constants
     >>> OK = 'Normal'
     >>> WARN = 'Warn'
     >>> ERROR = 'Error'
-    >>> RECOV = 'Recover'
 
     # lookup
     >>> def getTestStateName(index):
@@ -380,7 +469,7 @@ class WorkflowAware(object):
 
     # put the workflow though its paces
     >>> def processStates(test_pattern):
-    ...   app_state = AppState(workflow=wf)
+    ...   statusChecker = StatusChecker(workflow=wf)
     ...   count = 0
     ...   for i in range(0, len(test_pattern)):
     ...     state = getTestStateName(test_pattern[i])
@@ -397,16 +486,17 @@ class WorkflowAware(object):
     ...     #print 'last state: %s' % last_state
     ...
     ...     if state is OK and last_state not in [OK, None]:
-    ...       app_state.doTrans('Recovering')
+    ...       statusChecker.doTrans('Recovering')
     ...     elif state is not OK and count > 2 and state != 'Escalate':
-    ...       app_state.doTrans('Escalating')
+    ...       statusChecker.doTrans('Escalating')
     ...     elif state is WARN:
-    ...       app_state.doTrans('Warning')
+    ...       statusChecker.doTrans('Warning')
     ...     elif state is ERROR:
-    ...       app_state.doTrans('Erring')
+    ...       statusChecker.doTrans('Erring')
 
     >>> test_pattern = [0,1,2]
     >>> processStates(test_pattern)
+    + Entering normal state...
     - Leaving normal state...
     + Entering warning state...
     - Leaving warning state...
@@ -414,6 +504,7 @@ class WorkflowAware(object):
 
     >>> test_pattern = [0,2,0,0]
     >>> processStates(test_pattern)
+    + Entering normal state...
     - Leaving normal state...
     + Entering error state...
     - Leaving error state...
@@ -422,6 +513,7 @@ class WorkflowAware(object):
 
     >>> test_pattern = [2,2,2,2,2]
     >>> processStates(test_pattern)
+    + Entering normal state...
     - Leaving normal state...
     + Entering error state...
     - Leaving error state...
@@ -432,6 +524,11 @@ class WorkflowAware(object):
     * Issue unaddressed: escalating...
     * Issue unaddressed: escalating...
     """
+    def __init__(self):
+        self.workflow = None
+        self.thisWorkflowState = None
+        self.lastWorkflowState = None
+
     def __getstate__(self):
         return self.__dict__
 
@@ -460,29 +557,28 @@ class WorkflowAware(object):
         if not initialState:
             raise WorkflowError, 'undefined initial state'
 
-        if not self.workflow.states.has_key(initialState):
+        if not self.workflow.states.has_key(initialState.name):
             raise WorkflowError, "invalid initial state: '%s'" % initialState
 
         self.setState(initialState)
         self.thisWorkflowState = initialState
-        self.thisWorkflowStateName = self.getStateName(initialState)
         self.lastWorkflowState = None
 
         # Call app-specific enter-state handler for initial state, if any
-        self.dispatch('Enter', self.thisWorkflowStateName.title())(*args, **kwds)
+        name = self.thisWorkflowState.name.title()
+        self.dispatch('Enter', name)(*args, **kwds)
 
-    def setState(self, stateID):
+    def setState(self, state):
+        self.lastWorkflowState = self.thisWorkflowState
+        self.thisWorkflowState = state
+
+    def getStateName(self, stateID):
         """
         Subclasses must define this method.
         """
-        # XXX this shouldn't depend on application-level configuration or other
-        # definitions. One option is to provide the ability to pass a lookup
-        # function or to set one as an object attribute. Another option is to
-        # raise a NotImplemented error, requiring subclasses to write it as
-        # needed, complete with configuration code, if that's what they need.
         raise Exception, NotImplemented
 
-    def getStateName(self, stateID):
+    def getStateID(self, stateName):
         """
         Subclasses must define this method.
         """
@@ -494,40 +590,25 @@ class WorkflowAware(object):
         runs any defined state/transition handlers. Extra
         arguments are passed down to all handlers called.
         """
-        # Get the workflow
-        workflow = self.workflow
-
         # Get the current state
-        state = self.workflow.states[self.thisWorkflowState]
-
-        """
-        try:
-            # Get the new state name
-            # XXX this is the source of the bug, since the current state may
-            # not have the same "legal" transitions as the last state. In other
-            # words, this kind of lookup by array index is just wrong
-            self.lastWorkflowState = state.transitions[transname].stateFrom
-            state = state.transitions[transname].stateTo
-            stateName = self.getStateName(state)
-        except KeyError, e:
-            tmpl = "transition '%s' is invalid from state '%s (%s)'"
-            msg = tmpl % (transname, self.thisWorkflowState, e)
-            #import pdb;pdb.set_trace()
-            raise WorkflowError, msg
-        """
+        trans = self.workflow.getTransByStateAndName(self.thisWorkflowState,
+                                                     transname)
+        nextState = self.workflow.states[trans.stateTo]
         # call app-specific leave-state  handler if any
-        self.dispatch('Leave', self.thisWorkflowStateName.title())(*args, **kwds)
+        name = self.thisWorkflowState.name.title()
+        self.dispatch('Leave', name)(*args, **kwds)
 
         # Set the new state - before this is called, the current state is the
         # state prior to the transition; after this is called, that becomes the
         # last state and the destination state becomes the current state.
-        self.setState(state)
+        self.setState(nextState)
 
         # call app-specific transition handlers in order
         self.dispatch('Trans', transname.title())(*args, **kwds)
 
         # call app-specific enter-state handler if any
-        self.dispatch('Enter', self.thisWorkflowStateName.title())(*args, **kwds)
+        name = self.thisWorkflowState.name.title()
+        self.dispatch('Enter', name)(*args, **kwds)
 
     def noOp(self, *args, **kwds):
         return
@@ -542,17 +623,13 @@ class WorkflowAware(object):
         else:
             return self.noOp
 
-    def getStatename(self):
-        """Return the name of the current state."""
-        return self.thisWorkflowStateName
+    def currentStatus(self):
+        return self.thisWorkflowState.name
+    currentStatus = property(currentStatus)
 
-    def getLastStatename(self):
-        return self.lastWorkflowStateName
-
-    def getState(self):
-        """Returns the current state instance."""
-        state = self.thisWorkflowStateName
-        return self.workflow.states.get(state)
+    def previousStatus(self):
+        return self.thisWorkflowState.name
+    previousStatus = property(previousStatus)
 
     # Implements a stack that could be used to keep a record of the
     # object way through the workflow.

@@ -1,13 +1,36 @@
 from pymon.config import cfg
 from pymon.utils.logger import log
 
+def rangedIsIn(datum, threshold):
+    log.debug("Using method 'rangedIsIn'...")
+    log.debug("datum: %s" % datum)
+    log.debug("datum type: %s" % type(datum))
+    log.debug("threshold: %s" % threshold)
+    log.debug("threshold type: %s" % type(threshold))
+    threshold = [int(x) for x in threshold.split('-')]
+    threshold[1] += 1
+    if datum in xrange(*threshold):
+        return True
+    else:
+        return False
+
+def listedIsIn(datum, threshold):
+    log.debug("Using method 'listedIsIn'...")
+    if datum in threshold:
+        return True
+    return False
+
+def isExactly(datum, threshold):
+    log.debug("Using method 'isExactly'...")
+    if str(datum) == threshold:
+        return True
+    return False
+
 class ThresholdRules(object):
-    # XXX need checks for state and separate checks for
-    # notification
-    # XXX generalize threshold checks here... how much of this
-    # really should be in workflow?
-    # XXX what about escalation? Which messages are sent? How are
-    # messages sent? When are they NOT sent? Who gets what?
+
+    def __init__(self, factory):
+        self.factory = factory
+        self.setType(self.factory.cfg.defaults.threshold_type)
 
     def getOkThreshold(self):
         if self.factory.cfg.check.ok_threshold:
@@ -38,6 +61,7 @@ class ThresholdRules(object):
 
     def check(self, datum):
         log.debug("Got check data '%s'." % datum)
+        status = self.factory.cfg.app.state_definitions.unknown
         if self.isIn(datum, self.getOkThreshold()):
             log.debug("Status data is in 'ok' threshold.")
             status = self.factory.cfg.app.state_definitions.ok
@@ -48,57 +72,35 @@ class ThresholdRules(object):
                 self.factory.cfg.app.state_definitions.ok,
                 self.factory.cfg.app.state_definitions.recovering):
                 status = self.factory.cfg.app.state_definitions.recovering
-            self.status = status
         elif self.isIn(datum, self.getWarnThreshold()):
             log.debug("Status data is in 'warn' threshold.")
-            self.status = self.factory.cfg.app.state_definitions.warn
+            status = self.factory.cfg.app.state_definitions.warn
         elif self.isIn(datum, self.getErrorThreshold()):
             log.debug("Status data is in 'error' threshold.")
-            self.status = self.factory.cfg.app.state_definitions.error
+            status = self.factory.cfg.app.state_definitions.error
         elif self.isIn(datum, self.getFailedThreshold()):
             log.debug("Status data is in 'failed' threshold.")
-            self.status = self.factory.cfg.app.state_definitions.failed
+            status = self.factory.cfg.app.state_definitions.failed
         elif datum == self.factory.cfg.app.state_definitions.failed:
-            self.status = self.factory.cfg.app.state_definitions.failed
-        else:
-            self.status = self.factory.cfg.app.state_definitions.unknown
+            status = self.factory.cfg.app.state_definitions.failed
+        return status
 
     def isIn(self, datum, threshold):
         '''
         Generic method for checking data against thresholds
         '''
         if self.threshold_type == 'ranged':
-            return self.rangedIsIn(datum, threshold)
+            return rangedIsIn(datum, threshold)
         elif self.threshold_type == 'listed':
-            return self.listedIsIn(datum, threshold)
+            return listedIsIn(datum, threshold)
         elif self.threshold_type == 'exact':
-            return self.isExactly(datum, threshold)
+            return isExactly(datum, threshold)
 
-    def rangedIsIn(self, datum, threshold):
-        log.debug("Using method 'rangedIsIn'...")
-        log.debug("datum: %s" % datum)
-        log.debug("datum type: %s" % type(datum))
-        log.debug("threshold: %s" % threshold)
-        log.debug("threshold type: %s" % type(threshold))
-        threshold = [int(x) for x in threshold.split('-')]
-        threshold[1] += 1
-        if datum in xrange(*threshold):
-            return True
-        else:
-            return False
+class AsYetUndterminedClassName(object):
+    # XXX define me!
 
-    def listedIsIn(self, datum, threshold):
-        log.debug("Using method 'listedIsIn'...")
-        if datum in threshold:
-            return True
-        return False
-
-    def isExactly(self, datum, threshold):
-        log.debug("Using method 'isExactly'...")
-        if str(datum) == threshold:
-            return True
-        return False
-
+    # XXX what about escalation? Which messages are sent? How are
+    # messages sent? When are they NOT sent? Who gets what?
     def isMessage(self):
         if self.status == self.factory.cfg.app.state_definitions.ok:
             return False

@@ -200,17 +200,17 @@ Plugins
 
  * Adding a new monitor to pymon needs to be easy and intuitive (for a python
    programmer familiar with Twisted, that is)
- * DONE - All service monitors (even the bundled ones) should be in the plugins
-   directory
  * Dispatching needs to work with configuration files and plugins, not just
    python code (pymon.monitors.AbstractFactory.makeMonitor)
+ * DONE - All service monitors (even the bundled ones) should be in the plugins
+   directory
 
 
 AJAX
 ----
 
-User Accounts and Subscriptions
--------------------------------
+User Accounts, Subscriptions, and Messaging
+-------------------------------------------
 
 If we introduce the idea of users/accounts in pymon, we can have subscriptions.
 People can choose the services for which they want to be notified in case of
@@ -219,15 +219,34 @@ any state transitions that warrant notification.
 Hmm... each monitor needs to provide an RSS feed, allowing people to pull
 allerts (as opposed to have alerts pushed to them via emails).
 
+There is now some orphaned code that did the email messaging (orphaned after it
+was split from the workflow rules code). This needs to be made functional
+again... and with a mind to how we will be managing messaging in general (see
+the RSS comment above).
+
+Ah, another form of messaging: what about SMNP traps? A pymon MIB would define
+this (if memory serves)... need to look at how SNMP "messaging" works.
+
 ========
 New TODO
 ========
 
+* move the globalRegistry factories into persistent storage (storm.twisted) to
+  save on memory
+* maybe make BaseMonnitor.__call__ return a deferred for updating/saving data
+  of the last state (storm.twisted) and then add that deferred to a deferred
+  list in plugins that subclass is (i.e., all plugins)
+* The following should also be made to return deferreds:
+    * plugins' connectionLost output parsing
+    * ThresholdRules.check
+    * ServiceState.checkTransition
+    * plugins' connectionLost updateState
+* fix status counts for service state (dict obj); they're currently not
+  incrementing (looks like the problem is not with the incrementing, but rather
+  with the state saving -- see pymon.monitors, line 58)
+* reexamine and better define the onEnter/Trans/Leave methods required for
+  pymon's workflow
 * use bisect module to determine ranges more efficiently
-* fix the newly exposed bugs in the workflow code (see the unit test results);
-  the issue is likely at least in Workflow.addTrans where self.states is set by
-  both state from and state to. The check for this could be wrong, too
-  (WorkflowAware.doTrans).
 * expose service resources
   * JSON state data for monitor
   * RSS feed for state transitions of a monitor
@@ -239,7 +258,6 @@ New TODO
 * look into BaseMonitor.__call__ more closely (see XXX comment).
 * is pymon.clients.BaseClient.updateState doing its job?
 * rename all occurances of reactor_params to reactorArgs.
-* DONE - clean up old crap in pymon.monitors.
 * clean up old crap in pymon.clients.
 * add support for twisted-based TCP pinger.
 * create a doc/wiki page on pymon plugins (what they are, what they're based
@@ -274,6 +292,12 @@ New TODO
   config.
 * DONE - fix the *FromURI methods in the schemaless ZConfig wrapper to properly use
   self.services and self.default.
+* DONE - clean up old crap in pymon.monitors.
+* DONE - fix the newly exposed bugs in the workflow code (see the unit test results);
+  the issue is likely at least in Workflow.addTrans where self.states is set by
+  both state from and state to. The check for this could be wrong, too
+  (WorkflowAware.doTrans).
+* DONE - plug workflow into pymon
 
 ====
 TODO

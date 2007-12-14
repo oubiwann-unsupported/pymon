@@ -35,7 +35,6 @@ class PingClient(Protocol, ClientMixin):
         # dump info to log file
         log.debug('State Data: '+str(self.factory.state.data)+'\n')
 
-
 class LocalAgentPingClient(pb.Broker, ClientMixin):
 
     def connectionMade(self):
@@ -43,35 +42,28 @@ class LocalAgentPingClient(pb.Broker, ClientMixin):
         ClientMixin.connectionMade(self)
 
     def connectionLost(self, reason):
-
         # parse returned data
-        try:
-            log.debug(self.factory.data)
-        except Exception, e:
-            # something has gone terribly wrong ...
-            log.error(e)
-            return
+        log.debug(self.factory.data)
         parse = OutputParser(self.factory.data)
         loss = parse.getPingLoss()
         gain = parse.getPingGain()
         host = self.getHost()
 
         # push the returned data through the threshold checks
-        self.rules.check(gain)
-        self.rules.setMsg(gain, host)
-        self.rules.setSubj(host, loss)
-        if self.rules.isSendMessage():
-            self.rules.sendIt()
-
-        # dump info to log file
-        log.debug('Service: %s' % self.factory.uid)
-        log.info(self.rules.msg)
-        log.info(self.rules.subj)
-        log.debug("Status: %s for %s" % (self.rules.status, host))
+        status = self.rules.check(gain)
+        self.workflow.checkTransition(status, self.factory.cfg)
+        #self.rules.setMsg(gain, host)
+        #self.rules.setSubj(host, loss)
+        #if self.rules.isSendMessage():
+        #    self.rules.sendIt()
 
         # update state information
         self.updateState()
 
         # dump info to log file
         log.info('State Data: '+str(self.factory.state.data)+'\n')
+
+        # final cleanup
+        ClientMixin.connectionLost(self)
+
 
