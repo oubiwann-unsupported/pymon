@@ -1,3 +1,10 @@
+2007.12.15
+
+* Added the SQL CREATE statements for the tables as well as the storm schemas
+for initial testing purposes.
+* Added initial unit tests storm storage support.
+* Updated ChangeLog and TODO.
+
 2007.12.13
 
 * Added more doctests to workflow.

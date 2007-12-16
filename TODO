@@ -166,7 +166,7 @@ Here's how the flow should work:
    * source responds
    * monitor parses returned data
  * Workflow
-   * monnitor checks parsed data against expected data
+   * DONE - monnitor checks parsed data against expected data
    * monitor checks for state transitions
    * changes result in a state update and a history update
    * take action based on state transition
@@ -179,9 +179,9 @@ So, for workflow, there are a few separate but related bits of functionality:
 
 We need objects that represent these and allow them to interoperate in the
 desired ways.
- * threshold check - a function should do the trick here: result in,
+ * DONE - threshold check - a function should do the trick here: result in,
    OK|WARN|ERROR|FAIL out
- * state comparison - theshold check and last state in; workflow does this in
+ * DONE - state comparison - theshold check and last state in; workflow does this in
    doTrans()
    * we shouldn't actually enter doTrans() unless there is, in fact, a
      difference in current and previous state
@@ -264,10 +264,12 @@ New TODO
   on, how they work)
 * create a doc/wiki on how to *write* a pymon plugin
 * create a doc/wiki on how adaptors are used in pymon (e.g., IState)
-* services seem to stay in RECOVERING continuously, and this is obviously
-  wrong
 * start work on defining RPC for pymon
 * migrate to database-stored data (ditch pickled data).
+  - DONE - prototype and test async code
+  - design schema
+  - replace all state update code to use pymon storage API (which uses storm)
+  - reokace all event/history update code to use pymon storage.
 * explore the use of references (weak?) for memory-intensive things like
   monitor configurations (don't want to copy 1 config 1000s of times when each
   one is identical and static).
@@ -298,6 +300,8 @@ New TODO
   both state from and state to. The check for this could be wrong, too
   (WorkflowAware.doTrans).
 * DONE - plug workflow into pymon
+* DONE - services seem to stay in RECOVERING continuously, and this is
+  obviously wrong
 
 ====
 TODO
