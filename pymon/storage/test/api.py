@@ -15,10 +15,11 @@ from storm.twisted.store import DeferredStore
 from twisted.trial.unittest import TestCase
 from twisted.internet.defer import DeferredList
 
-from pymon.storage.stormorm import sqlCreateStatusTable, sqlCreateEventTable
-from pymon.storage.stormorm import Status, Event
+from pymon.storage import sql
+from pymon.storage import api
+from pymon.storage.model import Status, Event
 
-class DeferredStoreTestCase(TestCase):
+class DatabaseSetupTestCase(TestCase):
     """
     Tests for L{DeferredStore}.
     """
@@ -28,15 +29,35 @@ class DeferredStoreTestCase(TestCase):
         Create a test sqlite database, and insert some data.
         """
         self.filename = self.mktemp()
-        self.database = SQLite(URI("sqlite:" + self.filename))
+
+    def test_createTables(self):
+        pass
+
+    def test_checkTables(self):
+        pass
+        self.filename = self.mktemp()
+        self.database = api.getDatabase("sqlite:" + self.filename)
+        conn = self.database.connect()
+        api.createTables(conn)
+        # XXX make assertions about tables
+
+class DatabaseAPITestCase(TestCase):
+    """
+
+    """
+
+    def setUp(self):
+        """
+        Create a test sqlite database, and insert some data.
+        """
+        self.filename = self.mktemp()
+        self.database = api.getDatabase("sqlite:" + self.filename)
         self.host = u'www.adytum.us'
         self.service = u'ping'
         self.events = [u'warning', u'recovering', u'ok', u'error']
         conn = self.database.connect()
-        conn.execute(sqlCreateStatusTable)
-        conn.execute(sqlCreateEventTable)
-        conn.commit()
-        self.store = DeferredStore(self.database)
+        api.createTables(conn)
+        self.store = api.getStore(self.database)
         return self.store.start()
 
     def createHostStatus(self):
@@ -63,7 +84,6 @@ class DeferredStoreTestCase(TestCase):
         return results.one()
 
     def cbGetAllResults(self, results):
-        #results.order_by(Event.datetime)
         return results.get_all()
 
     def tearDown(self):
@@ -81,7 +101,6 @@ class DeferredStoreTestCase(TestCase):
             self.assertEquals(result.host, self.host)
             self.assertEquals(result.service, self.service)
             return result
-
         d = self.createHostStatus()
         d.addCallback(self.queryHostStatus)
         d.addCallback(self.cbGetOneResult)
@@ -96,7 +115,6 @@ class DeferredStoreTestCase(TestCase):
         def cbSetCount(stat):
             stat.ok_count += 1
             return self.store.commit()
-
         def cbCheckIncrement(stat):
             self.assertEquals(stat.ok_count, 1)
             return stat
@@ -117,23 +135,17 @@ class DeferredStoreTestCase(TestCase):
             return self.store.find(Event).addCallback(self.cbGetAllResults)
 
         def cbCheckEvent(events):
+            # XXX uncomment when storm.twisted supports order_by
             #events.order_by(Event.datetime)
             expected = self.events
             received = [x.transition for x in events]
             self.assertEqual(expected, received)
-
         def createEvents():
             dl = []
             for event in self.events:
                 dl.append(self.createHostEvent(event, datetime.now()))
             return DeferredList(dl)
-
-        def printResults(x):
-            print x
-
         d = createEvents()
         d.addCallback(cbQueryEvent)
         d.addCallback(cbCheckEvent)
-        df = d
-        #import pdb;pdb.set_trace()
         return d

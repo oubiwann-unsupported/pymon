@@ -1,3 +1,9 @@
+2007.12.16
+
+* Removed old database code from storage module.
+* Split up stormorm into separate modules: sql, model, and api.
+* Filled in a long-awaited database setting in the configuration file.
+
 2007.12.15
 
 * Added the SQL CREATE statements for the tables as well as the storm schemas
