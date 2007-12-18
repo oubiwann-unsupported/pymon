@@ -8,17 +8,17 @@ REQUIREMENTS
   (AJAX).
 * Provide a clean and clear way for writing plugins.
 * Put workflow at the core of all event-based heuristics.
-* Add user accounts in order to suport customization and subscriptions.
+* Support customization and subscriptions (requires user accounts).
 
 Scalability
 -----------
 
 In order for pymon to be so highly scalable, the following need to be
 satisfied:
- * No code must block (use deferreds!), including database code.
+ * No code must block (use deferreds!), including database code. Options:
    - use Axiom
    - use Storm with Twisted support
-   - use queues and/or threads (deferToThread)
+   - manually use queues and/or threads (deferToThread)
 
  * Service configuration (and anything else that needs to be confgured per
    host) need to be easily generated, updated, etc.
@@ -144,7 +144,6 @@ satisfied:
      2. create host files from the discovered hosts
 
 
-
     Scalabale Database Access
     -------------------------
     Some notes about intended direction:
@@ -161,6 +160,11 @@ satisfied:
         - may need to refactor factories such that they can provide picklable
           bits (__getdata__?) and can recieve unpickled data (and update their
           states) before firing off a service check
+     * All occurances of pymon.application.MonitorState need to be removed
+        - this includes IState and related componentry
+        - these need to be replaced with their storage counterparts
+          (add/update/delete/etc data)
+     * All occurances of pymon.application.History need to be removed
 
 
     Scalable JSON State URLs
@@ -204,13 +208,11 @@ desired ways.
      difference in current and previous state
    * we need to do more than compare states, e.g.,
    * detect flapping
-   *
  * state update - workflow does this in doTrans()
  * take action - probably in doTrans() as well as onEnter*() or onLeave*()
    * sending messages (needs to take into account message preferences like
      message count cut-offs)
    * escalating
-   *
 
 Plugins
 -------
@@ -227,6 +229,10 @@ Plugins
 
 AJAX
 ----
+
+The service check stats need to be updated based on the frequency with which
+each monitored service is checked. The UI should dynamically update when the
+status data has been updated.
 
 User Accounts, Subscriptions, and Messaging
 -------------------------------------------
@@ -246,10 +252,16 @@ the RSS comment above).
 Ah, another form of messaging: what about SMNP traps? A pymon MIB would define
 this (if memory serves)... need to look at how SNMP "messaging" works.
 
+
+
+
 ========
 New TODO
 ========
 
+* add new create table SQL
+* add relationships to data model tables
+* add tests for new tables and relationships
 * consider copying configuration data to database once config files are
   iterated and parsed (and remove config data from memory)
    - make sure that pymon.config.CheckConfig was pickleable
@@ -262,6 +274,7 @@ New TODO
      flushed would get reloaded the next time the config data was queried)
 * move the globalRegistry factories into persistent storage (storm.twisted) to
   save on memory
+* completely remove globalRegistry once storm orm code is in place
 * maybe make BaseMonnitor.__call__ return a deferred for updating/saving data
   of the last state (storm.twisted) and then add that deferred to a deferred
   list in plugins that subclass is (i.e., all plugins)
@@ -296,12 +309,9 @@ New TODO
 * start work on defining RPC for pymon
 * migrate to database-stored data (ditch pickled data).
   - DONE - prototype and test async code
-  - design schema
+  - design schema 
   - replace all state update code to use pymon storage API (which uses storm)
   - reokace all event/history update code to use pymon storage.
-* explore the use of references (weak?) for memory-intensive things like
-  monitor configurations (don't want to copy 1 config 1000s of times when each
-  one is identical and static).
 * give more consideration to the following features:
   - events (state transitions that meet the notification theshold requirements)
   - event hisory
@@ -333,18 +343,12 @@ New TODO
   obviously wrong
 
 ====
-TODO
+TODO (old)
 ====
 
 
-Global Registry Overhaul
-========================
-review monitors.BaseMonitor's maintenance window check and try to stop using
-the global reg.
-
-
 State and Workflow overhaul
-===========================
+---------------------------
 * DONE - Get rid of application.State's current use of backing up
     o DONE - have State subclass twisted.persisted.sob.Persistent
     o DONE - for regular backups, call monitorStateInstance.save()
@@ -352,151 +356,77 @@ State and Workflow overhaul
     o DONE - for restoring data, simply use twisted.persisted.sob.load()
 * DONE - Rename application.State to application.BaseState (subclassing Persistent)
 * DONE - Create application.CheckData, a dictionary with default values
-* WON'T DO - Move workflow.ServiceState to application (this belongs where is is for now)
-* Plug rules processing into ServiceState methods
-* Have monitors subclass ServiceState and override appropriate methods
+* DONE - Plug rules processing into ServiceState methods
 * DONE - Revamp application.MonitorState
     o DONE - __init__() instantiates a CheckState and assigns it to an attribute
     o DONE - checkStateInstance gets updated with all service changes; it's the 
         run-time data for the Monitor
-    o __init__() instantiates ServiceState and assigns it to an attribute
-    o ServiceState instance needs to subclass workflow.base.WorkflowAware
-    o serviceStateInstance needs to have access to checkStateInstance
 * Upon monitors parsing/proccessing returned network data:
-    o monitorStateInstance.workflow.doTrans(this_transition_name)
+    o DONE - monitorClient.workflow.doTrans(this_transition_name)
     o doTran() will initiate the actions appropriate for that particular
       transition
 * DONE - Convert all dictionary access to set/get access:
-    o DONE - clients/base.py, line 36
-* Renable the pickling (state-saving).
 
 Workflow Customizations
-=======================
-
-
+-----------------------
 
 o Move clients.rules.checkForMaintenanceWindow() to pymon.config.
 o Implement a very basic flap-guard: don't send out a notice until you 
 get x fails in a row, y warns in a row, or z errors in a row.
-
 o With notification cut-offs in place, the next thing to implement
 is checks for flapping services... that spend less than the cut-off
 limit in each state.
-
 o Run some prototype code with Glyph's Q2Q Vertext code... examine if 
 it's possible to do this via ssh... setting up shared keys between pymon 
 instances.
-
-o Entirely rip out configuration from globalRegistry -- there's no need 
-to that to be copied to another object -- it's all available as a 
-pymon.config import
-
 o Examine methodologies for performing the most checks in the
 shortest time; calculate limitations of system (number of hosts,
 time to check hosts, max checks in a given interval, etc.)
-
-o Start putting example configurations in the examples directory.
-
-o Rename etc/example-pymon.conf to etc/default-pymon.conf.
-
-o Clean up the print statements (convert to log) in stmp, ftp, and http 
-text client code.
-
-o Remove all the redundant copying of configuration data into objects 
-instances and instead use the globalRegistry.
-
-o Standardize repr's of all Monitor objects.
-
 o Add pymon overview page to the web UI
-
 o Add a form in the state lists for entering the number of seconds after 
 which the page shoudl refresh.
-
 o Convert the meta refrsh of the states web ui to AJAX/JSON.
-
-o Move the hard-coded data structure out of application.State and
-put it into code that is reusable. State() should have the flexibility
-to be initialized with whatever data structure the user wants.
-Ideally, the state data structure should be configurable in pymon.conf.
-
-o There is now state-related information in pymon.application, 
-pymon.client.base, and pymon.monitors. These need to be consolidated 
-into some subclass of State() and methods for dealing with this subclass 
-need to be generalized such that any arbitrary state information can be 
-stored.
-
-o I would like to add an event system to pymon... events which would 
-push to a listener. This means that there would be a single place for 
-doing many sorts of things (like updating state), and any time pymon 
-would need to update state, it would notify the listener.
-
 o Fix email formatting (only a problem onn some servers... needs 
 investigation)
-
 o Add https checks
-
 o Add organization to email message and subj; if not org, then host
 or IP
-
 o Add a built-in SMTP server for receiving acknowledgements from
 users (mail list will be checked for "authorized users"; headers
 will be checked for service uri)
-
 o Add custom pymon mail headers to outgoing messages
-
 o Add the ability to disable notifications on a per-service basis
-
-o Get a minimal pymon shell working
-
-o Fix the setuptools bin/script issues
-
 o enable multiple criteria for process matching
-
 o Fix the HTTP NullClient being __call__'ed.
-
 o Make sending of emails in clients.rules.ThresholdRules.sendIt()
 non-blocking.
 
 o DONE - Make the loglevel (verbosity) configurable
-
 o DONE - Use log levels for every log message (DEBUG, CRIT, INFO, etc.)
-
 o DONE - Use JSON/AJAX for arbitrarily sorting by columns on the services
 web views
-
 o DONE - Fix the maintenance window notification skips; add "maintenance"
 to state data structure
-
 o DONE - Add a virtual host monster so that it can be easily integrated
 with other web server software
-
 o DONE - Fix the "disabled" service configuration option
-
 o DONE - Add a regular check for config file modifications... re-load
 config? This might mean changing the "backup server" to "admin
 server", where backups and config file scanning/reloading would be
 two of its tasks.
-
 o DONE - Add failed message templates (these were actually already 
 there for HTTP status checks, there was just a typo in the 
 schema.xml file.
-
 o DONE - Add notification threshold logic (cutoff based on count
 to avoid getting spammed by pymon alerts)
-
 o DONE - Fix the status processing for http_status -- it seems to
 be broken
-
 o DONE - Fix the Nevow web interface
-
 o DONE - Get state data backups working for each monitor
-
 o DONE - Fix exceptions with HTTP status failures
-
 o DONE - create valid regex for human-readable ranged values in the
 validator pymon.zconfig.rangedValues. This has been moved to an
 externall library: adytum.config.zconfig.
-
 o DONE - tweak the ZConfig schema for pymon configuration to go from this:
   <check_type-defaults>
     ...
@@ -517,70 +447,8 @@ to something more like this:
       ...
     </check>
   </check_type>
-
-================
-Componentization
-================
-
-Adapters
---------
-Adapt Client to Configuration?
-components.registerAdapter(Configuration, SomeClient, IConfigureable)
-
-Adapt Persistent State data to Configuration?
-components.registerAdapter(Configuration, State, IConfigureable)
-    then in the Client, do an interface lookup:
-    components.globalRegistry(...
-
-Subclassing components.Componentized will let you do stuff like the following:
-
-    myclass.setComponent(cfg, IConfigLoader)
-    myclass.getComponent(...)
-
-IConfigLoader will have to be a custom interface, since 
-ZConfig.loader.ConfigLoader() doesn't implement an interface. The
-Componentized machinery takes care of implementation 
-(in the fixClassImplements() function):
-
-    class IConfigLoader(Interface):
-        pass
-
-This would provide access to the configuration where ever myclass is 
-lives. However, this is just the loaded ZConfig configuration -- we want
-methods, too. So, we can adapt ZConfig to our config API:
-
-    class IPyMonConfigAPI(Interface):
-        pass
-
-    class PyMonConfigAPI(object):
-        getUri(...)
-        getServiceDefaults(...)
-        getAppDefaults(...)
-        ...
-
-    class AdaptZConfigToPyMon(object):
-        implements(IPyMonConfigAPI)
-
-        def __init__(self, cfg):
-            """
-            The ZConfig python API is perfect for pymon's needs. 
-            However, there may be other configurations we want to 
-            support in the future; an adaptor for those will have to be
-            written in order to present an API like ZConfig uses.
-
-            For this "adaptor", all we need to do is pass the 
-            configuration object.
-            """
-            self.cfg = cfg
-
-    class Configuration(object):
-        def adapt(self, cfg):
-            adapted = PyMonConfigAPI(cfg)
-            self = cfg
-
-Lookups
--------
-
-We need to be able to get instances that implement 
-* IMonitor
-* 
+o DONE - Get a minimal pymon shell working
+o DONE - Entirely rip out configuration from globalRegistry -- there's no need 
+to that to be copied to another object -- it's all available as a 
+pymon.config import
+o DONE - Start putting example configurations in the examples directory.

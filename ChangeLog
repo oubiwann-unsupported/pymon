@@ -10,6 +10,8 @@ don't exist).
 * Added missing init file.
 * Added sorting to unit test, now that Thomas Herve has added order_by support
 to the twisted storm wrapper.
+* More data model tweaks.
+* TODO update.
 
 2007.12.16
 

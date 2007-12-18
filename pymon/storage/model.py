@@ -6,7 +6,7 @@ from datetime import datetime
 
 from storm.databases.sqlite import SQLite
 from storm.uri import URI
-from storm.properties import Int, Unicode, DateTime
+from storm.properties import Int, Unicode, DateTime, RawStr
 from storm.twisted.store import DeferredStore
 
 from twisted.internet.defer import DeferredList
@@ -24,6 +24,8 @@ class Service(object):
     host = Unicode()
     service = Unicode()
     service_type = Unicode()
+    factory = RawStr()
+    config = RawStr()
 
 class Status(object):
     """

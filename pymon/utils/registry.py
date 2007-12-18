@@ -52,10 +52,10 @@ class Registry(dict):
     'Alice'
     >>> reg.getFirstRegisteredObjectOfType('instance').name
     'Alice'
-  
-    # get rid of it now 
-    >>> reg.unregisterObject('config') 
-    >>> reg.unregisterObject('config') 
+
+    # get rid of it now
+    >>> reg.unregisterObject('config')
+    >>> reg.unregisterObject('config')
     Traceback (most recent call last):
     RegistrationError: 'config' is not in the registry.
 
@@ -68,7 +68,7 @@ class Registry(dict):
 
     # test with new-style classes
     >>> class Config(object):
-    ...   def __init__(self): 
+    ...   def __init__(self):
     ...     self.name = 'Bob'
     >>> cfg = Config()
     >>> reg.add('config', cfg)
