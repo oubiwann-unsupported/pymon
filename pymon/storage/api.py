@@ -4,7 +4,6 @@ pymon storage module for the Storm ORM
 
 from datetime import datetime
 
-from storm import databases
 from storm.uri import URI
 from storm.properties import Int, Unicode, DateTime
 from storm.twisted.store import DeferredStore
@@ -20,26 +19,38 @@ def getDatabase(connectionString=''):
     parts = connectionString.split(':')
     scheme = parts[0]
     if scheme == 'sqlite':
-        return databases.sqlite.SQLite(URI(connectionString))
+        from storm.databases import sqlite
+        klass = sqlite.SQLite
     elif scheme == 'mysql':
-        return databases.mysql.MySQL(URI(connectionString))
+        from storm.databases import mysql
+        klass = mysql.MySQL
     elif scheme == 'postgres':
-        return databases.postgres.Postgres(URI(connectionString))
-
-def getStore(database=None, connectionString=''):
-    if database:
-        return DeferredStore(database)
-    elif connectionString:
-        db = getDatabase(connectionString)
-        return DeferredStore(db)
+        from storm.databases import postgres
+        klass = postgres.Postgres
+    return klass(URI(connectionString))
 
 def createTables(conn):
     conn.execute(sql.createStatusTable)
     conn.execute(sql.createEventTable)
     conn.commit()
 
-def checkTables(conn):
-    pass
+def isTables(conn):
+    try:
+        conn.execute('SELECT * FROM status')
+        return True
+    # XXX this raw except needs to instead check for sqlite, mysql and postgres
+    # table-not-found errors
+    except:
+        return False
+
+def getStore(database=None, connectionString=''):
+    if not database and connectionString:
+        database = getDatabase(connectionString)
+    # check to see if tables exist; if not, create them
+    conn = database.connect()
+    if not isTables(conn):
+        createTables(conn)
+    return DeferredStore(database)
 
 def addHostStatus(host, service, data):
     pass

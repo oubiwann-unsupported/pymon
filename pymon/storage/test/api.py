@@ -8,6 +8,8 @@ Test for twistorm.
 import os
 from datetime import datetime
 
+import pysqlite2
+
 from storm.databases.sqlite import SQLite
 from storm.uri import URI
 from storm.twisted.store import DeferredStore
@@ -21,7 +23,8 @@ from pymon.storage.model import Status, Event
 
 class DatabaseSetupTestCase(TestCase):
     """
-    Tests for L{DeferredStore}.
+    Tests for the part of L{pymon.storage.api} that deals with getting a
+    database from a connection string, creating tables, and getting a store.
     """
 
     def setUp(self):
@@ -30,16 +33,31 @@ class DatabaseSetupTestCase(TestCase):
         """
         self.filename = self.mktemp()
 
-    def test_createTables(self):
-        pass
+    def test_connectionSchema(self):
+        db = api.getDatabase("sqlite:")
+        self.assertEqual(db.__class__.__name__, 'SQLite')
+        db = api.getDatabase("mysql:")
+        self.assertEqual(db.__class__.__name__, 'MySQL')
+        db = api.getDatabase("postgres:")
+        self.assertEqual(db.__class__.__name__, 'Postgres')
 
-    def test_checkTables(self):
-        pass
-        self.filename = self.mktemp()
-        self.database = api.getDatabase("sqlite:" + self.filename)
-        conn = self.database.connect()
+    def test_isTables(self):
+        database = api.getDatabase("sqlite:" + self.filename)
+        conn = database.connect()
+        self.assertEqual(api.isTables(conn), False)
         api.createTables(conn)
-        # XXX make assertions about tables
+        self.assertEqual(api.isTables(conn), True)
+
+    def test_createTables(self):
+        database = api.getDatabase("sqlite:" + self.filename)
+        conn = database.connect()
+        api.createTables(conn)
+        r = conn.execute('SELECT * FROM status')
+        self.assertNotEqual(r, None)
+        r = conn.execute('SELECT * FROM event')
+        self.assertNotEqual(r, None)
+        sql = 'SELECT * FROM bogus_table'
+        self.assertRaises(pysqlite2.dbapi2.OperationalError, conn.execute, sql)
 
 class DatabaseAPITestCase(TestCase):
     """

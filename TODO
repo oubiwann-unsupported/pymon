@@ -28,7 +28,7 @@ satisfied:
    that accessing 1000s to millions of monitored service states is "easy" and
    intuitive.
 
-    Scalable Configuration
+    Scalable Configuration (DONE)
     ----------------------
 
      * Scan directories and locate configuration files
@@ -143,8 +143,25 @@ satisfied:
      1. portscan a network
      2. create host files from the discovered hosts
 
+
+
     Scalabale Database Access
     -------------------------
+    Some notes about intended direction:
+     * Use relational DB for check data (monitored service state and history)
+     * Database access has to be async in order to scale well with pymon
+     * Programmatic interface has to be clean and object-oriented
+
+    This means the following needs to take place:
+     * DONE - Migrate to an async-capable ORM (Storm with Twistesd support)
+     * DONE - Create datamodels
+     * Store factories in the database instead of memory
+        - factories need to be picklable
+        - need to add 'factory' blob field to service
+        - may need to refactor factories such that they can provide picklable
+          bits (__getdata__?) and can recieve unpickled data (and update their
+          states) before firing off a service check
+
 
     Scalable JSON State URLs
     ------------------------
@@ -200,7 +217,9 @@ Plugins
 
  * Adding a new monitor to pymon needs to be easy and intuitive (for a python
    programmer familiar with Twisted, that is)
- * Dispatching needs to work with configuration files and plugins, not just
+    - add HOWTO and tutorial docs to the sf.net website and/or google wiki
+    - post to the mail list about the docs and the feature
+ * DONE - Dispatching needs to work with configuration files and plugins, not just
    python code (pymon.monitors.AbstractFactory.makeMonitor)
  * DONE - All service monitors (even the bundled ones) should be in the plugins
    directory
@@ -231,6 +250,16 @@ this (if memory serves)... need to look at how SNMP "messaging" works.
 New TODO
 ========
 
+* consider copying configuration data to database once config files are
+  iterated and parsed (and remove config data from memory)
+   - make sure that pymon.config.CheckConfig was pickleable
+   - add a blob file to service data model for CheckConfig pickle data
+   - would also need to make sure that updates to the configs on the
+     filesystem would refresh the config data stored in the DB
+   - a save to config changes would flush impacted db records
+   - all pymon code config lookups would first search the database, if not
+     found, would parse filesystem config files (thus anything that had been
+     flushed would get reloaded the next time the config data was queried)
 * move the globalRegistry factories into persistent storage (storm.twisted) to
   save on memory
 * maybe make BaseMonnitor.__call__ return a deferred for updating/saving data

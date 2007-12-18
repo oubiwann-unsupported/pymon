@@ -1,5 +1,16 @@
 2007.12.16
 
+* Added more unit tests for the storage api (and filled in the incomplete
+ones).
+* Fixed database creation code (imports).
+* Filled in stub for checking for the presence of tables.
+* Added code for getting the deferred store (first creating tables if they
+don't exist).
+* Filled in data model.
+* Added missing init file.
+
+2007.12.16
+
 * Removed old database code from storage module.
 * Split up stormorm into separate modules: sql, model, and api.
 * Filled in a long-awaited database setting in the configuration file.
