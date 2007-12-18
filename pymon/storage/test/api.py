@@ -102,6 +102,7 @@ class DatabaseAPITestCase(TestCase):
         return results.one()
 
     def cbGetAllResults(self, results):
+        results.order_by(Event.datetime)
         return results.get_all()
 
     def tearDown(self):
@@ -150,11 +151,11 @@ class DatabaseAPITestCase(TestCase):
         Let's put stuff in the history table and see that the data persisted.
         """
         def cbQueryEvent(ign):
-            return self.store.find(Event).addCallback(self.cbGetAllResults)
+            d = self.store.find(Event)
+            d.addCallback(self.cbGetAllResults)
+            return d
 
         def cbCheckEvent(events):
-            # XXX uncomment when storm.twisted supports order_by
-            #events.order_by(Event.datetime)
             expected = self.events
             received = [x.transition for x in events]
             self.assertEqual(expected, received)

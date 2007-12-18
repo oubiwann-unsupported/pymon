@@ -8,6 +8,8 @@ ones).
 don't exist).
 * Filled in data model.
 * Added missing init file.
+* Added sorting to unit test, now that Thomas Herve has added order_by support
+to the twisted storm wrapper.
 
 2007.12.16
 
