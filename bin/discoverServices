@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import sys
+from optparse import OptionParser
 
 from twisted.internet import task
 from twisted.internet import defer
@@ -17,17 +18,25 @@ except ImportError:
            'in order to run this tool.')
     sys.exit()
 
-script = sys.argv[0]
-blocks = sys.argv[1:-1]
-ports = sys.argv[-1].split(',')
-usage = '''
+usage = '''%prog [options] netBlock startPort,endPort
+
 You need to pass the CIDR block(s) that define the network(s)
 you want to scan as well as the port range to be scanned for
 each host. The port range must be two comma-separated integers.
 For example:
-    %s 192.168.4.0/24 1,8080
-    %s 172.16.0.0/16 172.29.13.0/24 10.1.24.0/26 21,1024
-''' % (script, script)
+    %prog [options] 192.168.4.0/24 1,8080
+    %prog [options] 172.16.0.0/16 172.29.13.0/24 10.1.24.0/26 21,1024
+'''
+
+optp = OptionParser(usage=usage)
+optp.set_defaults(ports='1,1000', batchSize=100, timeout=0.1)
+optp.add_option('-s', '--batchSize')
+optp.add_option('-t', '--timeout')
+
+(opts, args) = optp.parse_args()
+
+blocks = sys.argv[1:-1]
+ports = sys.argv[-1].split(',')
 
 TCPPingServiceConfigTemplate = '''
 <ping-tcp-check>
@@ -103,7 +112,6 @@ class Scanner(object):
         coop = task.Cooperator()
         def scanHosts():
             for host in self.hosts:
-                print "Setting up deferreds for %s ..." % host
                 for port in xrange(*self.portRange):
                     yield self.doFactory(host, port)
         scans = scanHosts()
@@ -125,7 +133,6 @@ class Scanner(object):
         hostData.append(port)
 
     def recordFailure(self, failure, host, port):
-        #print "(failing %s:%s ...)" % (host, port)
         hostData = self.data['failure'].setdefault(host, [])
         data = (port, failure.getErrorMessage())
         hostData.append(data)
@@ -168,5 +175,5 @@ print '\nBeginning scan on the following %s (%s):' % (netword, countMsg)
 for net in nets:
     print '\t%s' % net
 
-scanner = Scanner(nets.iterIPs(), ports, batchSize=10000, timeout=1)
+scanner = Scanner(nets.iterIPs(), ports, batchSize=500, timeout=0.1)
 scanner.run()

@@ -6,6 +6,7 @@ micro version increment should have taken place. Current version reflects the
 sum of those changes.
 * Added another scanner to the sandbox for testing parameters, custom
 schedulers, etc.
+* Added optparse support to discoverServices.
 
 2007.12.24
 
