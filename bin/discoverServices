@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import sys
+from socket import gethostbyaddr
 from optparse import OptionParser
 
 from twisted.internet import task
@@ -30,11 +31,12 @@ For example:
 
 optp = OptionParser(usage=usage)
 optp.set_defaults(ports='1,1000', batchSize=100, timeout=0.1, verbose=False,
-                  spew=False)
+                  spew=False, debug=False)
 optp.add_option('-s', '--batchSize', dest='batchSize')
 optp.add_option('-t', '--timeout', dest='timeout')
 optp.add_option('-v', '--verbose', dest='verbose', action='store_true')
 optp.add_option('-p', '--spew', dest='spew', action='store_true')
+optp.add_option('-d', '--debug', dest='debug', action='store_true')
 (opts, args) = optp.parse_args()
 
 if len(args) < 2:
@@ -60,6 +62,14 @@ def _getSimplePlural(word, count):
     if count > 1:
         word += 's'
     return word
+
+def printError(err):
+    print '\nError:\n'
+    if opts.debug:
+        print err
+    else:
+        print '\t%s' % err.getErrorMessage()
+    print '\n'
 
 class ScanProtocol(Protocol):
 
@@ -98,6 +108,7 @@ class Scanner(object):
         d = self.doScans()
         d.addCallback(self.doReport)
         d.addCallback(self.writeConfigs)
+        d.addErrback(printError)
         reactor.run()
 
     def doScans(self):
@@ -137,29 +148,47 @@ class Scanner(object):
         data = (port, failure.getErrorMessage())
         hostData.append(data)
 
-    def doReport(self, resul):
-        print "Open Ports:"
-        for host, ports in self.getSuccesses().items():
+    def doReport(self, ignore):
+        results = self.getSuccesses().items()
+        if results:
+            print "Open Ports:"
+        else:
+            print "No open ports found."
+        for host, ports in results:
             print "\tHost: %s" % host
             for port in ports:
                 print "\t\topen port: %i" % port
         errors = {}
-        for host, portAndError in self.getFailures().items():
+        results = self.getFailures().items()
+        for host, portAndError in results:
             for port, error in portAndError:
                 errors.setdefault(error, 0)
                 errors[error] += 1
-        if opts.verbose or opts.spew:
+        if results and (opts.verbose or opts.spew):
             print "\nErrors encountered, and their counts:"
             for error, count in errors.items():
                 print "\t%s -- %i" % (error, count)
 
     def writeConfigs(self, result):
         reactor.stop()
-        print "Writing config files..."
-        for host, ports in self.getSuccesses().items():
-            ports = ','.join(ports)
-            cfg = TCPPingServiceConfigTemplate % (host, ports)
         basePath = FilePath('etc/services/ping_tcp')
+        if not basePath.exists():
+            basePath.makedirs()
+        results = self.getSuccesses().items()
+        if results:
+            print "Writing config files:"
+        for host, ports in results:
+            hostname = gethostbyaddr(host)[0]
+            cfgFile = basePath.child('%s.conf' % hostname)
+            if cfgFile.exists():
+                continue
+            print "\t%s ..." % cfgFile.path
+            cfgFile.touch()
+            fh = cfgFile.open('w')
+            ports = ','.join([str(x) for x in ports])
+            cfg = TCPPingServiceConfigTemplate % (host, ports)
+            fh.write(cfg)
+            fh.close()
 
     def getSuccesses(self):
         return self.data['success']
