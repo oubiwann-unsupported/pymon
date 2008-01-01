@@ -6,7 +6,7 @@ from pymon.clients import ClientMixin
 from pymon.utils.pingparser import OutputParser
 
 
-class PingClient(Protocol, ClientMixin):
+class TCPPingClient(Protocol, ClientMixin):
 
     def connectionMade(self):
         self.factory.deferred.callback("success")

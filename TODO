@@ -259,7 +259,7 @@ this (if memory serves)... need to look at how SNMP "messaging" works.
 New TODO
 ========
 
-* add new create table SQL
+* add SQL create statements for tables in the updated model.
 * add relationships to data model tables
 * add tests for new tables and relationships
 * consider copying configuration data to database once config files are

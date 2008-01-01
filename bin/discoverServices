@@ -1,0 +1,172 @@
+#!/usr/bin/env python
+import sys
+
+from twisted.internet import task
+from twisted.internet import defer
+from twisted.internet import reactor
+from twisted.internet.protocol import Protocol
+from twisted.internet.protocol import ClientFactory
+from twisted.internet.protocol import ReconnectingClientFactory
+from twisted.internet.error import ConnectBindError
+from twisted.python.filepath import FilePath
+
+try:
+    from netcidr import CIDR, Networks
+except ImportError:
+    print ('\nYou must have NetCIDR installed for your version of python ' +
+           'in order to run this tool.')
+    sys.exit()
+
+script = sys.argv[0]
+blocks = sys.argv[1:-1]
+ports = sys.argv[-1].split(',')
+usage = '''
+You need to pass the CIDR block(s) that define the network(s)
+you want to scan as well as the port range to be scanned for
+each host. The port range must be two comma-separated integers.
+For example:
+    %s 192.168.4.0/24 1,8080
+    %s 172.16.0.0/16 172.29.13.0/24 10.1.24.0/26 21,1024
+''' % (script, script)
+
+TCPPingServiceConfigTemplate = '''
+<ping-tcp-check>
+    uri     %s
+    ports   %s
+    enabled true
+</ping-tcp-check>
+'''
+
+def doUsage():
+    print usage
+    sys.exit()
+
+if len(sys.argv) < 2:
+    doUsage()
+if len(ports) != 2:
+    doUsage()
+try:
+    ports = [int(x) for x in ports]
+except ValueError:
+    doUsage()
+
+def _getSimplePlural(word, count):
+    if count > 1:
+        word += 's'
+    return word
+
+class ScanProtocol(Protocol):
+
+    def connectionMade(self):
+        self.factory.deferred.callback("success")
+        self.transport.loseConnection()
+
+class ScanFactory(ClientFactory):
+
+    protocol = ScanProtocol
+
+    def __init__(self):
+        self.deferred = defer.Deferred()
+
+    def clientConnectionFailed(self, connector, reason):
+        self.deferred.errback(reason)
+
+    def clientConnectionLost(self, connector, reason):
+        pass
+
+class Scanner(object):
+    '''
+    '''
+    def __init__(self, hosts, portRange, batchSize=50, timeout=1):
+        self.hosts = hosts
+        portRange[1] += 1
+        self.portRange = portRange
+        self.batchSize = batchSize
+        self.timeout = timeout
+        self.data = {
+            'success': {},
+            'failure': {},
+        }
+
+    def run(self):
+        d = self.doScans()
+        d.addCallback(self.doReport)
+        d.addCallback(self.writeConfigs)
+        reactor.run()
+
+    def doScans(self):
+        '''
+        We use the Twisted task cooperator here to control the number of
+        deferrds (and therefore connections) created at once, thus providing a
+        way for systems to use the script efficiently.
+        '''
+        coop = task.Cooperator()
+        def scanHosts():
+            for host in self.hosts:
+                print "Setting up deferreds for %s ..." % host
+                for port in xrange(*self.portRange):
+                    yield self.doFactory(host, port)
+        scans = scanHosts()
+        self.scans = defer.DeferredList(
+            [coop.coiterate(scans) for i in xrange(self.batchSize)])
+        return self.scans
+
+    def doFactory(self, host, port):
+        factory = ScanFactory()
+        reactor.connectTCP(host, port, factory, self.timeout)
+        d = factory.deferred
+        d.addCallback(self.recordConnection, host, port)
+        d.addErrback(self.recordFailure, host, port)
+        return d
+
+    def recordConnection(self, result, host, port):
+        print "Connected to %s:%s ..." % (host, port)
+        hostData = self.data['success'].setdefault(host, [])
+        hostData.append(port)
+
+    def recordFailure(self, failure, host, port):
+        #print "(failing %s:%s ...)" % (host, port)
+        hostData = self.data['failure'].setdefault(host, [])
+        data = (port, failure.getErrorMessage())
+        hostData.append(data)
+
+    def doReport(self, resul):
+        print "Open Ports:"
+        for host, ports in self.getSuccesses().items():
+            print "\tHost: %s" % host
+            for port in ports:
+                print "\t\topen port: %i" % port
+        errors = {}
+        for host, portAndError in self.getFailures().items():
+            for port, error in portAndError:
+                errors.setdefault(error, 0)
+                errors[error] += 1
+        print "\nErrors encountered, and their counts:"
+        for error, count in errors.items():
+            print "\t%s -- %i" % (error, count)
+
+    def writeConfigs(self, result):
+        reactor.stop()
+        print "Writing config files..."
+        for host, ports in self.getSuccesses().items():
+            ports = ','.join(ports)
+            cfg = TCPPingServiceConfigTemplate % (host, ports)
+        basePath = FilePath('etc/services/ping_tcp')
+
+    def getSuccesses(self):
+        return self.data['success']
+
+    def getFailures(self):
+        return self.data['failure']
+
+nets = Networks([CIDR(x) for x in blocks])
+total = nets.getHostCount()
+netword = _getSimplePlural('network', len(nets))
+hostword = _getSimplePlural('host', total)
+countMsg = 'for a total of %s %s' % (total, hostword)
+print '\nBeginning scan on the following %s (%s):' % (netword, countMsg)
+for net in nets:
+    print '\t%s' % net
+
+scanner = Scanner(nets.iterIPs(), ports, batchSize=10000, timeout=1)
+scanner.run()

@@ -32,6 +32,9 @@ def getDatabase(connectionString=''):
 def createTables(conn):
     conn.execute(sql.createStatusTable)
     conn.execute(sql.createEventTable)
+    conn.execute(sql.createCountsTable)
+    conn.execute(sql.createLastTimesTable)
+    conn.execute(sql.createServiceTable)
     conn.commit()
 
 def isTables(conn):
