@@ -18,25 +18,35 @@ except ImportError:
            'in order to run this tool.')
     sys.exit()
 
-usage = '''%prog [options] netBlock startPort,endPort
+usage = '''%prog [options] netBlock[,netBlock2[,...]] startPort,endPort
 
 You need to pass the CIDR block(s) that define the network(s)
 you want to scan as well as the port range to be scanned for
 each host. The port range must be two comma-separated integers.
 For example:
     %prog [options] 192.168.4.0/24 1,8080
-    %prog [options] 172.16.0.0/16 172.29.13.0/24 10.1.24.0/26 21,1024
+    %prog [options] 172.16.0.0/16,172.29.13.0/24,10.1.24.0/26 21,1024
 '''
 
 optp = OptionParser(usage=usage)
-optp.set_defaults(ports='1,1000', batchSize=100, timeout=0.1)
-optp.add_option('-s', '--batchSize')
-optp.add_option('-t', '--timeout')
-
+optp.set_defaults(ports='1,1000', batchSize=100, timeout=0.1, verbose=False,
+                  spew=False)
+optp.add_option('-s', '--batchSize', dest='batchSize')
+optp.add_option('-t', '--timeout', dest='timeout')
+optp.add_option('-v', '--verbose', dest='verbose', action='store_true')
+optp.add_option('-p', '--spew', dest='spew', action='store_true')
 (opts, args) = optp.parse_args()
 
-blocks = sys.argv[1:-1]
-ports = sys.argv[-1].split(',')
+if len(args) < 2:
+    optp.error('You must pass at lease a netblock and a range of ports.')
+blocks = args[0].split(',')
+ports = args[1].split(',')
+if len(ports) != 2:
+    optp.error('You must provide two ports in the port range.')
+try:
+    ports = [int(x) for x in ports]
+except ValueError:
+    optp.error('Ports must be integers.')
 
 TCPPingServiceConfigTemplate = '''
 <ping-tcp-check>
@@ -45,19 +55,6 @@ TCPPingServiceConfigTemplate = '''
     enabled true
 </ping-tcp-check>
 '''
-
-def doUsage():
-    print usage
-    sys.exit()
-
-if len(sys.argv) < 2:
-    doUsage()
-if len(ports) != 2:
-    doUsage()
-try:
-    ports = [int(x) for x in ports]
-except ValueError:
-    doUsage()
 
 def _getSimplePlural(word, count):
     if count > 1:
@@ -121,6 +118,8 @@ class Scanner(object):
 
     def doFactory(self, host, port):
         factory = ScanFactory()
+        if opts.spew:
+            print "Preparing connection for %s:%s ..." % (host, port)
         reactor.connectTCP(host, port, factory, self.timeout)
         d = factory.deferred
         d.addCallback(self.recordConnection, host, port)
@@ -128,7 +127,8 @@ class Scanner(object):
         return d
 
     def recordConnection(self, result, host, port):
-        print "Connected to %s:%s ..." % (host, port)
+        if opts.verbose or opts.spew:
+            print "Connected to %s:%s ..." % (host, port)
         hostData = self.data['success'].setdefault(host, [])
         hostData.append(port)
 
@@ -148,9 +148,10 @@ class Scanner(object):
             for port, error in portAndError:
                 errors.setdefault(error, 0)
                 errors[error] += 1
-        print "\nErrors encountered, and their counts:"
-        for error, count in errors.items():
-            print "\t%s -- %i" % (error, count)
+        if opts.verbose or opts.spew:
+            print "\nErrors encountered, and their counts:"
+            for error, count in errors.items():
+                print "\t%s -- %i" % (error, count)
 
     def writeConfigs(self, result):
         reactor.stop()
@@ -175,5 +176,5 @@ print '\nBeginning scan on the following %s (%s):' % (netword, countMsg)
 for net in nets:
     print '\t%s' % net
 
-scanner = Scanner(nets.iterIPs(), ports, batchSize=500, timeout=0.1)
+scanner = Scanner(nets.iterIPs(), ports, opts.batchSize, opts.timeout)
 scanner.run()
