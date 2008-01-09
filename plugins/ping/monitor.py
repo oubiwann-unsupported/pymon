@@ -23,7 +23,7 @@ class LocalAgentPingMonitor(pb.PBClientFactory, BaseMonitor):
         count = '-c %s' % self.cfg.defaults.count
         self.args = [count, self.host]
         port = int(cfg.app.agents.port)
-        self.reactor_params = ('127.0.0.1', port, self)
+        self.reactorArgs = ('127.0.0.1', port, self)
 
     def __call__(self):
         BaseMonitor.__call__(self)
@@ -38,14 +38,10 @@ class LocalAgentPingMonitor(pb.PBClientFactory, BaseMonitor):
 
     def getPingReturn(self, results):
         self.data = results
-        #print dir(self)
         log.debug('Ping results: %s' % results)
         self.disconnect()
 
-    def clientConnectionLost(self, connector, reason, reconnecting=1):
-        """
-        Reconnecting subclasses should call with reconnecting=1.
-        """
+    def clientConnectionLost(self, connector, reason, reconnecting=True):
         if reconnecting:
             # any pending requests will go to next connection attempt
             # so we don't fail them.

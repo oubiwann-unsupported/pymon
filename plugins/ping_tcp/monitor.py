@@ -1,5 +1,5 @@
 from twisted.python import components
-from twisted.spread import pb
+from twisted.internet import defer
 from twisted.internet.protocol import ClientFactory
 
 from pymon.utils.logger import log
@@ -8,44 +8,52 @@ from pymon.application import MonitorState
 from pymon.application import globalRegistry
 from pymon.monitors import BaseMonitor
 
-from client import LocalAgentPingClient
+from client import TCPPingClient
 
-class LocalAgentPingMonitor(pb.PBClientFactory, BaseMonitor):
+class TCPPingMonitor(ClientFactory, BaseMonitor):
 
-    protocol = LocalAgentPingClient
+    protocol = TCPPingClient
 
     def __init__(self, uid, cfg):
-        pb.PBClientFactory.__init__(self)
         BaseMonitor.__init__(self, uid, cfg)
-
-        # get the info in order to make the next ping
-        self.binary = self.cfg.defaults.binary
-        count = '-c %s' % self.cfg.defaults.count
-        self.args = [count, self.host]
-        port = int(cfg.app.agents.port)
-        self.reactor_params = ('127.0.0.1', port, self)
+        self.ports = [int(x.strip()) for x in cfg.check.ports.split(',')]
+        self.count = cfg.check.count or cfg.defaults.count
 
     def __call__(self):
-        BaseMonitor.__call__(self)
-        d = self.getRootObject()
-        d.addCallback(self.pingHost)
-        d.addErrback(log.error)
-        d.addCallback(self.getPingReturn)
-        d.addErrback(log.error)
+        for port in self.ports:
+            dl = []
+            for check in xrange(self.count):
+                self.reactorArgs = (self.host, port, self)
+                BaseMonitor.__call__(self)
+                d = defer.Deferred()
+                d.addCallback(self.recordConnection, port)
+                d.addErrback(self.recordFailure, port)
+                dl.append(d)
+            dl = DeferredList(dl)
+            dl.addCallback(self.getPingReturn, port)
+            dl.addErrback(log.error)
 
-    def pingHost(self, pbobject):
-        return pbobject.callRemote('call', self.binary, self.args)
+    def clientConnectionFailed(self, connector, reason):
+        self.deferred.errback(reason)
 
-    def getPingReturn(self, results):
+    def clientConnectionLost(self, connector, reason):
+        pass
+
+    def recordConnection(self, result, port):
+        self.data['success'].setdefault(port, 0)
+        self.data['success']['port'] += 1
+
+    def recordFailure(self, failure, port):
+        portData = self.data['failure'].setdefault(host, [])
+        data = (port, failure.getErrorMessage())
+        portData.append(data)
+
+    def getPingReturn(self, results, port):
         self.data = results
-        #print dir(self)
         log.debug('Ping results: %s' % results)
         self.disconnect()
 
     def clientConnectionLost(self, connector, reason, reconnecting=1):
-        """
-        Reconnecting subclasses should call with reconnecting=1.
-        """
         if reconnecting:
             # any pending requests will go to next connection attempt
             # so we don't fail them.

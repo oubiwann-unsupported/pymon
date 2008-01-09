@@ -48,6 +48,8 @@ class BaseMonitor(object):
         self.cfg = cfg
         self.message = None
         self.setInterval()
+        self.reactorArgs = ()
+        self.reactorKwds = {}
 
     def __repr__(self):
         return "<%s: %s>" % (self.__class__.__name__, self.uid)
@@ -68,7 +70,7 @@ class BaseMonitor(object):
                 self.cfg.app.state_definitions.maintenance, self.uid)
             globalRegistry.factories[self.uid].state = self.state
         elif self.cfg.check.enabled:
-            reactor.connectTCP(*self.reactor_params)
+            reactor.connectTCP(*self.reactorArgs, **self.reactorKwds)
         else:
             msg = "Service %s has been disabled; not checking."
             log.warning(msg % self.uid)

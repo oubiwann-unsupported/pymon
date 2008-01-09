@@ -259,6 +259,15 @@ this (if memory serves)... need to look at how SNMP "messaging" works.
 New TODO
 ========
 
+* move maintenance window check into its own method, isMaintenance()
+* move disabled check into its own method, isDisabled()
+* move state-saving functionality into its own method
+* add a parameter to BaseMonitor.__call__ (e.g., "call=True") that would allow
+  subclasses to determine if BaseMonitor should call connectTCP or not
+* with those in place, clean up BaseMonitor.__call__() so that if
+  isMaintenance or isDisabled, call=False
+* with those in place, update ping_tcp plugin with a "sub-factory" that works
+  like the factory in the discoverServices script
 * add SQL create statements for tables in the updated model.
 * add relationships to data model tables
 * add tests for new tables and relationships
@@ -299,7 +308,6 @@ New TODO
 * pull messaging crap out of ThresholdCheck class
 * look into BaseMonitor.__call__ more closely (see XXX comment).
 * is pymon.clients.BaseClient.updateState doing its job?
-* rename all occurances of reactor_params to reactorArgs.
 * clean up old crap in pymon.clients.
 * add support for twisted-based TCP pinger.
 * create a doc/wiki page on pymon plugins (what they are, what they're based
@@ -341,6 +349,7 @@ New TODO
 * DONE - plug workflow into pymon
 * DONE - services seem to stay in RECOVERING continuously, and this is
   obviously wrong
+* DONE - rename all occurances of reactor_params to reactorArgs.
 
 ====
 TODO (old)

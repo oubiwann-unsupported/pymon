@@ -2,6 +2,11 @@
 
 * Added best practices/advice to usage in discoverServices script.
 * Coped the ping plugin as the basis for the new ping_tcp plugin.
+* Removed TCPPingClient from plugins.ping.client.
+* Removed LocalAgentPingClient from plugins.ping_tcp.client.
+* Started hacking on TCPPingMonitor and TCPPingClient.
+* Added the ability to pass both args and kwds to BaseMonitor.__call__.
+* Fixed up initial ping_tcp config options.
 
 2008.01.01
 

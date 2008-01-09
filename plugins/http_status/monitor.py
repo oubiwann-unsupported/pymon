@@ -30,7 +30,7 @@ class HttpStatusMonitor(HTTPClientFactory, BaseMonitor):
         #port = self.checkConfig.http_port
         #import pdb;pdb.set_trace()
         port = int(self.defaults.remote_port)
-        self.reactor_params = (self.host, port, self)
+        self.reactorArgs = (self.host, port, self)
 
     def __repr__(self):
         """
