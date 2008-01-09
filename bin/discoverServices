@@ -27,6 +27,26 @@ each host. The port range must be two comma-separated integers.
 For example:
     %prog [options] 192.168.4.0/24 1,8080
     %prog [options] 172.16.0.0/16,172.29.13.0/24,10.1.24.0/26 21,1024
+
+
+There are two parameters that control the rate at which the connections to
+servers are made: batchSize and timeout. However, all parameters affect the
+number of files opened in your os: with enough hosts and ports, a large batch
+size and a small timeout, you could easily max out the number of open files on
+your system. Please keep that in mind.
+
+I have found that for hosts over a good internet connection, a timeout of 1
+second usually gives enough time to make a connection. However, this can take
+quite a while with a large number of ports per host. I have found the following
+works well in general for internet discovery:
+  %prog --batchSize=100 --timeout=1 1.2.3.4/24 1,1000
+On my machine, that takes about 12 seconds.
+
+For local networks, however, we don't have to worry so much about latency.
+Connections are made and closed more quickly, leaving fewer open files in a
+smaller period of time. Scanning large network blocks can go very quickly. I've
+found the following works well on my corporate network:
+  %prog --batchSize=200 --timeout=0.1 10.2.3.4/24 1,10000
 '''
 
 optp = OptionParser(usage=usage)

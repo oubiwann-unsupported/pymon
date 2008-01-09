@@ -1,3 +1,8 @@
+2008.01.08
+
+* Added best practices/advice to usage in discoverServices script.
+* Coped the ping plugin as the basis for the new ping_tcp plugin.
+
 2008.01.01
 
 * More option edits for discoverServices script.
