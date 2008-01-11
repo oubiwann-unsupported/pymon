@@ -55,31 +55,40 @@ class BaseMonitor(object):
         return "<%s: %s>" % (self.__class__.__name__, self.uid)
 
     def __call__(self):
-        # update the configuration in case it has changed
-        # XXX not sure if this is doing what we expect it to be doing...
-        IState(self).save()
-        self.state = IState(self)
-        if self.cfg.app.checkForMaintenanceWindow(self.cfg.check):
-            # XXX These two chunks of state info access need to be moved
-            # out of here... and made less eyesoreingly redundant.
-            # There's another set of XXX's that discuss this in general
-            # elsewhere. There are also notes in the TODO.
-            msg = "Service %s has been disabled during maintenance."
-            log.warning(msg % self.uid)
-            self.state = application.setNonChangingState(self.state,
-                self.cfg.app.state_definitions.maintenance, self.uid)
-            globalRegistry.factories[self.uid].state = self.state
-        elif self.cfg.check.enabled:
+        self.updateState()
+        if not (self.isMaintenance() or self.isDisabled()):
             reactor.connectTCP(*self.reactorArgs, **self.reactorKwds)
-        else:
-            msg = "Service %s has been disabled; not checking."
-            log.warning(msg % self.uid)
-            self.state = application.setNonChangingState(self.state,
-                self.cfg.app.state_definitions.disabled, self.uid)
-            globalRegistry.factories[self.uid].state = self.state
 
     def __getstate__(self):
         return self.__dict__
+
+    def _setNonCheckState(self, nonCheckState, msg):
+            log.warning(msg)
+            self.state = application.setNonChangingState(self.state,
+                nonCheckState, self.uid)
+            globalRegistry.factories[self.uid].state = self.state
+
+    def updateState(self):
+        # update the configuration in case it has changed
+        # XXX not sure if state stuff is doing what we expect it to be doing...
+        IState(self).save()
+        self.state = IState(self)
+
+    def isMaintenance(self):
+        if self.cfg.isMaintenance():
+            msg = "Service %s has been disabled during maintenance."
+            stateID = self.cfg.app.state_definitions.maintenance
+            self._setNonCheckState(stateID, msg % self.uid)
+            return True
+        return False
+
+    def isDisabled(self):
+        if self.cfg.isDisabled():
+            msg = "Service %s has been disabled; not checking."
+            stateID = self.cfg.app.state_definitions.disabled
+            self._setNonCheckState(stateID, msg % self.uid)
+            return True
+        return False
 
     def host(self):
         return utils.getHostFromURI(self.uid)

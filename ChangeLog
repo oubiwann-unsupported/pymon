@@ -1,3 +1,20 @@
+2008.01.10
+
+* Moved maintenance window check into its own method, isMaintenance().
+* Moved disabled check into its own method, isDisabled().
+* Removed redundant checks in those two methods and put them into
+_setNonCheckState().
+* Added an isMaintenance check to the CheckConfig object that checks both the
+service check default configuration as well as the specific check
+configuration.
+* Also added an isDisabled check to CheckConfig for the same convenience.
+* Updated SchemalessSection object to turn 'true' and 'false' strings into
+appropriate boolean values.
+* Copied the parse date function from utils.zconfig to utils and made some
+minor changes.
+* Fixed the logic in checkForMaintenanceWindow().
+* Moved monnitors.BaseMonitor state updating into its own method.
+
 2008.01.08
 
 * Added best practices/advice to usage in discoverServices script.

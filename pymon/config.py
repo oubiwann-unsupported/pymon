@@ -6,7 +6,7 @@ from datetime import datetime
 
 from ZConfig.schemaless import loadConfigFile
 
-from pymon.utils import getTypeFromURI
+from pymon.utils import getTypeFromURI, parseDate
 
 def getConfigFiles():
     confs = chain(os.walk('etc/services'), os.walk('plugins'))
@@ -59,7 +59,6 @@ def assembleConfig():
 config = loadConfigFile(assembleConfig())
 
 def refreshConfig():
-    log.info("Checking for config file changes...")
     conf_file = utils.getResource(['etc', 'pymon.conf'])
     conf = open(conf_file).read()
     new_md5 = md5.new(conf).hexdigest()
@@ -67,7 +66,6 @@ def refreshConfig():
     globalRegistry.state['config_md5'] = new_md5
     # check against MD5 in state
     if new_md5 != old_md5:
-        log.warning("Config MD5 signatures do not match; loading new config...")
         # get and load schema, load config
         schema_file = utils.getResource(['etc', 'schema.xml'])
         schema = ZConfig.loadSchema(schema_file)
@@ -154,20 +152,19 @@ class BaseConfig(object):
         return enabled.intersection(pymonServices)
 
     def checkForMaintenanceWindow(self, config):
-        # Checking for maintenance window...
         try:
-            start = config.scheduled_downtime['start'].timetuple()
-            end = config.scheduled_downtime['end'].timetuple()
-            now = datetime.now().timetuple()
-        except TypeError:
-            start = end = now = None
+            start, end = config.scheduled_downtime.split('-')
+            start = parseDate(start)
+            end = parseDate(end)
         except AttributeError:
-            if self.checkConfig == None:
-                raise "Configuration should not be none!"
-        if (start < now < end):
-            # Maintenance is scheduled for this service now
+            start = end = None
+        if (start <= datetime.now().timetuple() <= end):
             return True
-        # No maintenance window for this time
+        return False
+
+    def checkForDisabledService(self, config):
+        if config.enabled == False:
+            return True
         return False
 
     def getStateNames(self):
@@ -226,6 +223,12 @@ class SchemalessSection(object):
                 val = val[0]
         except Exception, err:
             import pdb;pdb.set_trace()
+        # check for boolean
+        if isinstance(val, str):
+            if val.lower() == 'true':
+                val = True
+            elif val.lower() == 'false':
+                val = False
         return val
 
     def _getSection(self, name):
@@ -340,6 +343,18 @@ class CheckConfig(object):
         return cfg.getCheckConfigFromURI(self.uri)
     check = property(check)
 
+    def isMaintenance(self):
+        if (
+            self.app.checkForMaintenanceWindow(self.defaults) == True or
+            self.app.checkForMaintenanceWindow(self.check) == True):
+            return True
+        return False
 
-
+    def isDisabled(self):
+        #import pdb;pdb.set_trace()
+        if (
+            self.app.checkForDisabledService(self.defaults) == True or
+            self.app.checkForDisabledService(self.check) == True):
+            return True
+        return False
 

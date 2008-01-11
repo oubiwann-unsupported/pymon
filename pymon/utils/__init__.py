@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from uri import Uri
 
 class LocalTools:
@@ -32,6 +34,12 @@ def isInList(datum, in_list):
     if str(datum) in list:
         return True
     return False
+
+def parseDate(yyyymmdd_hhmmss_string):
+    date, time = yyyymmdd_hhmmss_string.strip().split()
+    y, m, d = date.strip().split('.')
+    h, min, s = time.strip().split(':')
+    return tuple([ int(x) for x in (y,m,d,h,min,s) ])
 
 def makeUID(scheme, uri_remainder):
     return (('%s://%s') % (scheme, uri_remainder)).replace(' ', '+')

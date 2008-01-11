@@ -259,9 +259,6 @@ this (if memory serves)... need to look at how SNMP "messaging" works.
 New TODO
 ========
 
-* move maintenance window check into its own method, isMaintenance()
-* move disabled check into its own method, isDisabled()
-* move state-saving functionality into its own method
 * add a parameter to BaseMonitor.__call__ (e.g., "call=True") that would allow
   subclasses to determine if BaseMonitor should call connectTCP or not
 * with those in place, clean up BaseMonitor.__call__() so that if
@@ -350,6 +347,9 @@ New TODO
 * DONE - services seem to stay in RECOVERING continuously, and this is
   obviously wrong
 * DONE - rename all occurances of reactor_params to reactorArgs.
+* DONE - move maintenance window check into its own method, isMaintenance()
+* DONE - move disabled check into its own method, isDisabled()
+* DONE - move state-saving functionality into its own method
 
 ====
 TODO (old)
@@ -379,7 +379,7 @@ State and Workflow overhaul
 Workflow Customizations
 -----------------------
 
-o Move clients.rules.checkForMaintenanceWindow() to pymon.config.
+o DONE - Move clients.rules.checkForMaintenanceWindow() to pymon.config.
 o Implement a very basic flap-guard: don't send out a notice until you 
 get x fails in a row, y warns in a row, or z errors in a row.
 o With notification cut-offs in place, the next thing to implement
