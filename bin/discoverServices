@@ -8,8 +8,6 @@ from twisted.internet import defer
 from twisted.internet import reactor
 from twisted.internet.protocol import Protocol
 from twisted.internet.protocol import ClientFactory
-from twisted.internet.protocol import ReconnectingClientFactory
-from twisted.internet.error import ConnectBindError
 from twisted.python.filepath import FilePath
 
 try:
@@ -117,8 +115,8 @@ class Scanner(object):
         self.hosts = hosts
         portRange[1] += 1
         self.portRange = portRange
-        self.batchSize = batchSize
-        self.timeout = timeout
+        self.batchSize = int(batchSize)
+        self.timeout = float(timeout)
         self.data = {
             'success': {},
             'failure': {},

@@ -6,24 +6,23 @@ Singleton. The state of the system will be stored in base.State
 which in turn is used in base.Workflow. The last thing we want is
 multiple instances of workflow with different state information.
 '''
-from adytum.workflow.singleton import SingletonWorkflow
-from adytum.workflow.singleton import SingletonWorkflowAware
+from base import Workflow, WorkflowAware
 
 # Instantiate and setup workflow states
-app_wf = base.SingletonWorkflow()
-app_wf.addState('Normal', description='pymon is in normal operation with no alerts')
-app_wf.setInitState('Normal')
+appWf = Workflow()
+appWf.addState('Normal', description='pymon is in normal operation with no alerts')
+appWf.setInitState('Normal')
 
 # Setup workflow transitions
 
 # define a workflow-aware for mangaging state
-class AppState(SingletonWorkflowAware):
+class AppState(WorkflowAware):
     '''
     '''
     def __init__(self, workflow=None):
         self.enterWorkflow(workflow, None, "Just Created")
 
 # this is what should get imported by the pymon application:
-app_state = AppState(workflow=app_wf)
+appState = AppState(workflow=appWf)
 
 

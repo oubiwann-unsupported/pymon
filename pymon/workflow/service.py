@@ -5,7 +5,6 @@ For each service that is being monitored, it's own workflow
 should exist, one that shares no session data with any other service,
 as each service is completely independent.
 '''
-from pymon import utils
 from pymon.config import cfg
 
 from base import Workflow, WorkflowAware

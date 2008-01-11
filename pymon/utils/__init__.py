@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from uri import Uri
 
 class LocalTools:

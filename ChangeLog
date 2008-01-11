@@ -16,6 +16,12 @@ minor changes.
 * Moved monnitors.BaseMonitor state updating into its own method.
 * Added a parameter to BaseMonitor.__call__ (e.g., "connect=True") that allows
 subclasses to determine if Subclass() will call connectTCP or not.
+* Fixed the discoverServices script to coerce the types of the passed batch
+size and timeout parameters.
+* Removed unused imports from discoverServices.
+* Cleaned up imports and vars in worflow.app.
+* Cleaned up imports in worflow.service.
+* Removed unused import in utils.
 
 2008.01.08
 
