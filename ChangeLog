@@ -14,6 +14,8 @@ appropriate boolean values.
 minor changes.
 * Fixed the logic in checkForMaintenanceWindow().
 * Moved monnitors.BaseMonitor state updating into its own method.
+* Added a parameter to BaseMonitor.__call__ (e.g., "connect=True") that allows
+subclasses to determine if Subclass() will call connectTCP or not.
 
 2008.01.08
 

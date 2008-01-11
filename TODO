@@ -259,10 +259,6 @@ this (if memory serves)... need to look at how SNMP "messaging" works.
 New TODO
 ========
 
-* add a parameter to BaseMonitor.__call__ (e.g., "call=True") that would allow
-  subclasses to determine if BaseMonitor should call connectTCP or not
-* with those in place, clean up BaseMonitor.__call__() so that if
-  isMaintenance or isDisabled, call=False
 * with those in place, update ping_tcp plugin with a "sub-factory" that works
   like the factory in the discoverServices script
 * add SQL create statements for tables in the updated model.
@@ -314,7 +310,7 @@ New TODO
 * start work on defining RPC for pymon
 * migrate to database-stored data (ditch pickled data).
   - DONE - prototype and test async code
-  - design schema 
+  - design schema
   - replace all state update code to use pymon storage API (which uses storm)
   - reokace all event/history update code to use pymon storage.
 * give more consideration to the following features:
@@ -350,6 +346,8 @@ New TODO
 * DONE - move maintenance window check into its own method, isMaintenance()
 * DONE - move disabled check into its own method, isDisabled()
 * DONE - move state-saving functionality into its own method
+* DONE - add a parameter to BaseMonitor.__call__ (e.g., "call=True") that would
+  allow subclasses to determine if BaseMonitor should call connectTCP or not
 
 ====
 TODO (old)

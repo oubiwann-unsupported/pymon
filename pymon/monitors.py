@@ -54,9 +54,9 @@ class BaseMonitor(object):
     def __repr__(self):
         return "<%s: %s>" % (self.__class__.__name__, self.uid)
 
-    def __call__(self):
-        self.updateState()
-        if not (self.isMaintenance() or self.isDisabled()):
+    def __call__(self, connect=True):
+        if connect and not (self.isMaintenance() or self.isDisabled()):
+            self.updateState()
             reactor.connectTCP(*self.reactorArgs, **self.reactorKwds)
 
     def __getstate__(self):
