@@ -10,6 +10,7 @@ generalized and added unit tests.
 * Put self.updateState() back where it belongs (in
 monitors.BaseMonitor.__call__).
 * Moved pymon.tac to pymond.
+* Moving scripts around, trying to get perms stored in svn properly.
 
 2008.01.10
 
