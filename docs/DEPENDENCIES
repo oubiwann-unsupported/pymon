@@ -1,43 +1,12 @@
-{
-'system_software': [
-    ('Python2.4', '', ''),
-    ('SQLite3', '', '')
-],
-
-'easy_install_packages': [
-    ('ZConfig',
-        'http://www.zope.org/Members/fdrake/zconfig/ZConfig-2.3.1.tar.gz'),
-    ('adytum',
-        'http://cheeseshop.python.org/packages/source/A/Adytum-PyMonitor/Adytum-PyMonitor-1.0.5.tar.bz2'),
-    ('pyparsing',
-        'http://easynews.dl.sourceforge.net/sourceforge/pyparsing/pyparsing-1.4.3.tar.gz'),
-    ('cElementTree',
-        'http://effbot.org/downloads/cElementTree-1.0.5-20051216.tar.gz'),
-    ('zope.interface',
-        'http://www.zope.org/Products/ZopeInterface/3.1.0b1/ZopeInterface-3.1.0b1.tgz'),
-    ('simplejson',
-        'http://cheeseshop.python.org/packages/2.4/s/simplejson/simplejson-1.4-py2.4.egg'),
-],
-
-'python_packages': [
-    # The following have been moved into setuptools' install_requires 
-    # option:
-    #
-    #('protocols',
-    #    'http://peak.telecommunity.com/snapshots/PyProtocols-1.0a0dev_r2082.zip',
-    #    'unzip', 'PyProtocols-1.0a0dev_r2082', ''),
-    #('dispatch',
-    #    'http://peak.telecommunity.com/snapshots/RuleDispatch-0.5a0.dev-r2100.zip',
-    #    'unzip', 'RuleDispatch-0.5a0.dev-r2100', ''),
-    ('twisted', 
-        'http://tmrc.mit.edu/mirror/twisted/Twisted/2.4/Twisted-2.4.0.tar.bz2',
-        'tar xvj', 'Twisted-2.4.0', ''),
-    ('nevow',
-        'http://divmod.org/trac/attachment/wiki/SoftwareReleases/Nevow-0.9.0.tar.gz?format=raw',
-        'tar xvz', 'Nevow-0.9.0', ''),
-    #('pysqlite2', '', '', ''),
-    #('sqlobject', '', '', ''),
-    #('epsilon', '', '', ''),
-    #('axiom', '', '', ''),
-],
-}
+Python2.4+
+zope.interface (http://www.zope.org/Products/ZopeInterface)
+Twisted (http://twistedmatrix.com/trac/wiki/Downloads)
+Nevow (http://divmod.org/trac/wiki/DivmodNevow)
+SQLite3 (http://www.sqlite.org/download.html)
+pysqlite 2.3.5 (http://www.initd.org/tracker/pysqlite/wiki/pysqlite)
+Storm ORM (https://launchpad.net/storm/+download)
+ZConfig 2.5+ (http://www.zope.org/Members/fdrake/zconfig)
+pyparsing (http://sourceforge.net/project/showfiles.php?group_id=97203)
+ElementTree/cElementTree 1.3+ (http://effbot.org/zone/elementtree-13-intro.htm)
+simplejson (http://pypi.python.org/pypi/simplejson)
+NetCIDR (http://pypi.python.org/pypi/NetCIDR)

@@ -1,3 +1,8 @@
+2008.01.12
+
+* Updated DEPENDENCIES.
+* Created third-party directory for source files.
+
 2008.01.11
 
 * Fixed utils.isInList() and added more unit tests.
