@@ -12,6 +12,7 @@ monitors.BaseMonitor.__call__).
 * Moved pymon.tac to pymond.
 * Moving scripts around, trying to get perms stored in svn properly.
 * Used svn propset to set the svn:executable property on pymond.
+* Removed testing executable from bin.
 
 2008.01.10
 
