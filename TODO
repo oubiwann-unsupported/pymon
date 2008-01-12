@@ -260,7 +260,13 @@ New TODO
 ========
 
 * with those in place, update ping_tcp plugin with a "sub-factory" that works
-  like the factory in the discoverServices script
+  like the factory in the discoverServices script; changes of the code need to
+  make sure the following happens:
+  . multiple connectTCP() calls are made to the host being checked (one for
+    each port)
+  . each port check needs to fire an event if the results exceed the threshold
+  . deferreds may need to be sequential to avoid flooding; this might be
+    possible by using the twisted task coiterators with a small batch size
 * add SQL create statements for tables in the updated model.
 * add relationships to data model tables
 * add tests for new tables and relationships

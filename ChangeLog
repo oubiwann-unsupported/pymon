@@ -15,6 +15,7 @@ monitors.BaseMonitor.__call__).
 * Removed testing executable from bin.
 * Updated the daemontools service run script to reflect new way of running the
 pymon daemon.
+* Updated TODO.
 
 2008.01.10
 
