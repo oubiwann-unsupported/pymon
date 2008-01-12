@@ -12,24 +12,130 @@ def getService(db_type):
 def updateDatabase(data):
     pass
 
-def isInRange(datum, incl_range):
-    minimum, maximum = incl_range.split(',')
-    if int(minimum) <= int(datum) <= int(maximum):
+def isInList(datum, values):
+    '''
+    >>> testList = [200, 303, 304, 401]
+    >>> isInList(200, testList)
+    True
+    >>> isInList('200', testList)
+    True
+    >>> isInList('405', testList)
+    False
+
+    >>> testList = '200, 303, 304, 401'
+    >>> isInList(200, testList)
+    True
+    >>> isInList('200', testList)
+    True
+    >>> isInList('405', testList)
+    False
+
+    >>> testList = ['200', '303', '304', '401']
+    >>> isInList(200, testList)
+    True
+    >>> isInList('200', testList)
+    True
+    >>> isInList(405, testList)
+    False
+    >>> isInList('405', testList)
+    False
+    '''
+    if isinstance(values, str):
+        values = [x.strip() for x in values.split(',')]
+    values = [unicode(x) for x in values]
+    if unicode(datum) in values:
         return True
     return False
 
-def isInList(datum, in_list):
-    '''
-    >>> test_list = [200, 303, 304, 401]
-    >>> isInList(200, test_list)
+def _isInRange(datum, dataRange, delimiter, function):
+    dataRange = [function(x) for x in dataRange.split(delimiter)]
+    dataRange[1] += 1
+    if function(datum) in xrange(*dataRange):
+        return True
+    else:
+        return False
+
+def isInNumericRange(datum, threshold, delimiter='-'):
+    """
+    >>> isInNumericRange(1, '1-10')
     True
-    >>> isInList('200', test_list)
+    >>> isInNumericRange('1', '1-10')
     True
-    >>> isInList('405', test_list)
+    >>> isInNumericRange(5, '1-10')
+    True
+    >>> isInNumericRange(10, '1-10')
+    True
+
+    >>> isInNumericRange(0, '1-10')
     False
-    '''
-    list = [ x.strip() for x in list_string.split(',') ]
-    if str(datum) in list:
+    >>> isInNumericRange(11, '1-10')
+    False
+    """
+    return _isInRange(datum, threshold, delimiter, int)
+
+def isInCharacterRange(datum, threshold, delimiter='-'):
+    """
+    >>> isInCharacterRange('b', 'b-d')
+    True
+    >>> isInCharacterRange('c', 'b-d')
+    True
+    >>> isInCharacterRange('d', 'b-d')
+    True
+
+    >>> isInCharacterRange('a', 'b-d')
+    False
+    >>> isInCharacterRange('e', 'b-d')
+    False
+
+    >>> isInCharacterRange('A', 'b-d')
+    False
+    >>> isInCharacterRange('B', 'b-d')
+    False
+    >>> isInCharacterRange('E', 'b-d')
+    False
+    """
+    return _isInRange(datum, threshold, delimiter, ord)
+
+def isInRange(datum, threshold, delimiter='-'):
+    """
+    >>> isInRange(1, '1-10')
+    True
+    >>> isInRange('1', '1-10')
+    True
+    >>> isInRange(11, '1-10')
+    False
+
+    >>> isInRange('a', 'a-z')
+    True
+    >>> isInRange('A', 'a-z')
+    False
+    """
+    try:
+        int(datum)
+        return isInNumericRange(datum, threshold, delimiter)
+    except ValueError:
+        return isInCharacterRange(datum, threshold, delimiter)
+
+def isExactly(datum, threshold):
+    """
+    >>> isExactly(1,1)
+    True
+    >>> isExactly('1','1')
+    True
+    >>> isExactly(1,'1')
+    True
+    >>> isExactly('1',1)
+    True
+    >>> isExactly(1,2)
+    False
+    >>> isExactly('1','2')
+    False
+    >>> isExactly(1,'2')
+    False
+    >>> isExactly('1',2)
+    False
+    """
+    if unicode(datum) == unicode(threshold):
         return True
     return False
 
@@ -64,9 +170,20 @@ def guessMonitorFactoryNameFromType(checkType):
     part = checkType.replace('_', ' ').title().replace(' ', '')
     return "%sMonitor" % part
 
+def getSimplePlural(word, count):
+    """
+    >>> getSimplePlural('word', 1)
+    'word'
+    >>> getSimplePlural('word', 2)
+    'words'
+    """
+    if count > 1:
+        word += 's'
+    return word
+
 def _test():
-    import doctest, utils
-    return doctest.testmod(utils)
+    import doctest
+    return doctest.testmod()
 
 if __name__ == '__main__':
     _test()

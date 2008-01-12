@@ -1,3 +1,4 @@
+#!/usr/bin/env twistd -noy
 from twisted.application import service
 
 from pymon.config import cfg
@@ -13,7 +14,7 @@ pymonsvc = service.IServiceCollection(application)
 pymonsvc.cfg = cfg
 
 # add all the services that are going to be monitored. This is where you
-# add service engine; choose the right one for your architecture, for
+# add a service engine; choose the right one for your architecture, for
 # instance:
 #
 #   engines.runProcessOptimizedEngine()

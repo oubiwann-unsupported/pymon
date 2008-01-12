@@ -1,3 +1,15 @@
+2008.01.11
+
+* Fixed utils.isInList() and added more unit tests.
+* Added getSimplePlural() to utils and added some unit tests.
+* Moved discoverServices code into utils.scanner and changed discoverServices
+to just call that.
+* Removed old pymond and setup pymon.tac to be run as an executable.
+* Moved 'is in' functions out of workflow.rules and into utils, renamed them,
+generalized and added unit tests.
+* Put self.updateState() back where it belongs (in
+monitors.BaseMonitor.__call__).
+
 2008.01.10
 
 * Moved maintenance window check into its own method, isMaintenance().

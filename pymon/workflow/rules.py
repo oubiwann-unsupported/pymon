@@ -1,30 +1,6 @@
 from pymon.config import cfg
+from pymon.utils import isInList, isInRange, isExactly
 from pymon.utils.logger import log
-
-def rangedIsIn(datum, threshold):
-    log.debug("Using method 'rangedIsIn'...")
-    log.debug("datum: %s" % datum)
-    log.debug("datum type: %s" % type(datum))
-    log.debug("threshold: %s" % threshold)
-    log.debug("threshold type: %s" % type(threshold))
-    threshold = [int(x) for x in threshold.split('-')]
-    threshold[1] += 1
-    if datum in xrange(*threshold):
-        return True
-    else:
-        return False
-
-def listedIsIn(datum, threshold):
-    log.debug("Using method 'listedIsIn'...")
-    if datum in threshold:
-        return True
-    return False
-
-def isExactly(datum, threshold):
-    log.debug("Using method 'isExactly'...")
-    if str(datum) == threshold:
-        return True
-    return False
 
 class ThresholdRules(object):
 
@@ -90,11 +66,17 @@ class ThresholdRules(object):
         Generic method for checking data against thresholds
         '''
         if self.threshold_type == 'ranged':
-            return rangedIsIn(datum, threshold)
+            isInFunc = isInRange
         elif self.threshold_type == 'listed':
-            return listedIsIn(datum, threshold)
+            isInFunc = isInList
         elif self.threshold_type == 'exact':
-            return isExactly(datum, threshold)
+            isInFunc = isExactly
+        log.debug("Using method '%s'..." % isInFunc.func_name)
+        log.debug("datum: %s" % datum)
+        log.debug("datum type: %s" % type(datum))
+        log.debug("threshold: %s" % threshold)
+        log.debug("threshold type: %s" % type(threshold))
+        return isInFunc(datum, threshold)
 
 class AsYetUndterminedClassName(object):
     # XXX define me!
