@@ -267,6 +267,20 @@ New TODO
   . each port check needs to fire an event if the results exceed the threshold
   . deferreds may need to be sequential to avoid flooding; this might be
     possible by using the twisted task coiterators with a small batch size
+  . we need a couple factories:
+    - one that's respondible for connecting to a port (and reporting on
+      connection errors)
+    - one that's responsible for a series of port connections (and reporting on
+      the overall/averaged success); this is the one whose protocol will be the
+      monitor "client" that is responsible for firing off the workflow upon
+      connectionLost (in this case, the connectionLost will have to be
+      simulated, or contingent upon the last port connection being lost)
+* add a method to the ConfigCheck class called getTiered() (or something),
+  taking an attribute name as a parameter; it will check the 'check' and
+  'defaults' attrs, returned the preferred one first, if it finds it (setting
+  the preferred attr should happen in a passed param, too)
+* once that's done, find all the places in the code where check and defauts are
+  checked, and call the method instead
 * add SQL create statements for tables in the updated model.
 * add relationships to data model tables
 * add tests for new tables and relationships

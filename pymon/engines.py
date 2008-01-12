@@ -16,12 +16,12 @@ def runTwistedFactoryEngine(rootService):
     # iterate through the enabled services
     for pymonService in enabledServices:
         serviceName = pymonService.getName()
-        log.debug("Service name: " + serviceName)
+        log.info("Service name: " + serviceName)
         factoryName = pymonService.default.factory
         # for each enabled service, iterate through the checks for that
         # service
         for check in pymonService.checks:
-            log.debug("Service check uri: "+check.uri)
+            log.info("Service check uri: "+check.uri)
             factory = monitors.AbstractFactory(factoryName, serviceName,
                                                check.uri)
             monitor = factory.makeMonitor(cfg.configFactory(factory.uid))

@@ -16,6 +16,11 @@ monitors.BaseMonitor.__call__).
 * Updated the daemontools service run script to reflect new way of running the
 pymon daemon.
 * Updated TODO.
+* Added a timeout to the ping_tcp defaults config as well as an attribute in
+the TCPPingMonitor.
+* Updated the connection logic in BaseMonitor.__call__.
+* Added a custom ping factory to plugins.ping_tcp.monitor.
+* Fixed assembleConfig() to work with config files that start with a new line.
 
 2008.01.10
 

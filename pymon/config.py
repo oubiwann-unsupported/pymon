@@ -33,7 +33,7 @@ def assembleConfig():
         fh = open(path)
         raw = fh.read()
         fh.close()
-        tag = raw.split('\n')[0].strip()
+        tag = raw.lstrip().split('\n')[0].strip()
         tag = tag.replace('<', '').replace('>', '')
         if tag:
             groups.setdefault(tag, [])
@@ -55,7 +55,9 @@ def assembleConfig():
     fh.close()
     configFile = StringIO(conf)
     return configFile
-
+fh = open('out1.conf' ,'w+')
+fh.write(assembleConfig().getvalue())
+fh.close()
 config = loadConfigFile(assembleConfig())
 
 def refreshConfig():

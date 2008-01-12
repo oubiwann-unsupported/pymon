@@ -56,8 +56,11 @@ class BaseMonitor(object):
 
     def __call__(self, connect=True):
         self.updateState()
-        if connect and not (self.isMaintenance() or self.isDisabled()):
-            reactor.connectTCP(*self.reactorArgs, **self.reactorKwds)
+        if not (self.isMaintenance() or self.isDisabled()):
+            # we always want the maintenance and disabled checks to run, even
+            # if we're not connecting (right away)
+            if connect:
+                reactor.connectTCP(*self.reactorArgs, **self.reactorKwds)
 
     def __getstate__(self):
         return self.__dict__
