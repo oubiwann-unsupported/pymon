@@ -275,6 +275,10 @@ New TODO
       monitor "client" that is responsible for firing off the workflow upon
       connectionLost (in this case, the connectionLost will have to be
       simulated, or contingent upon the last port connection being lost)
+    - TCPPingSeriesClient must be for one series of pings on a single port and
+      not more; as such, we will need a third layer, one for all series of
+      for a given host (all ports, all counts)
+  . ugh. this isn't working. probably need to explore a different solution
 * add a method to the ConfigCheck class called getTiered() (or something),
   taking an attribute name as a parameter; it will check the 'check' and
   'defaults' attrs, returned the preferred one first, if it finds it (setting

@@ -10,9 +10,11 @@ from pymon.application import MonitorState
 from pymon.application import globalRegistry
 from pymon.monitors import BaseMonitor
 
-from client import TCPPingClient
+from client import TCPSinglePingClient, TCPPingClient
 
 class PingFactory(ClientFactory):
+
+    protocol = TCPSinglePingClient
 
     def __init__(self):
         self.deferred = defer.Deferred()
@@ -41,6 +43,11 @@ class TCPPingMonitor(BaseMonitor):
         self.count = int(count)
         timeout = cfg.check.timeout or cfg.defaults.timeout or 1
         self.timeout = int(timeout)
+        self.data = {
+            'gain': {},
+            'loss': {},
+            'percent': {},
+            'error': {}}
 
     def __call__(self):
         # call the superclass, but only to do the checks; don't connect, since
@@ -49,7 +56,7 @@ class TCPPingMonitor(BaseMonitor):
         BaseMonitor.__call__(self, connect=False)
         for port in self.ports:
             d = self.doPing(port)
-            d.addCallback(self.getPingReturn)
+            d.addCallback(self.getPingReturn, port)
             d.addErrback(log.error)
             d.addCallback(self.protocol.connectionLost, 'completed ping')
 
@@ -62,8 +69,9 @@ class TCPPingMonitor(BaseMonitor):
             for check in xrange(self.count):
                 yield self.doFactory(port)
         ping = _doPing()
-        self.ping = defer.DeferredList(
+        pings = defer.DeferredList(
             [coop.coiterate(ping) for i in xrange(limiter)])
+        return pings
 
     def doFactory(self, port):
         factory = PingFactory()
@@ -71,20 +79,29 @@ class TCPPingMonitor(BaseMonitor):
         d = factory.deferred
         d.addCallback(self.recordConnection, port)
         d.addErrback(self.recordFailure, port)
+        return d
 
     def recordConnection(self, result, port):
-        self.data['success'].setdefault(port, 0)
-        self.data['success']['port'] += 1
+        self.data['gain'].setdefault(port, 0)
+        self.data['gain'][port] += 1
 
     def recordFailure(self, failure, port):
-        portData = self.data['failure'].setdefault(host, [])
-        data = (port, failure.getErrorMessage())
-        portData.append(data)
+        self.data['error'].setdefault(port, failure.getErrorMessage())
+        self.data['loss'].setdefault(port, 0)
+        self.data['loss'][port] += 1
 
     def getPingReturn(self, results, port):
-        self.data = results
+        try:
+            gain = self.data['gain'][port]
+        except KeyError:
+            gain = 0
+        try:
+            loss = self.data['loss'][port]
+        except KeyError:
+            loss = 0
+        results = gain / (float(gain + loss) or 1)
         log.debug('Ping results: %s' % results)
-        self.disconnect()
+        return results
 
 components.registerAdapter(MonitorState, TCPPingMonitor, IState)
 

@@ -21,6 +21,13 @@ the TCPPingMonitor.
 * Updated the connection logic in BaseMonitor.__call__.
 * Added a custom ping factory to plugins.ping_tcp.monitor.
 * Fixed assembleConfig() to work with config files that start with a new line.
+* Set info logs in engines back to debug.
+* Added missing deferred returns in tcp ping plugin monitor.
+* Added a single ping client to tcp ping.
+* Added missing data attr to monitor.
+* Added missing arg to getPingReturn callback.
+* Renamed and fixed recorded data.
+* Fixed getPingReturn.
 
 2008.01.10
 

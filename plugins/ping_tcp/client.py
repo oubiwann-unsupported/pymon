@@ -3,6 +3,11 @@ from twisted.internet.protocol import Protocol
 from pymon.utils.logger import log
 from pymon.clients import ClientMixin
 
+class TCPSinglePingClient(Protocol):
+
+    def connectionMade(self):
+        self.factory.deferred.callback("success")
+        self.transport.loseConnection()
 
 class TCPPingClient(Protocol, ClientMixin):
 
