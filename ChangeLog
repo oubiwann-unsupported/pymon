@@ -13,6 +13,8 @@ monitors.BaseMonitor.__call__).
 * Moving scripts around, trying to get perms stored in svn properly.
 * Used svn propset to set the svn:executable property on pymond.
 * Removed testing executable from bin.
+* Updated the daemontools service run script to reflect new way of running the
+pymon daemon.
 
 2008.01.10
 

@@ -1,4 +1,5 @@
 #!/bin/sh
 
-exec /usr/local/python2.4/bin/twistd -noy /usr/local/pymon/bin/pymon.tac
+BASE_DIR='/where/you/installed/pymon'
+exec $BASE_DIR/bin/pymond
 
