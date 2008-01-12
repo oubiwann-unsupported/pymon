@@ -11,6 +11,7 @@ generalized and added unit tests.
 monitors.BaseMonitor.__call__).
 * Moved pymon.tac to pymond.
 * Moving scripts around, trying to get perms stored in svn properly.
+* Used svn propset to set the svn:executable property on pymond.
 
 2008.01.10
 
