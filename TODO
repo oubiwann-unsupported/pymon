@@ -259,6 +259,7 @@ this (if memory serves)... need to look at how SNMP "messaging" works.
 New TODO
 ========
 
+* update the INSTALL instructions to reflect the recent changes.
 * with those in place, update ping_tcp plugin with a "sub-factory" that works
   like the factory in the discoverServices script; changes of the code need to
   make sure the following happens:

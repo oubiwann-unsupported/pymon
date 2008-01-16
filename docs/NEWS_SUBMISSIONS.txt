@@ -1,0 +1,51 @@
+Structure of News Items
+-----------------------
+
+Taken from SF.net:
+  https://sourceforge.net/docman/display_doc.php?docid=12834&group_id=1
+
+   1. A general description of the project, including what it is, or what it
+does. This should be no more than a few sentences long, and should start with a
+one-sentence overview of the purpose of the news item (e.g. a new release,
+major donation, etc.).
+   2. A second paragraph should be included as further detail for the news
+item, that you would like to be seen by all readers of the news item. Usually a
+paragraph or two is all that is required; keep this concise and include
+additional information on your project web site (which you mention later-on in
+the news article).
+   3. You should provide a listing of URLs that apply to the news article,
+including links back to the project's latest file releases, the project home
+page and anything else that may be applicable. Please keep the URLs in long
+form and do not shorten them via use of a third party URL shortening service.
+We want all advertised URLs to go back and give credit to those hosting
+providers involved (whether SourceForge.net or otherwise).
+   4. Any further details that are not covered in the prior paragraphs would
+either belong at the end of the article, in content placed on the project web
+site, or in a separate news posting.
+
+News Item Formatting
+--------------------
+
+    * No HTML support: The SourceForge.net Project News facility does not
+      accept HTML content (news is used in a variety of places on the site, and
+      exported to other formats like email and RSS feeds; inclusion of
+      user-supplied HTML tags would further complicate formatting).
+    * Paragraph formatting: Since the Project News feature does not accept
+      HTML-encoded content, paragraphs should be separated by a blank line of
+      whitespace. Splitting longer news article in to paragraphs makes them
+      more readable.
+    * URL conversion: Though HTML is not accepted, URLs are accepted as text
+      (not as part of an anchor tag). We recommend that you include URLs at the
+      end of paragraphs, as that they are easy to read. URLs are displayed in
+      the clear (the URL will be visible to the end-user) and are made
+      click-able automatically by the news system. Text starting with 'www.',
+      all email-address similar text (user@*), and URI-similar text
+      (uri-type://*) will automatically be converted in to a clickable URL. URL
+      shortening services shouldn't be used; we want to make sure all involved
+      parties get credit for hosting the referenced content.
+
+Release News
+------------
+News articles posted regarding file releases should include the project name,
+the version number of the software that has been released and the keyword
+'released', e.g. 'pymon version 1.0.7 (beta) released'.
