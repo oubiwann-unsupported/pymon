@@ -3,6 +3,9 @@
 * Added NEWS_SUBMISSIONS.txt for best practices with SF.net.
 * Added missing link to DEPENDENCIES.
 * Updated TODO.
+* Cleaned up some white space in the index.shtml page.
+* Added google analytics to template.
+* Started revamping INSTALL.
 
 2008.01.12
 

@@ -5,15 +5,8 @@ dependancies
 System dependencies
 ----------------------
 * Python 2.4 - python2.4 needs to be in your path
-* wget
-* tar
-* unzip
-* ping
 * a program named "sendmail" that is in your path and can send mail
 * standard C header files
-
-pymon runs under a dedicated user and group. If you don't have a user
-and group on your system for pymon, you need to add them now.
 
 Python Dependencies
 ----------------------
@@ -48,8 +41,8 @@ Configuration
 ----------------------
 
 *** IMPORTANT ***
-You must create a copy of etc/example-pymon.conf and name it 
-"etc/pymon.conf". The install script setup.py will not run 
+You must create a copy of etc/example-pymon.conf and name it
+"etc/pymon.conf". The install script setup.py will not run
 without it.
 
 You don't have to have your whole monitoring scheme planned out and
