@@ -259,6 +259,10 @@ this (if memory serves)... need to look at how SNMP "messaging" works.
 New TODO
 ========
 
+* rename ./admin scripts to conform to standards
+* add support to the news-publishing script to convert SF.net news links of the
+  form TEXT (URL), used for official SF.net news to HTML links used on the
+  pymon web site.
 * update the INSTALL instructions to reflect the recent changes.
 * with those in place, update ping_tcp plugin with a "sub-factory" that works
   like the factory in the discoverServices script; changes of the code need to

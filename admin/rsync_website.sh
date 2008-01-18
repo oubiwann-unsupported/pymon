@@ -7,9 +7,9 @@ REMOTE_DIR="pymon/"
 
 if [ "$CHECK" = "check" ]; then
     echo
-    echo "Hit ENTER to continue..."
+    echo "Hit ENTER to continue ..."
     read
-    echo "Performing a dry-run..."
+    echo "Performing a dry-run ..."
     echo
    rsync \
     --recursive \
@@ -21,10 +21,10 @@ if [ "$CHECK" = "check" ]; then
 elif [ "$CHECK" = "download" ]; then
     echo
     echo "To download files from production, hit ENTER."
-    echo "To quit now, hit ^C (Control-C)..."
+    echo "To quit now, hit ^C (Control-C) ..."
     echo
     read
-    echo "Downloading files from production..."
+    echo "Downloading files from production ..."
     echo
     rsync \
     --recursive \
@@ -34,11 +34,11 @@ elif [ "$CHECK" = "download" ]; then
     $REMOTE_USER@$REMOTE_HOST:$REMOTE_DIR $SOURCE_DIR
 else
     echo
-    echo "To move files into production, hit ENTER."
-    echo "To quit now, hit ^C (Control-C)..."
+    echo "To move changed files to production web site, hit ENTER."
+    echo "To quit now, hit ^C (Control-C) ..."
     echo
     read
-    echo "Moving files into production..."
+    echo "Moving files into production ..."
     echo
     rsync \
     --recursive \

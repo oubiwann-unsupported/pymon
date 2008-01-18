@@ -1,3 +1,7 @@
+2008.01.17
+
+* Added scripts for publishing news content.
+
 2008.01.16
 
 * Added NEWS_SUBMISSIONS.txt for best practices with SF.net.
@@ -10,6 +14,13 @@
 * Lots of content updates, including a news archive sections and three news
 items (1 in December, 2 for January so far).
 * Fixed the bad link in the site header.
+* Updated main menu with dev section.
+* Added support for subheadings to pageparts cgi.
+* Made sourceforge_website and sourceforge_website/cgi-bin packages for content
+scripting convenience.
+* Fixed footer formatting bug.
+* Added latest news date functions.
+* Removed string module imports and use.
 
 2008.01.12
 
