@@ -3,8 +3,8 @@ from twisted.application import internet
 from nevow import vhost
 from nevow import appserver
 
-from pymon import agents
 from pymon import utils
+from pymon.agents import local
 from pymon.utils.logger import log
 from pymon.config import refreshConfig
 from pymon.ui.web import pages
@@ -61,8 +61,8 @@ def addBackupServer(rootService):
     backups.setServiceParent(rootService)
 
 def addProcessServer(rootService):
-    factory = agents.ProcessServerFactory()
-    port = int(rootService.cfg.agents.port)
+    factory = local.ProcessServerFactory()
+    port = int(rootService.cfg.agents.local_command.port)
     server = internet.TCPServer(port, factory)
     server.setServiceParent(rootService)
 

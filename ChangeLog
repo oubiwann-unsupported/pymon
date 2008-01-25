@@ -6,6 +6,10 @@
 * Split old message utility into two messaging modules.
 * Moved old, unnamed messaging class out of workflow.rules and into
 messaging.email.
+* Moved the agents module into its own package.
+* Updated services module to use the new agents package.
+* Adjusted local agent configuration and added a config for local messaging
+agent.
 
 2008.01.17
 
