@@ -144,7 +144,7 @@ satisfied:
      2. create host files from the discovered hosts
 
 
-    Scalabale Database Access
+    Scalabale Database Access (IN PROGRESS)
     -------------------------
     Some notes about intended direction:
      * Use relational DB for check data (monitored service state and history)
@@ -169,6 +169,33 @@ satisfied:
 
     Scalable JSON State URLs
     ------------------------
+    We probably need to address URL layouts for all services. This includes the
+    following:
+     * Data presented in the web UI
+     * JSON State Data
+     * RSS
+     * XLM-RPC
+     * JSON-RPC
+    The last two are actually pretty easy: we'll publish the APIs at BASE/RPC2
+    and BASE/RPC3, respectively.
+
+    The others, though, will need to be present at any node where that
+    information would be pertinent, and will probably have the form of
+    BASE/PATH, BASE/PATH/data, BASE/PATH/feed.
+
+    It's the PATH that's the tricky bit. Possible permutations include:
+     * BASE/node/HOSTORIP - all services for that node
+     * BASE/node/HOSTORIP/SERVICETYPE - only service for that node that is of
+       the given type
+     * BASE/service/SERVICETYPE - all services of a given type
+     * BASE/organization/ORGNAME - all nodes, all services
+     * BASE/organization/ORGNAME/HOSTORIP - filtered by org
+     * BASE/organization/ORGNAME/HOSTORIP/SERVICETYPE - filtered by org
+     * BASE/organization/service/SERVICETYPE - all services of a given type
+
+    This architecture needs to be able to support:
+     * virtual hosting (e.g., fo isolating pymon views/data for an organization)
+     * authentication than can be limited by PATH
 
 Workflow
 --------
@@ -252,6 +279,18 @@ the RSS comment above).
 Ah, another form of messaging: what about SMNP traps? A pymon MIB would define
 this (if memory serves)... need to look at how SNMP "messaging" works.
 
+Generalization of messenging:
+ * create a service that listens for messages
+ * all publishable messages will be sent to that service
+ * need to pass information like:
+    - message type
+    - message content
+    - service type
+    - service host
+    - **kwds for data particular to the message type, such as:
+        . subject, to, from (for emails)
+        . date, title, link (for RSS)
+        . ? (for SNMP)
 
 
 
@@ -259,9 +298,6 @@ this (if memory serves)... need to look at how SNMP "messaging" works.
 New TODO
 ========
 
-* add support to the news-publishing script to convert SF.net news links of the
-  form TEXT (URL), used for official SF.net news to HTML links used on the
-  pymon web site.
 * update the INSTALL instructions to reflect the recent changes.
 * with those in place, update ping_tcp plugin with a "sub-factory" that works
   like the factory in the discoverServices script; changes of the code need to
@@ -308,6 +344,9 @@ New TODO
 * maybe make BaseMonnitor.__call__ return a deferred for updating/saving data
   of the last state (storm.twisted) and then add that deferred to a deferred
   list in plugins that subclass is (i.e., all plugins)
+* pymon shouldn't spawn thousands of connections unless specifically configured
+  to do so; instead use task.cooperate to batch connections... not sure how
+  this should be architected...
 * The following should also be made to return deferreds:
     * plugins' connectionLost output parsing
     * ThresholdRules.check
@@ -327,7 +366,6 @@ New TODO
   * provide /hosts/<hostname>/<service type>/<JSON data>
   * provide /hosts/<hostname>/<service type>/<RSS feed>
 * pull messaging crap out of ThresholdCheck class
-* look into BaseMonitor.__call__ more closely (see XXX comment).
 * is pymon.clients.BaseClient.updateState doing its job?
 * clean up old crap in pymon.clients.
 * add support for twisted-based TCP pinger.
@@ -340,7 +378,7 @@ New TODO
   - DONE - prototype and test async code
   - design schema
   - replace all state update code to use pymon storage API (which uses storm)
-  - reokace all event/history update code to use pymon storage.
+  - replace all event/history update code to use pymon storage.
 * give more consideration to the following features:
   - events (state transitions that meet the notification theshold requirements)
   - event hisory
@@ -351,7 +389,6 @@ New TODO
   1. locate hosts on a network
   2. identify running services for each host
   3. create service check configs for each service on each host
-* do the same for a twisted-based script (no nmap).
 * examine the reasons for having pymon.utils.LocalTools.
 * fix broken links in web ui (probelms with relative URLs?)
 * DONE - add dispatching support
@@ -370,13 +407,18 @@ New TODO
 * DONE - plug workflow into pymon
 * DONE - services seem to stay in RECOVERING continuously, and this is
   obviously wrong
+* DONE - look into BaseMonitor.__call__ more closely (see XXX comment).
 * DONE - rename all occurances of reactor_params to reactorArgs.
 * DONE - move maintenance window check into its own method, isMaintenance()
 * DONE - move disabled check into its own method, isDisabled()
 * DONE - move state-saving functionality into its own method
 * DONE - add a parameter to BaseMonitor.__call__ (e.g., "call=True") that would
   allow subclasses to determine if BaseMonitor should call connectTCP or not
+* DONE - write a twisted-based iservice discovery script (no nmap).
 * DONE - rename ./admin scripts to conform to standards
+* DONE - add support to the news-publishing script to convert SF.net news links of the
+  form TEXT (URL), used for official SF.net news to HTML links used on the
+  pymon web site.
 
 ====
 TODO (old)
