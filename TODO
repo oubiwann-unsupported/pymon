@@ -292,13 +292,48 @@ Generalization of messenging:
         . date, title, link (for RSS)
         . ? (for SNMP)
 
+Listener
+    The listener will be a local agent (pb.spread), much like the ping agent
+    that is used for running the ping command line tool for host-checking.
+
+    The listener will be responsible for making connections to remote servers
+    (choosing the appropriate protocols, clients, etc.) after receiving a
+    message from pymon.
+
+    As such (and in addition), the listener will need to be an intelligent
+    client factory, more or less.
+
+Message Types
+    Email:
+        * in addition to the default, require parameters, takes to, from, and
+       subject
+        * needs to be able to connect to either sendmail or remote SMTP host
+
+    Pages:
+        * identical to email, except with special content formatting for phones
+
+    RSS
+
+    SNMP
+
+    IRC
+
+    AIM
+
+    Twitter
+
+    MUSH/MUD
+
 
 
 ========
 New TODO
 ========
 
-* update the INSTALL instructions to reflect the recent changes.
+* extract general code from command-line pinger client and put into agents code
+* add third-party libs
+* create installer script for third-party setup/installation
+* update the INSTALL instructions to reflect the recent changes
 * with those in place, update ping_tcp plugin with a "sub-factory" that works
   like the factory in the discoverServices script; changes of the code need to
   make sure the following happens:
@@ -419,6 +454,7 @@ New TODO
 * DONE - add support to the news-publishing script to convert SF.net news links of the
   form TEXT (URL), used for official SF.net news to HTML links used on the
   pymon web site.
+* DONE - split utils/message into messaging/email and messaging/formatters
 
 ====
 TODO (old)

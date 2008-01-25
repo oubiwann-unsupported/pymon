@@ -2,6 +2,8 @@
 
 * Cleaned up admin scripts and renamed site sync script.
 * Updated TODO for work on URLS, services, and messasging.
+* Stubbed out dirs and files for messaging work.
+* Split old message utility into two messaging modules.
 
 2008.01.17
 
