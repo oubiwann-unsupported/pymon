@@ -4,6 +4,8 @@
 * Updated TODO for work on URLS, services, and messasging.
 * Stubbed out dirs and files for messaging work.
 * Split old message utility into two messaging modules.
+* Moved old, unnamed messaging class out of workflow.rules and into
+messaging.email.
 
 2008.01.17
 
