@@ -10,4 +10,4 @@ echo
 read
 echo "Publishing to SF.net News ..."
 ./admin/publishNews.py -f sourceforge_website/newsItem
-./admin/rsync_website.sh
+./admin/rsyncWebsite.sh

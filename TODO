@@ -259,7 +259,6 @@ this (if memory serves)... need to look at how SNMP "messaging" works.
 New TODO
 ========
 
-* rename ./admin scripts to conform to standards
 * add support to the news-publishing script to convert SF.net news links of the
   form TEXT (URL), used for official SF.net news to HTML links used on the
   pymon web site.
@@ -377,6 +376,7 @@ New TODO
 * DONE - move state-saving functionality into its own method
 * DONE - add a parameter to BaseMonitor.__call__ (e.g., "call=True") that would
   allow subclasses to determine if BaseMonitor should call connectTCP or not
+* DONE - rename ./admin scripts to conform to standards
 
 ====
 TODO (old)
