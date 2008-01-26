@@ -10,6 +10,9 @@ messaging.email.
 * Updated services module to use the new agents package.
 * Adjusted local agent configuration and added a config for local messaging
 agent.
+* Moved pb-specific code from ping plugin into agents.local module.
+* Changed the ping plugin to subclass agents.local client and monitor.
+* Updated TODO with plan for creating listener and first messenging client.
 
 2008.01.17
 

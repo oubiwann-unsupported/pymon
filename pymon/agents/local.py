@@ -42,3 +42,27 @@ class ProcessServerFactory(pb.PBServerFactory):
         self.unsafeTracebacks = False
         self.security = globalSecurity
 
+class LocalAgentClient(pb.Broker):
+
+    def connectionMade(self):
+        pb.Broker.connectionMade(self)
+
+class LocalAgentMonitor(pb.PBClientFactory):
+
+    protocol = LocalAgentClient
+
+    def __init__(self):
+        pb.PBClientFactory.__init__(self)
+
+    def __call__(self):
+        return self.getRootObject()
+
+    def clientConnectionLost(self, connector, reason, reconnecting=True):
+        if reconnecting:
+            # any pending requests will go to next connection attempt
+            # so we don't fail them.
+            self._broker = None
+            self._root = None
+        else:
+            self._failAll(reason)
+

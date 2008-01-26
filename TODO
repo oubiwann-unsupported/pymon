@@ -330,10 +330,22 @@ Message Types
 New TODO
 ========
 
-* extract general code from command-line pinger client and put into agents code
+* write messaging listener (start by copying usable code from agents.local)
+  that:
+    - has a message() method that takes message type, message content, service
+      type, service host, and **kwds
+    - accepts incoming messages only on the configured IP address (should
+      always be 127.0.0.1)
+    - has client factories for each of the supported message types
+* write an email messenger that:
+    - can be instantiated by workflow when messages need to be sent
+    - can connect to the listener and send messages
+* update local mail sender to use process factory instead of making a direct
+  call to popen
 * add third-party libs
 * create installer script for third-party setup/installation
 * update the INSTALL instructions to reflect the recent changes
+* add a __repr__ for tcp ping factory
 * with those in place, update ping_tcp plugin with a "sub-factory" that works
   like the factory in the discoverServices script; changes of the code need to
   make sure the following happens:
@@ -455,6 +467,7 @@ New TODO
   form TEXT (URL), used for official SF.net news to HTML links used on the
   pymon web site.
 * DONE - split utils/message into messaging/email and messaging/formatters
+* DONE - extract general code from command-line pinger client and put into agents code
 
 ====
 TODO (old)

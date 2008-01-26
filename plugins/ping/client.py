@@ -1,15 +1,15 @@
-from twisted.spread import pb
 from twisted.internet.protocol import Protocol
 
 from pymon.utils.logger import log
 from pymon.clients import ClientMixin
 from pymon.utils.pingparser import OutputParser
+from pymon.agents.local import LocalAgentClient
 
 
-class LocalAgentPingClient(pb.Broker, ClientMixin):
+class LocalAgentPingClient(LocalAgentClient, ClientMixin):
 
     def connectionMade(self):
-        pb.Broker.connectionMade(self)
+        LocalAgentClient.connectionMade(self)
         ClientMixin.connectionMade(self)
 
     def connectionLost(self, reason):
@@ -35,6 +35,7 @@ class LocalAgentPingClient(pb.Broker, ClientMixin):
         log.info('State Data: '+str(self.factory.state.data)+'\n')
 
         # final cleanup
+        LocalAgentClient.connectionLost(self, reason)
         ClientMixin.connectionLost(self)
 
 
