@@ -25,6 +25,9 @@ engines.runTwistedFactoryEngine(pymonsvc)
 # Add a local perspective broker server for running processes
 services.addProcessServer(pymonsvc)
 
+# Add messaging server for email (et al) notifications
+services.addMessagingServer(pymonsvc)
+
 # Add a Nevow web server to pymon for the HTTP interface
 services.addWebServer(pymonsvc)
 

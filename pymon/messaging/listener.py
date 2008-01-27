@@ -1,9 +1,6 @@
-import os
-
 from twisted.spread import pb
 from twisted.spread.jelly import globalSecurity
 from twisted.spread.flavors import IPBRoot
-from twisted.internet import utils
 
 from pymon.config import cfg
 from pymon.utils.logger import log

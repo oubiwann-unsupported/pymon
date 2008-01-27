@@ -4,6 +4,12 @@
 * Removed useless __init__ method from listern client.
 * Set pymon to attempt to pull the "from" address from the pymon config file
 (for mail messages sent from the listener).
+* Added a process client for calling command line executables within pymon (not
+as part of a service check).
+* Removed old and now unneeded RemoteMail class.
+* Improved the process server with call/errbacks and a client message.
+* Plugged messaging server into services + pymond.
+* Cleaned up listener imports.
 
 2008.01.26
 

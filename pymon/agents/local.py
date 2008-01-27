@@ -5,6 +5,8 @@ from twisted.spread.jelly import globalSecurity
 from twisted.spread.flavors import IPBRoot
 from twisted.internet import utils
 
+from pymon.utils.logger import log
+
 class ProcessServer(pb.Root):
     '''
     This is the process agent for running processes, if you can believe
@@ -24,12 +26,21 @@ class ProcessServer(pb.Root):
     it will run the local binary, but to the perspective broker client,
     it will be remote.
     '''
-    def remote_call(self, cmd, args):
+    def remote_call(self, cmd, args, quiet=True):
         '''
         Execute a 'remote' binary.
         '''
+        def _cb(result):
+            if not quiet:
+                log.info(result)
+
+        def _eb(err):
+            log.error(err)
+
         d = utils.getProcessOutput(cmd, args, env=os.environ, errortoo=1)
-        return d
+        d.addCallback(_cb)
+        d.addErrback(_eb)
+        return 'Check process server logs for output.'
 
 class ProcessServerFactory(pb.PBServerFactory):
     '''
@@ -41,6 +52,20 @@ class ProcessServerFactory(pb.PBServerFactory):
         self.root = IPBRoot(ProcessServer())
         self.unsafeTracebacks = False
         self.security = globalSecurity
+
+class ProcessClient(pb.PBClientFactory):
+
+    protocol = pb.Broker
+
+    def execute(self, pbObj, cmd, args, quiet):
+        return pbObj.callRemote('call', cmd, args, quiet)
+
+    def call(self, cmd, args, quiet=True):
+        d = self.getRootObject()
+        d.addCallback(self.execute, cmd, args, quiet)
+        d.addErrback(log.error)
+        d.addCallback(log.info)
+        return d
 
 class LocalAgentClient(pb.Broker):
 

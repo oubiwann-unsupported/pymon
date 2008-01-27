@@ -5,6 +5,7 @@ from nevow import appserver
 
 from pymon import utils
 from pymon.agents import local
+from pymon.messaging import listener
 from pymon.utils.logger import log
 from pymon.config import refreshConfig
 from pymon.ui.web import pages
@@ -63,6 +64,12 @@ def addBackupServer(rootService):
 def addProcessServer(rootService):
     factory = local.ProcessServerFactory()
     port = int(rootService.cfg.agents.local_command.port)
+    server = internet.TCPServer(port, factory)
+    server.setServiceParent(rootService)
+
+def addMessagingServer(rootService):
+    factory = listener.ListenerFactory()
+    port = int(rootService.cfg.agents.messaging.port)
     server = internet.TCPServer(port, factory)
     server.setServiceParent(rootService)
 

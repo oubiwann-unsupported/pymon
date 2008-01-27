@@ -57,18 +57,6 @@ class LocalMail(object):
         #if sts != 0:
         #    print "Sendmail exit status", sts
 
-class RemoteMail(object):
-
-    def setHost(self, host):
-        self.host = host
-
-    def send(self):
-        import smtplib
-        self._prepMessage()
-        mail=smtplib.SMTP(self.host)
-        mail.sendmail(self.frm,self.to,self.mail_data)
-        mail.close()
-
 class AsYetUndterminedClassName(object):
     # XXX define me!
 
@@ -127,7 +115,7 @@ class AsYetUndterminedClassName(object):
         # XXX we probably want to make the actual sending of emails
         # non-blocking. Dererreds anyone?
         # XXX modify this when support for escalation and different
-        # group levels is added to python
+        # group levels is added to pymon
         for address in cfg.getMailList(self.factory.uid):
             email = LocalMail()
             email.setSendmailBinary(sendmail)

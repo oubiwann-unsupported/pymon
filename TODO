@@ -333,16 +333,13 @@ New TODO
 * add note to readme or other doc that using an smtp server will likely result
   in the "from" field set by pymon (pymon@adytum.us) being overriden (by the
   smtp server).
-* write messaging listener (start by copying usable code from agents.local)
-  that:
-    - has a message() method that takes message type, message content, service
-      type, service host, and **kwds
-    - has client factories for each of the supported message types
-* write an email messenger that:
-    - can be instantiated by workflow when messages need to be sent
-    - can connect to the listener and send messages
 * update local mail sender to use process factory instead of making a direct
   call to popen
+* plug new messaging into workflow
+  - where should logic for message-enabled (or disabled) checks go? workflow?
+    it'll probably want to be in checkTransition()
+  - might want to put actual code/logic in rules, and the execution of those
+    rules in checkTransition()
 * add third-party libs
 * create installer script for third-party setup/installation
 * update the INSTALL instructions to reflect the recent changes
@@ -350,23 +347,23 @@ New TODO
 * with those in place, update ping_tcp plugin with a "sub-factory" that works
   like the factory in the discoverServices script; changes of the code need to
   make sure the following happens:
-  . multiple connectTCP() calls are made to the host being checked (one for
+  - multiple connectTCP() calls are made to the host being checked (one for
     each port)
-  . each port check needs to fire an event if the results exceed the threshold
-  . deferreds may need to be sequential to avoid flooding; this might be
+  - each port check needs to fire an event if the results exceed the threshold
+  - deferreds may need to be sequential to avoid flooding; this might be
     possible by using the twisted task coiterators with a small batch size
-  . we need a couple factories:
-    - one that's respondible for connecting to a port (and reporting on
+  - we need a couple factories:
+    . one that's respondible for connecting to a port (and reporting on
       connection errors)
-    - one that's responsible for a series of port connections (and reporting on
+    . one that's responsible for a series of port connections (and reporting on
       the overall/averaged success); this is the one whose protocol will be the
       monitor "client" that is responsible for firing off the workflow upon
       connectionLost (in this case, the connectionLost will have to be
       simulated, or contingent upon the last port connection being lost)
-    - TCPPingSeriesClient must be for one series of pings on a single port and
+    . TCPPingSeriesClient must be for one series of pings on a single port and
       not more; as such, we will need a third layer, one for all series of
       for a given host (all ports, all counts)
-  . ugh. this isn't working. probably need to explore a different solution
+  - ugh. this isn't working. probably need to explore a different solution
 * add a method to the ConfigCheck class called getTiered() (or something),
   taking an attribute name as a parameter; it will check the 'check' and
   'defaults' attrs, returned the preferred one first, if it finds it (setting
@@ -469,6 +466,14 @@ New TODO
   pymon web site.
 * DONE - split utils/message into messaging/email and messaging/formatters
 * DONE - extract general code from command-line pinger client and put into agents code
+* DONE - write messaging listener (start by copying usable code from agents.local)
+  that:
+    - has a message() method that takes message type, message content, service
+      type, service host, and **kwds
+    - has client factories for each of the supported message types
+* DONE - write an email messenger that:
+    - can be instantiated by workflow when messages need to be sent
+    - can connect to the listener and send messages
 
 ====
 TODO (old)
