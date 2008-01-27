@@ -334,8 +334,6 @@ New TODO
   that:
     - has a message() method that takes message type, message content, service
       type, service host, and **kwds
-    - accepts incoming messages only on the configured IP address (should
-      always be 127.0.0.1)
     - has client factories for each of the supported message types
 * write an email messenger that:
     - can be instantiated by workflow when messages need to be sent

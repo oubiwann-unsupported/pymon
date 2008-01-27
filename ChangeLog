@@ -1,3 +1,8 @@
+2008.01.26
+
+* Added a message module.
+* Added code to listener.
+
 2008.01.25
 
 * Cleaned up admin scripts and renamed site sync script.
