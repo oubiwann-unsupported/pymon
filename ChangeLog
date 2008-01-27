@@ -10,6 +10,13 @@ as part of a service check).
 * Improved the process server with call/errbacks and a client message.
 * Plugged messaging server into services + pymond.
 * Cleaned up listener imports.
+* Added messaging rules to worflow.rules.
+* Added dispatches for all Leave, Transition and Enter workflow states,
+regardless of and in addition to type name and updated unit tests for this..
+* Added config options for notification types.
+* Started work on the workflow code that will send messages to the listener.
+* Started work on the messaging rules code that will generate the messages to
+send to the listener.
 
 2008.01.26
 

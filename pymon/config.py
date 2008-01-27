@@ -141,7 +141,7 @@ class BaseConfig(object):
         '''
         # XXX this is ugly and wrong... replacing characters like this
         # shouldn't happen at this level. This should be enforced elsewhere.
-        return [ x.replace(' ', '_') for x in self.monitor_status.enabled ]
+        return [x.replace(' ', '_') for x in self.monitor_status.enabled]
 
     def getEnabledServices(self):
         '''
@@ -150,6 +150,12 @@ class BaseConfig(object):
         enabled = set(self.getEnabledNames())
         pymonServices = set(self.services.getSectionAttributes())
         return enabled.intersection(pymonServices)
+
+    def getEnabledNotificationTypes(self):
+        '''
+        Get a list of the notification types that are enabled.
+        '''
+        return [x.replace(' ', '_') for x in self.notifications.types.enabled]
 
     def checkForMaintenanceWindow(self, config):
         try:
@@ -294,6 +300,16 @@ class SchemalessConfig(BaseConfig, SchemalessSection):
         for name in enabled:
             yield getattr(self.services, name)
 
+    def getEnabledNotificationTypes(self):
+        '''
+        Get a list of the notification types that are enabled.
+        '''
+        enabled = self.notifications.types.enable
+        if isinstance(enabled, str):
+            enabled = [enabled]
+        return [x.replace(' ', '_') for x in enabled]
+
+
     def getCheckConfigFromURI(self, uri):
         type = getTypeFromURI(uri)
         svc = self.getServiceConfigFromURI(uri)
@@ -351,7 +367,6 @@ class CheckConfig(object):
         return False
 
     def isDisabled(self):
-        #import pdb;pdb.set_trace()
         if (
             self.app.checkForDisabledService(self.defaults) == True or
             self.app.checkForDisabledService(self.check) == True):

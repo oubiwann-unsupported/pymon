@@ -336,10 +336,18 @@ New TODO
 * update local mail sender to use process factory instead of making a direct
   call to popen
 * plug new messaging into workflow
-  - where should logic for message-enabled (or disabled) checks go? workflow?
-    it'll probably want to be in checkTransition()
-  - might want to put actual code/logic in rules, and the execution of those
-    rules in checkTransition()
+  - DONE -create messaging rules class for notification checks and temporary storage
+    of generated messages
+  - DONE - in plugins, after general rules check, run message check (isSend) and
+    generate messages
+  - DONE - in plugins, to the workflow transition check method, pass data necessary
+    for sending messages to the listener
+  - create a method (onTrans) that will get called for all transitions and in
+    that method, iterate the created messages, make a listener client
+    connection, and send the message to the listener
+  - create MessageFactory class that takes a type and **kwds as parameters, and
+    then generates the appropriate Message instance (to be used by the
+    MessagingRules class)
 * add third-party libs
 * create installer script for third-party setup/installation
 * update the INSTALL instructions to reflect the recent changes

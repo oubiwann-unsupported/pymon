@@ -7,6 +7,7 @@ class ThresholdRules(object):
     def __init__(self, factory):
         self.factory = factory
         self.setType(self.factory.cfg.defaults.threshold_type)
+        self.messaging = MessagingRules(factory)
 
     def getOkThreshold(self):
         if self.factory.cfg.check.ok_threshold:
@@ -78,4 +79,47 @@ class ThresholdRules(object):
         log.debug("threshold type: %s" % type(threshold))
         return isInFunc(datum, threshold)
 
+class MessagingRules(object):
+
+    def __init__(self, factory):
+        self.factory = factory
+        self.messages = []
+
+    # XXX what about escalation? Which messages are sent? How are
+    # messages sent? When are they NOT sent? Who gets what?
+
+    def isMessage(self, status):
+        if status == self.factory.cfg.app.state_definitions.ok:
+            return False
+        return True
+
+    def isEnabled(self):
+        if self.factory.cfg.notifications.enabled:
+            return True
+        return False
+
+    def isCutoff(self):
+        cutoff = self.factory.cfg.notifications.cut_off
+        if self.factory.state.get('count') > cutoff:
+            log.info("Incident count has passed the cut-off " +
+                "threshold; not sending email.")
+            return True
+        return False
+
+    def isSend(self, status):
+        if (self.isMessage(status) and self.isEnabled()
+            and not self.isCutoff()):
+            return True
+        return False
+
+    def createMessages(self, **kwds):
+        '''
+        For every type of enabled message, create a Message object that can be
+        sent to the Listener.
+        '''
+        for type in self.factory.cfg.app.getEnabledNotificationTypes():
+            print "Preparing to create message of type '%s' ..." % type
+            # XXX uncomment this code and make it work
+            #msg = MessageFactory(type, **kwds)
+            #messages.append(msg)
 

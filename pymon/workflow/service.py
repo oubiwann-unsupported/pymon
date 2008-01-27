@@ -104,17 +104,24 @@ class ServiceState(WorkflowAware):
     def getStateID(self, stateName):
         return getattr(stateName.lower(), states)
 
+    def onTrans(self, status='', rules=''):
+        if rules.messaging.isSend(status):
+            for msg in rules.messaging.messages:
+                # XXX instantiate a pymon listener client and send the listener
+                # the messages
+                print " >>> Preparing to send message of type '%s' ..." % type
+
     def onTransRecovering(self):
         print '* Transitioning in recovering state...'
 
     def onTransEscalating(self):
         print '* Issue unaddressed: escalating...'
 
-    def checkTransition(self, status, factory):
+    def checkTransition(self, status, factory, rules=None):
         """
 
         """
-        self.doTrans(transitionNames[status])
+        self.doTrans(transitionNames[status], status=status, rules=rules)
 
 # this is what should get imported by the pymon application:
 #serviceState = ServiceState(stateWorkflow)

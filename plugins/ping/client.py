@@ -20,9 +20,13 @@ class LocalAgentPingClient(LocalAgentClient, ClientMixin):
         gain = parse.getPingGain()
         host = self.getHost()
 
-        # push the returned data through the threshold checks
+        # push the returned data through the threshold checks and create any
+        # needed messages for notification
         status = self.rules.check(gain)
-        self.workflow.checkTransition(status, self.factory.cfg)
+        if self.rules.messaging.isSend(status):
+            self.rules.messaging.createMessages(
+                host=host, gain=gain, loss=loss)
+        self.workflow.checkTransition(status, self.factory.cfg, self.rules)
         #self.rules.setMsg(gain, host)
         #self.rules.setSubj(host, loss)
         #if self.rules.isSendMessage():
