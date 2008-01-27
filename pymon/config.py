@@ -55,9 +55,7 @@ def assembleConfig():
     fh.close()
     configFile = StringIO(conf)
     return configFile
-fh = open('out1.conf' ,'w+')
-fh.write(assembleConfig().getvalue())
-fh.close()
+
 config = loadConfigFile(assembleConfig())
 
 def refreshConfig():

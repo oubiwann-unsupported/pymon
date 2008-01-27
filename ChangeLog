@@ -2,6 +2,7 @@
 
 * Added a message module.
 * Added code to listener.
+* Removed old debugging code from pymon.config.
 
 2008.01.25
 
