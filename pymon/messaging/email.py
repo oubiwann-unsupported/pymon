@@ -1,8 +1,48 @@
+import sys
+from StringIO import StringIO
+from OpenSSL.SSL import SSLv3_METHOD
+
+from twisted.mail.smtp import ESMTPSenderFactory
+from twisted.python.usage import Options, UsageError
+from twisted.internet.ssl import ClientContextFactory
+from twisted.internet.defer import Deferred
+from twisted.internet import reactor
+
 from pymon.config import cfg
 from pymon.utils import isInList, isInRange, isExactly
 from pymon.utils.logger import log
 
-class LocalMail(Email):
+def sendmail(username, password, fromAddress, toAddress, message, smtpHost,
+             smtpPort=25):
+    """
+    @param username: The username with which to authenticate.
+    @param password: The password with which to authenticate.
+    @param fromAddress: The SMTP reverse path (ie, MAIL FROM)
+    @param toAddress: The SMTP forward path (ie, RCPT TO)
+    @param message: text containing the headers and body of the message to send.
+    @param smtpHost: The MX host to which to connect.
+    @param smtpPort: The port number to which to connect.
+
+    @return: A Deferred which will be called back when the message has been
+    sent or which will errback if it cannot be sent.
+    """
+    # Create a context factory which only allows SSLv3 and does not verify
+    # the peer's certificate.
+    contextFactory = ClientContextFactory()
+    contextFactory.method = SSLv3_METHOD
+    d = Deferred()
+    senderFactory = ESMTPSenderFactory(
+        username,
+        password,
+        fromAddress,
+        toAddress,
+        StringIO(message),
+        d,
+        contextFactory=contextFactory)
+    reactor.connectTCP(smtpHost, smtpPort, senderFactory)
+    return d
+
+class LocalMail(object):
 
     def setSendmailBinary(self, bin='/usr/sbin/sendmail'):
         self.sendmail = bin
@@ -17,7 +57,7 @@ class LocalMail(Email):
         #if sts != 0:
         #    print "Sendmail exit status", sts
 
-class RemoteMail(Email):
+class RemoteMail(object):
 
     def setHost(self, host):
         self.host = host

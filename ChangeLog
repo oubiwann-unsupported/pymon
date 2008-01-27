@@ -3,6 +3,12 @@
 * Added a message module.
 * Added code to listener.
 * Removed old debugging code from pymon.config.
+* Added an email formatter and removed the old (and useless) Email class.
+* Added a twisted-based sendmail function.
+* Updated Listener with a type checker for email.
+* Added smtp options to pymon.conf.
+* Created new message classes and registered them with pb so that the message
+object can be passed over pb.
 
 2008.01.25
 
