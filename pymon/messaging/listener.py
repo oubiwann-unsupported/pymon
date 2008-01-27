@@ -35,7 +35,7 @@ class Listener(pb.Root):
             d, successMsg = self.processEmail(msgObj)
         d.addCallback(_cb, successMsg)
         d.addErrback(_eb)
-        return d
+        return successMsg
 
     def processEmail(self, msgObj):
         '''
@@ -52,7 +52,7 @@ class Listener(pb.Root):
             msg = msg.replace('\r', '')
         successMsg = 'Email sent to %s.' % k['to']
         d = email.sendmail(
-            cfg.smtp_username, cfg.smtp_password, k['from'], k['to'],
+            cfg.smtp_username, cfg.smtp_password, cfg.mail_from, k['to'],
             msg, cfg.smtp_server, int(cfg.smtp_port))
         return (d, successMsg)
 
@@ -71,9 +71,6 @@ class ListenerFactory(pb.PBServerFactory):
 class ListenerClient(pb.PBClientFactory):
 
     protocol = pb.Broker
-
-    def __init__(self):
-        pb.PBClientFactory.__init__(self)
 
     def message(self, pbObj, msgObj):
         return pbObj.callRemote('message', msgObj)

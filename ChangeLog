@@ -1,3 +1,10 @@
+2008.01.27
+
+* Fixed the listener (server) to return text data to the client.
+* Removed useless __init__ method from listern client.
+* Set pymon to attempt to pull the "from" address from the pymon config file
+(for mail messages sent from the listener).
+
 2008.01.26
 
 * Added a message module.

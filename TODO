@@ -330,6 +330,9 @@ Message Types
 New TODO
 ========
 
+* add note to readme or other doc that using an smtp server will likely result
+  in the "from" field set by pymon (pymon@adytum.us) being overriden (by the
+  smtp server).
 * write messaging listener (start by copying usable code from agents.local)
   that:
     - has a message() method that takes message type, message content, service
