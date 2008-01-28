@@ -48,10 +48,10 @@ class Listener(pb.Root):
 
     def processEmail(self, msgObj):
         '''
-        # email kwds (to, from, subject) need to be set by the client;
-        # ultimately, this data is set on the Message object that is
-        # created in the workflow, and it is there that configuration
-        # values will be used to populate this data.
+        email kwds (to, from, subject) need to be set by the client;
+        ultimately, this data is set on the Message object that is
+        created in the workflow, and it is there that configuration
+        values will be used to populate this data.
         '''
         k = msgObj.kwds
         k['body'] = msgObj.content

@@ -1,3 +1,8 @@
+2008.01.28
+
+* Updated TODO with plan for connectionless monitors as well as code-cleanup
+thoughts.
+
 2008.01.27
 
 * Fixed the listener (server) to return text data to the client.
@@ -23,6 +28,7 @@ send to the listener.
 when used with connectionless monitoris (e.g., DNS or anything else that uses
 UDP).
 * Fixed some config references in messaging rules.
+* Cleaned up a docstring.
 
 2008.01.26
 

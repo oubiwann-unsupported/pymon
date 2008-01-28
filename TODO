@@ -330,6 +330,37 @@ Message Types
 New TODO
 ========
 
+* add support for non-connection oriented monitor plugins
+  - develop a means by which one can write plugins where deferreds can be
+    "processed" for results in lieu of TCP connections
+  - this will require fulfilling all the requirements that are currently met in
+    plugins through the use of connectionMade and connectionLost; these need to
+    be documented somewhere as part of the pymon monitor plugin API; these
+    include, but may not be limited to the following:
+     . setting up rules and workflow (ClientMixin.setup)
+     . setting factory (monitor) data
+     . parsing factory data
+     . checking thresholds
+     . initiating workflow transitions
+     . updating state information
+     . deleting rules object (ClientMixin.teardown)
+  - replicating the process that currently happens with connections (making and
+    losing them) will probably go something like this:
+     . create a monitor that subclasses both from ClientMixin and BaseMonitor
+     . implement a monitor __call__ method that calls its superclass __call__
+       with connect=False
+     . call ClientMixin.setup
+     . in __call__, execute a method that returns a deferred
+     . implement a callback that sets the monitor's (factory's) data attribute
+     . add a callback that processes the data, checks thresholds, does workflow
+       transitions, and updates state
+     . call ClientMixin.teardown
+* move monitor client code for rules, messaging and workflow into a ClientMixin
+  method (it should be the same for every monitor)
+* look into the possibility of ClientMixin and MonitorBase subclassing the same
+  base class (maybe only having the 'host' property + set/gets?); or better
+  yet, having client plugins subclass ClientMixin and pymon.plugin.Plugin and
+  monitor plugins subclass MonitorBase and pymon.plugin.Plugin
 * add note to readme or other doc that using an smtp server will likely result
   in the "from" field set by pymon (pymon@adytum.us) being overriden (by the
   smtp server).
