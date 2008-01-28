@@ -15,13 +15,13 @@ class ClientMixin(object):
         uri = utils.Uri(self.factory.uid)
         return uri.getAuthority().getHost()
 
-    def connectionMade(self):
+    def setup(self):
         # setup the rules
         self.rules = ThresholdRules(self.factory)
         # setup the workflow
         self.workflow = ServiceState()
 
-    def connectionLost(self):
+    def teardown(self):
         del self.rules
 
     def updateState(self):

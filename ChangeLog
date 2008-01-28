@@ -19,6 +19,10 @@ regardless of and in addition to type name and updated unit tests for this..
 send to the listener.
 * Started working on MessageFactory.
 * Filled in some docstrings.
+* Changed the ClientMixin connection-oriented names so as not to be confusing
+when used with connectionless monitoris (e.g., DNS or anything else that uses
+UDP).
+* Fixed some config references in messaging rules.
 
 2008.01.26
 

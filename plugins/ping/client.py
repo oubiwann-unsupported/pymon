@@ -10,7 +10,7 @@ class LocalAgentPingClient(LocalAgentClient, ClientMixin):
 
     def connectionMade(self):
         LocalAgentClient.connectionMade(self)
-        ClientMixin.connectionMade(self)
+        ClientMixin.setup(self)
 
     def connectionLost(self, reason):
         # parse returned data
@@ -39,6 +39,6 @@ class LocalAgentPingClient(LocalAgentClient, ClientMixin):
 
         # final cleanup
         LocalAgentClient.connectionLost(self, reason)
-        ClientMixin.connectionLost(self)
+        ClientMixin.teardown(self)
 
 

@@ -94,12 +94,12 @@ class MessagingRules(object):
         return True
 
     def isEnabled(self):
-        if self.factory.cfg.notifications.enabled:
+        if self.factory.cfg.app.notifications.enabled:
             return True
         return False
 
     def isCutoff(self):
-        cutoff = self.factory.cfg.notifications.cut_off
+        cutoff = self.factory.cfg.app.notifications.cut_off
         if self.factory.state.get('count') > cutoff:
             log.info("Incident count has passed the cut-off " +
                 "threshold; not sending email.")

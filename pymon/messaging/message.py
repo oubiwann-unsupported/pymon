@@ -56,12 +56,15 @@ class MessageFactory(object):
         if type == 'smtp':
             # set subject kwd
             # set to kwd
+            pass
         elif type == 'rss':
             # set title, date, and link kwds
+            pass
         elif type == 'irc':
             # set irc host and port kwds
             # set irc nick kwd
             # set irc channels (list) kwd
+            pass
         elif type == 'snmp':
             pass
         elif type == 'im':
