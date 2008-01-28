@@ -28,8 +28,20 @@ class Listener(pb.Root):
         def _eb(err):
             log.error(err)
 
-        if msgObj.type == 'email':
+        if msgObj.type == 'smtp':
             d, successMsg = self.processEmail(msgObj)
+        elif msgObj.type == 'rss':
+            pass
+        elif msgObj.type == 'irc':
+            pass
+        elif msgObj.type == 'im':
+            pass
+        elif msgObj.type == 'mud':
+            pass
+        elif msgObj.type == 'snmp':
+            pass
+        elif msgObj.type == 'twitter':
+            pass
         d.addCallback(_cb, successMsg)
         d.addErrback(_eb)
         return successMsg

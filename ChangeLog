@@ -17,6 +17,8 @@ regardless of and in addition to type name and updated unit tests for this..
 * Started work on the workflow code that will send messages to the listener.
 * Started work on the messaging rules code that will generate the messages to
 send to the listener.
+* Started working on MessageFactory.
+* Filled in some docstrings.
 
 2008.01.26
 

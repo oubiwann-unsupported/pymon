@@ -120,6 +120,6 @@ class MessagingRules(object):
         for type in self.factory.cfg.app.getEnabledNotificationTypes():
             print "Preparing to create message of type '%s' ..." % type
             # XXX uncomment this code and make it work
-            #msg = MessageFactory(type, **kwds)
-            #messages.append(msg)
+            #factory = MessageFactory(type, **kwds)
+            #messages.append(factory.msg)
 
