@@ -1,4 +1,4 @@
-Copyright (c) 2003-2005, AdytumSolutions, Inc.
+Copyright (c) 2001-2008, AdytumSolutions, Inc.
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -29,8 +29,8 @@ ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 
 Copyright Exceptions:
-	- Portions of support libraries are taken from other projects
-	or public domain code. All files in the pymon release that
-	do not decalre their own license at the top of the file
-	fall under the above defined license.
+    Portions of support libraries are taken from other projects
+    or public domain code. All files in the pymon release that
+    do not decalre their own license at the top of the file
+    fall under the above defined license.
 
