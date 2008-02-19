@@ -1,9 +1,12 @@
 #!/usr/bin/env python2.4
 import re
+from datetime import datetime
 from optparse import OptionParser
 
 from adytum.util.text import formatRFC822LongField
-from adytum.util.sourceforge.news import postNews
+from adytum.util.sourceforge.news import getNewsURL
+from adytum.util.sourceforge.news import postNews as postSFNews
+from adytum.util.launchpad.news import postNews as postLPNews
 
 from sourceforge_website import pageparts
 
@@ -19,11 +22,15 @@ if not opts.filename:
     optp.error('It is required that you pass a filename.')
 
 def readSourceFile(filename):
+    """
+    The source file is a simple text file with the first line being the
+    headline, and the rest of the file being the body of the story.
+    """
     fh = open(filename)
     lines = fh.readlines()
     fh.close()
     headline = lines[0].strip()
-    story = ' '.join(lines[1:])#.strip()
+    story = ' '.join(lines[1:])
     return (headline, story)
 
 def convertLinks(story, dest='site'):
@@ -77,5 +84,7 @@ if opts.isDryRun:
 else:
     dest = 'sourceforge_website/data/content/news.front'
     pageparts.updateNews(dest, headline, htmlNews)
-    postNews('pymon', 'sourceforge_creds', headline, sfNews)
-
+    b = postSFNews('pymon', 'sourceforge_creds', headline, sfNews)
+    url = getNewsURL(b)
+    date = datetime.now().strftime('%Y-%m-%d %H:%M')
+    postLPNews('pymon', 'launchpad_creds', headline, lpNews, url, date)
