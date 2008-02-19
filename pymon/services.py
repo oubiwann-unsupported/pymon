@@ -11,7 +11,6 @@ from pymon.config import refreshConfig
 from pymon.ui.web import pages
 from pymon.application import globalRegistry
 
-
 def publishJSON():
     '''
     This is a function for peering but the data is only for the local
@@ -51,9 +50,9 @@ def addWebServer(rootService):
 
 def addConfigServer(rootService):
     interval = int(rootService.cfg.admin.config_update.interval)
-    #config_check = internet.TimerService(interval, refreshConfig)
-    config_check = internet.TimerService(interval, lambda x: None, '')
-    config_check.setServiceParent(rootService)
+    #configCheck = internet.TimerService(interval, refreshConfig)
+    configCheck = internet.TimerService(interval, lambda x: None, '')
+    configCheck.setServiceParent(rootService)
 
 def addBackupServer(rootService):
     interval = int(rootService.cfg.admin.backups.interval)
