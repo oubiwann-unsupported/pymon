@@ -28,6 +28,7 @@ class Listener(pb.Root):
         def _eb(err):
             log.error(err)
 
+        # we'll need to fill these in as we support more notification types
         if msgObj.type == 'smtp':
             d, successMsg = self.processEmail(msgObj)
         elif msgObj.type == 'rss':
