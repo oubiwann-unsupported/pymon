@@ -12,6 +12,19 @@ class LocalAgentPingClient(LocalAgentClient, ClientMixin):
         LocalAgentClient.connectionMade(self)
         ClientMixin.setup(self)
 
+    def processRules(self, checkData, **kwds):
+        """
+        Push the returned data through the threshold checks and create any
+        needed messages for notification, which will be send by the
+        workflow's doTrans() method (if messaging is enabled).
+        """
+        status = self.rules.check(checkData)
+        if self.rules.messaging.isSend(status):
+            self.rules.messaging.createMessages(**kwds)
+        self.workflow.checkTransition(status, self.factory.cfg, self.rules)
+        #self.rules.setMsg(gain, host)
+        #self.rules.setSubj(host, loss)
+
     def connectionLost(self, reason):
         # parse returned data
         log.debug(self.factory.data)
@@ -20,16 +33,8 @@ class LocalAgentPingClient(LocalAgentClient, ClientMixin):
         gain = parse.getPingGain()
         host = self.getHost()
 
-        # push the returned data through the threshold checks and create any
-        # needed messages for notification, which will be send by the
-        # workflow's doTrans() method (if messaging is enabled)
-        status = self.rules.check(gain)
-        if self.rules.messaging.isSend(status):
-            self.rules.messaging.createMessages(
-                host=host, gain=gain, loss=loss)
-        self.workflow.checkTransition(status, self.factory.cfg, self.rules)
-        #self.rules.setMsg(gain, host)
-        #self.rules.setSubj(host, loss)
+        # threshold checks, messaging, and workflow
+        self.processRules(gain, host=host, loss=loss, gain=gain)
 
         # update state information
         self.updateState()
