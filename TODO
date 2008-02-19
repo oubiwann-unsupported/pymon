@@ -280,8 +280,8 @@ Ah, another form of messaging: what about SMNP traps? A pymon MIB would define
 this (if memory serves)... need to look at how SNMP "messaging" works.
 
 Generalization of messenging:
- * create a service that listens for messages
- * all publishable messages will be sent to that service
+ * DONE - create a service that listens for messages
+ * DONE - all publishable messages will be sent to that service
  * need to pass information like:
     - message type
     - message content
@@ -361,7 +361,7 @@ New TODO
   base class (maybe only having the 'host' property + set/gets?); or better
   yet, having client plugins subclass ClientMixin and pymon.plugin.Plugin and
   monitor plugins subclass MonitorBase and pymon.plugin.Plugin
-* add note to readme or other doc that using an smtp server will likely result
+* add note to README or other doc that using an smtp server will likely result
   in the "from" field set by pymon (pymon@adytum.us) being overriden (by the
   smtp server).
 * update local mail sender to use process factory instead of making a direct
