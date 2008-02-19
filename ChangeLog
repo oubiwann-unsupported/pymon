@@ -1,3 +1,24 @@
+2008.02.18
+
+* Updated news script to post news to launchpad.
+* Updated favicon.
+* Updated logo.
+* Added square logo.
+
+2008.02.15
+
+* Updated LICENSE.
+
+2008.01.30
+
+* Moved rules processing into a dedicated method.
+* Fixed non-standard variable names in pymon.services.
+* Updated TODO.
+
+2008.01.29
+
+* Added comment to listener.
+
 2008.01.28
 
 * Updated TODO with plan for connectionless monitors as well as code-cleanup
