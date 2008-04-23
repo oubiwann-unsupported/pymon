@@ -18,8 +18,8 @@ def makeInt(orig, location, tokens):
 
 class Grammar(object):
     '''
-    # setup the ShellParser and set the services; in a real application, 
-    # this will be done at a higher level (where configuration is in its 
+    # setup the ShellParser and set the services; in a real application,
+    # this will be done at a higher level (where configuration is in its
     # proper place).
     >>> p = ShellParser()
     >>> p.services = ['ping', 'http-status']
@@ -129,15 +129,15 @@ class Grammar(object):
         listToken = Literal("list").setResultsName(
             "commandtype")
         memToken = Literal("mem").setResultsName(
-            "commandtype") 
+            "commandtype")
         helpToken = Literal("help").setResultsName(
-            "commandtype") 
+            "commandtype")
 
-        # XXX in the future, service types will be taken from the 
-        # configuration file... but not directly. Need to provide an 
-        # attribute so that higher up in the "chain" (at the factory 
+        # XXX in the future, service types will be taken from the
+        # configuration file... but not directly. Need to provide an
+        # attribute so that higher up in the "chain" (at the factory
         # level?) the configuration data that the grammar needs can
-        # be set. We'll look at protocol/factory attributes for 
+        # be set. We'll look at protocol/factory attributes for
         # twisted factories and clients, respectively.
         svcs = ' '.join(self.parser.services)
         #svcs = 'testing ping http-status'
@@ -174,28 +174,28 @@ class Grammar(object):
             (true | false).setResultsName(
             "enabled"))
         orgToken = Optional(
-            Literal("org") + 
+            Literal("org") +
             Word(alphanums + """.'",:;!?()@#$%&*<>/\\""").setResultsName(
             "org"))
         intervalToken = Optional(
-            Literal("interval") + 
+            Literal("interval") +
             Word(nums).setParseAction(makeInt).setResultsName(
             "interval"))
 
         okThreshToken = Optional(
-            Literal("ok-threshold") + 
+            Literal("ok-threshold") +
             Word(alphanums).setResultsName(
             "ok_threshold"))
         warnThreshToken = Optional(
-            Literal("warn-threshold") + 
+            Literal("warn-threshold") +
             Word(alphanums).setResultsName(
             "warn_threshold"))
         errorThreshToken = Optional(
-            Literal("error-threshold") + 
+            Literal("error-threshold") +
             Word(alphanums).setResultsName(
             "error_threshold"))
         failedThreshToken = Optional(
-            Literal("failed-threshold") + 
+            Literal("failed-threshold") +
             Word(alphanums).setResultsName(
             "failed_threshold"))
         thresholdsToken = okThreshToken + warnThreshToken + \
@@ -204,18 +204,18 @@ class Grammar(object):
         downtimeToken = Optional(
             Literal("scheduled-downtime") +
             Word(
-                nums + "." + " " + nums + ":" + " - " + 
+                nums + "." + " " + nums + ":" + " - " +
                 nums + "." + " " + nums + ":"
             ).setParseAction(getDateRange).setResultsName(
             "scheduled_downtime"))
 
         # ping-specific args
         pingBinaryToken = Optional(
-            Literal("binary") + 
+            Literal("binary") +
             legalPathChars.setResultsName(
             "binary"))
         pingCountToken = Optional(
-            Literal("count") + 
+            Literal("count") +
             Word(nums).setParseAction(makeInt).setResultsName(
             "count"))
 

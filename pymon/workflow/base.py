@@ -1,5 +1,6 @@
 # Copyright (C) 2002-2004 Juan David Ibanez Palomar <jdavid@itaapy.com>
 #               2002 Thilo Ernst <Thilo.Ernst@dlr.de>
+#               2005 Duncan McGreggor <duncan@adytum.us>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -15,7 +16,6 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 #
-# Modified  by Duncan McGreggor starting 2005.
 """
 The workflow module simplifies the task of writing workflow systems.
 
