@@ -9,4 +9,8 @@ push:
 	git push --all git@$(GITHUB_REPO)
 
 pull:
-	git pull https://$(GOOGLE_REPO)
+	git pull -a https://$(GOOGLE_REPO)
+
+update:
+	make pull
+	make push
