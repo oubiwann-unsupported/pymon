@@ -37,7 +37,8 @@ commit-raw:
 
 msg:
 	@rm $(MSG_FILE)
-	@git diff ChangeLog |egrep -v '^\+\+\+'|egrep '^\+.*'|sed -e 's/^+//' > $(MSG_FILE)
+	@echo '!!! REMOVE THIS LINE !!!' >> $(MSG_FILE)
+	@git diff ChangeLog |egrep -v '^\+\+\+'|egrep '^\+.*'|sed -e 's/^+//' >> $(MSG_FILE)
 .PHONY: msg
 
 
@@ -55,7 +56,7 @@ stat: msg
 	@echo
 	@echo "### Changes ###"
 	@echo
-	-@cat $(MSG_FILE)
+	-@cat $(MSG_FILE)|egrep -v '^\!\!\!'
 	@echo
 	@echo "### Git working branch status ###"
 	@echo

@@ -6,6 +6,7 @@
 VERSION file and updated the setup.py to pull from the meta file..
 * Removed the admin files, since they have been replaced by make targets or
 have been moved to other projects.
+* Tweaked the MSG output in the Makefile.
 
 2008.04.23
 
