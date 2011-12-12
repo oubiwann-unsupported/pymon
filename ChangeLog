@@ -2,6 +2,10 @@
 
 * Added a Makefile with push and pull targets for various git repos.
 * Added a slew of new targets to the makefile and cleaned up the existing ones.
+* Added a meta file to the library code with version info and removed the old
+VERSION file and updated the setup.py to pull from the meta file..
+* Removed the admin files, since they have been replaced by make targets or
+have been moved to other projects.
 
 2008.04.23
 

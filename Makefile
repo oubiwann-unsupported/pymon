@@ -1,10 +1,11 @@
-GOOGLE_REPO := code.google.com/p/pymon
-SF_REPO := pymon.git.sourceforge.net/gitroot/pymon/pymon
-GITHUB_REPO := github.com:oubiwann/pymon.git
+PROJ := pymon
+GOOGLE_REPO := code.google.com/p/$(PROJ)
+SF_REPO := pymon.git.sourceforge.net/gitroot/pymon/$(PROJ)
+GITHUB_REPO := github.com:oubiwann/$(PROJ).git
 AUTHOR ?= oubiwann
 MSG_FILE ?= MSG
 
-LIB := pymon
+LIB := $(PROJ)
 
 
 clean:
@@ -12,7 +13,7 @@ clean:
 	find ./ -name "*.pyc" -exec rm {} \;
 	find ./ -name "*.pyo" -exec rm {} \;
 	find . -name "*.sw[op]" -exec rm {} \;
-	rm -rf MSG.backup _trial_temp/ build/ dist/ MANIFEST \
+	rm -rf $(MSG_FILE).backup _trial_temp/ build/ dist/ MANIFEST \
 		CHECK_THIS_BEFORE_UPLOAD.txt *.egg-info
 
 
@@ -35,7 +36,9 @@ commit-raw:
 
 
 msg:
-	git diff ChangeLog |egrep -v '^\+\+\+'|egrep '^\+.*'|sed -e 's/^+//' > $(MSG_FILE)
+	@rm $(MSG_FILE)
+	@git diff ChangeLog |egrep -v '^\+\+\+'|egrep '^\+.*'|sed -e 's/^+//' > $(MSG_FILE)
+.PHONY: msg
 
 
 commit: msg
@@ -62,6 +65,8 @@ stat: msg
 	@echo
 	@git branch
 
+status: stat
+.PHONY: status
 
 todo:
 	git grep -n -i -2 XXX

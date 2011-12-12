@@ -4,23 +4,20 @@ import sys
 import glob
 from distutils.core import setup
 
-version = open('VERSION').read().strip()
+from pymon import meta
+
 
 plugins = glob.glob(os.path.join('plugins', '*'))
 schemas = glob.glob(os.path.join('etc', 'schema*.xml'))
 
 setup(name="PyMonitor",
-    version=version,
-    description="Python Enterprise Monitoring Application",
-    author="Duncan McGreggor",
-    author_email="duncan@adytum.us",
-    url="http://pymon.sf.net",
+    version=meta.version,
+    description=meta.description,
+    author=meta.author,
+    author_email=meta.author_email,
+    url=meta.url,
     license="BSD",
-    long_description='''pymon is an open source network and process
-        monitoring solution implemented in python. The interface and
-        conifiguration is designed to be easily and rapidly deployed,
-        saving on time and overhead often associated with other 
-        monitoring solutions.''',
+    long_description=meta.long_description,
     packages=[
         'pymon',
         'pymon.clients',
