@@ -64,6 +64,7 @@ If you want to add more monitoring types, you will need to:
 api notes
 =========
 The currently defined monitor types are as follows:
+
 * ping
 * http status
 
