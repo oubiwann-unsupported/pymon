@@ -11,6 +11,8 @@ have been moved to other projects.
 * Moved the README to the main dir.
 * Moved the tests directory into the pymon lib.
 * Removed placeholder "data" and "state" directories.
+* Removed the unnecessary dir depth in static.
+* Updated README and moved TODO to docs.
 
 2008.04.23
 
