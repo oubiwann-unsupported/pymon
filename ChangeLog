@@ -7,6 +7,10 @@ VERSION file and updated the setup.py to pull from the meta file..
 * Removed the admin files, since they have been replaced by make targets or
 have been moved to other projects.
 * Tweaked the MSG output in the Makefile.
+* Created a contrib dir and moved the daemontools into it.
+* Moved the README to the main dir.
+* Moved the tests directory into the pymon lib.
+* Removed placeholder "data" and "state" directories.
 
 2008.04.23
 
