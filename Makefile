@@ -14,3 +14,6 @@ pull:
 update:
 	make pull
 	make push
+
+commit:
+	git commit -a -v
