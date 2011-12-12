@@ -1,6 +1,7 @@
 2011.12.12
 
 * Added a Makefile with push and pull targets for various git repos.
+* Added a slew of new targets to the makefile and cleaned up the existing ones.
 
 2008.04.23
 
