@@ -32,7 +32,7 @@ If you are running a development version of pymon in your working directory
 
 Now you should be up and running.
 
-Apache Virtual Hosts
+apache virtual hosts
 --------------------
 You can also run pymon under apache configured as a virtual host. Here's
 how you'd do that::
@@ -43,9 +43,39 @@ how you'd do that::
       ProxyPass / http://localhost:8080/vhost/http/pymon.mycompany.com/
   </VirtualHost>
 
-======================
+ngix virtual hosts
+------------------
+
+TBD
+
+lighttpd virtual hosts
+----------------------
+
+TBD
+
+plugin list
+-----------
+The currently defined monitor types are as follows:
+
+* ping
+* http status
+
+port numbers
+------------
+How the port numbers were chosen::
+
+    >>> from adytum.util import numerology
+    >>> numerology.getNumerologicalValue('adytum pymon service web')
+    3293
+    >>> numerology.getNumerologicalValue('adytum pymon service xml-rpc')
+    3298
+
+===========
+development
+===========
+
 creating a new monitor
-======================
+----------------------
 
 If you want to add more monitoring types, you will need to:
 
@@ -60,21 +90,16 @@ If you want to add more monitoring types, you will need to:
 * enable the new monitoring type in etc/pymon.conf
 * rebuild pymon with 'python setup.py install'
 
-=========
-api notes
-=========
-The currently defined monitor types are as follows:
+For more details, see the development guide: docs/HACKING.txt
 
-* ping
-* http status
+contributing
+------------
 
-============
-port numbers
-============
-How the port numbers were chosen::
+Plans for development are being migrated from the docs/TODO file to a more
+formal location using a system specifically designed for targeting feature
+development in open source software:
 
-    >>> from adytum.util import numerology
-    >>> numerology.getNumerologicalValue('adytum pymon service web')
-    3293
-    >>> numerology.getNumerologicalValue('adytum pymon service xml-rpc')
-    3298
+  https://blueprints.launchpad.net/pymon
+
+If the feature you would like to see implemented is not there, feel free to
+propose one for discussion.

@@ -13,6 +13,7 @@ have been moved to other projects.
 * Removed placeholder "data" and "state" directories.
 * Removed the unnecessary dir depth in static.
 * Updated README and moved TODO to docs.
+* Further improvements to the README.
 
 2008.04.23
 
