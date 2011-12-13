@@ -58,10 +58,10 @@ NOTE: during the current development phase, we are not testing the complete
 installation process, and we are probably breaking it in places. As a result,
 if you wish to run pymon, do the following:
 
-  * define ``PYTHONPATH`` to include the current directory
-  * check out the latest pymon from git (see the README)
-  * ``cd`` to the pymon checkout directory
-  * run ``python presetup.py`` to install the dependencies
+* define ``PYTHONPATH`` to include the current directory
+* check out the latest pymon from git (see the README)
+* ``cd`` to the pymon checkout directory
+* run ``python presetup.py`` to install the dependencies
 
 (The rest of the install instructions will eventually be applicable, but are
 currently not supported)
