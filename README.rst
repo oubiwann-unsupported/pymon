@@ -1,7 +1,14 @@
-============
-installation
-============
-Please see the docs/INSTALL file.
+=======================
+source and installation
+=======================
+
+The following locations currently mirror the source for pymon:
+
+* http://code.google.com/p/pymon/source/checkout
+* https://github.com/oubiwann/pymon
+* https://sourceforge.net/projects/pymon/develop
+
+For further instructions on installation, please see the docs/INSTALL file.
 
 =============
 running pymon
