@@ -2,13 +2,25 @@ import os
 import sys
 
 import glob
-from distutils.core import setup
+
+from setuptools import find_packages, setup
+from pkg_resources import parse_requirements
 
 from pymon import meta
 
 
+try:
+    parse_requirements(meta.requirements)
+except:
+    msg = ("You seem to be running a very old version of setuptools. "
+           "This version of setuptools has a bug parsing dependencies, "
+           "so automatic dependency resolution is disabled.")
+    print msg
+
+
 plugins = glob.glob(os.path.join('plugins', '*'))
 schemas = glob.glob(os.path.join('etc', 'schema*.xml'))
+
 
 setup(name="PyMonitor",
     version=meta.version,
@@ -18,17 +30,10 @@ setup(name="PyMonitor",
     url=meta.url,
     license="BSD",
     long_description=meta.long_description,
-    packages=[
-        'pymon',
-        'pymon.clients',
-        #'pymon.storage',
-        'pymon.ui',
-        #'pymon.ui.jabber',
-        #'pymon.ui.irc',
-        'pymon.ui.shell',
-        'pymon.ui.web',
-        'pymon.workflow',
-    ],
+    packages=find_packages('pymon'),
+    install_requires=meta.requirements,
+    include_package_data=True,
+    zip_safe=False,
     package_dir = {
         'pymon': 'pymon',
     },
@@ -36,11 +41,7 @@ setup(name="PyMonitor",
     data_files=[
         ('etc', ['etc/pymon.conf']),
         ('etc', schemas),
-        ('data', ['data/.placeholder']),
         ('plugins', plugins),
-        ('service', ['service/run']),
-        ('service/log', ['service/log/run']),
-        ('service/log/main', ['service/log/main/.placeholder']),
     ],
     scripts = ['bin/pymond', 'bin/pymon.tac'],
     classifiers = [f.strip() for f in """

@@ -4,6 +4,8 @@ from itertools import chain
 from StringIO import StringIO
 from datetime import datetime
 
+# XXX debugging
+#import pdb;pdb.set_trace()
 from ZConfig.schemaless import loadConfigFile
 
 from pymon.utils import getTypeFromURI, parseDate

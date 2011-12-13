@@ -17,17 +17,25 @@ clean:
 		CHECK_THIS_BEFORE_UPLOAD.txt *.egg-info
 
 
+push-tags:
+	git push --tags git@$(GITHUB_REPO)
+	git push --tags https://$(GOOGLE_REPO)
+	git push --tags ssh://$(AUTHOR)@$(SF_REPO)
+
+
 push:
 	git push --all git@$(GITHUB_REPO)
 	git push --all https://$(GOOGLE_REPO)
 	git push --all ssh://$(AUTHOR)@$(SF_REPO)
 
+push-all: push push-tags
+.PHONY: push-all
 
 pull:
 	git pull -a https://$(GOOGLE_REPO)
 
 
-update: pull push
+update: pull push-all
 .PHONY: update
 
 
@@ -48,7 +56,7 @@ commit: msg
 	touch $(MSG_FILE)
 
 
-commit-push: commit push
+commit-push: commit push-all
 .PHONY: commit-push
 
 

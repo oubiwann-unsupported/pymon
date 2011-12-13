@@ -1,7 +1,7 @@
 from grammar import Grammar
 
-class ShellParser(object):
 
+class ShellParser(object):
     services = None
 
     def __init__(self):
@@ -26,9 +26,11 @@ class ShellParser(object):
         self.tokens = tokens
         return out
 
+
 def _test():
     import doctest, parser
     doctest.testmod(parser)
+
 
 if __name__ == '__main__':
     _test()

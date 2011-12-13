@@ -1,7 +1,7 @@
 import os
 from urllib2 import urlparse
 
-import simplejson
+import json
 
 from nevow import rend
 from nevow import tags
@@ -173,4 +173,4 @@ class JSONPublisher(StatesPage):
         pass
 
     def data_getJSONData(self, context, data):
-        return simplejson.dumps(self.data)
+        return json.dumps(self.data)

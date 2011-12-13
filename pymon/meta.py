@@ -11,3 +11,10 @@ solution implemented in Twisted. It's built for use and deployment in
 distributed environments. Both the interface and the software configuration are
 designed to be easily and rapidly updated, saving on time and overhead often
 associated with other monitoring solutions."""
+requirements = [
+    "twisted",
+    "nevow",
+    "zope.interface",
+    "ZConfig",
+    "pyOpenSSL",
+    ]
