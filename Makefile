@@ -134,8 +134,14 @@ check-dist:
 	@echo "Need to fill this in ..."
 
 
+check: MOD ?= pymon
 check: build check-docs check-votingdocs
-	trial $(LIB)
+	python pymon/testing/runner.py $(MOD)
+
+
+check-integration:
+# placeholder for integration tests
+.PHONY: check-integration
 
 
 build-docs:

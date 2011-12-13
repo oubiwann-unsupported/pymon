@@ -8,6 +8,7 @@
 * Fixed up setup.py to behave properly.
 * Added a pymon.scripts subpackage.
 * Added a manifest file for packaging etc up with the sdist.
+* Added a testing subpackage and updated the check target to use it.
 
 2011.12.12
 
