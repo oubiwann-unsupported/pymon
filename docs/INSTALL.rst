@@ -1,14 +1,14 @@
-======================
-dependancies
-======================
+============
+dependencies
+============
 
-System dependencies
+system dependencies
 -------------------
 * Python 2.4 - python2.4 needs to be in your path
 * a program named "sendmail" that is in your path and can send mail
 * standard C header files
 
-Python Dependencies
+python dependencies
 -------------------
 These are automatically downloaded and installed for you. I
 had planned on using EasyInstall for this, but alas, many people
@@ -37,7 +37,7 @@ auto-installer won't install it. But pymon requires Twisted 2.1.0,
 because it uses the Epsilon package, so you will need to manually
 install/upgrade your Twisted if you have anything less than 2.1.0.
 
-Configuration
+configuration
 -------------
 
 ``*** IMPORTANT ***``
@@ -52,7 +52,7 @@ location), user, and group. After installation, you can then edit your
 installed pymon.conf file (PREFIX/etc/pymon.conf) for all the services
 that you want to monitor.
 
-Installation
+installation
 ------------
 NOTE: during the current development phase, we are not testing the complete
 installation process, and we are probably breaking it in places. As a result,
