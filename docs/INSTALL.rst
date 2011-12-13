@@ -37,8 +37,9 @@ auto-installer won't install it. But pymon requires Twisted 2.1.0,
 because it uses the Epsilon package, so you will need to manually
 install/upgrade your Twisted if you have anything less than 2.1.0.
 
+=============
 configuration
--------------
+=============
 
 ``*** IMPORTANT ***``
 
@@ -52,8 +53,10 @@ location), user, and group. After installation, you can then edit your
 installed pymon.conf file (PREFIX/etc/pymon.conf) for all the services
 that you want to monitor.
 
+============
 installation
-------------
+============
+
 NOTE: during the current development phase, we are not testing the complete
 installation process, and we are probably breaking it in places. As a result,
 if you wish to run pymon, do the following:
@@ -77,6 +80,7 @@ will be installed in the usual place (site-packages), and all the
 pymon files you might need to change and/or configure, will be
 installed in PREFIX.
 
-Running pymon
--------------
+=============
+running pymon
+=============
 See the README for instructions on running pymon.
