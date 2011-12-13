@@ -12,9 +12,9 @@ distributed environments. Both the interface and the software configuration are
 designed to be easily and rapidly updated, saving on time and overhead often
 associated with other monitoring solutions."""
 requirements = [
-    "twisted",
     "nevow",
-    "zope.interface",
-    "ZConfig",
+    "twisted",
     "pyOpenSSL",
+    "ZConfig",
+    "zope.interface",
     ]

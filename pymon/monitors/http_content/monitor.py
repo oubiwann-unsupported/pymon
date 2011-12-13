@@ -1,6 +1,7 @@
 from twisted.web.client import HTTPClientFactory
 
-from pymon.monitors import BaseMonitor
+from pymon.monitors.base import BaseMonitor
+
 
 class HttpTextMonitor(HTTPClientFactory, BaseMonitor):
 

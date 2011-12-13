@@ -4,8 +4,13 @@ SF_REPO := pymon.git.sourceforge.net/gitroot/pymon/$(PROJ)
 GITHUB_REPO := github.com:oubiwann/$(PROJ).git
 AUTHOR ?= oubiwann
 MSG_FILE ?= MSG
-
+VIRT_DIR ?= .pymon-venv
+VERSION := $(shell python pymon/scripts/getVersion.py)
 LIB := $(PROJ)
+
+
+version:
+	@echo $(VERSION)
 
 
 clean:
@@ -86,6 +91,30 @@ build:
 	python setup.py build
 	python setup.py sdist
 
+virtual-build: SUB_DIR ?= test-build
+virtual-build: clean build
+	mkdir -p $(VIRT_DIR)
+	virtualenv $(VIRT_DIR)/$(SUB_DIR)
+	. $(VIRT_DIR)/$(SUB_DIR)/bin/activate
+	$(VIRT_DIR)/$(SUB_DIR)/bin/pip install twisted
+	$(VIRT_DIR)/$(SUB_DIR)/bin/pip install nevow
+	$(VIRT_DIR)/$(SUB_DIR)/bin/easy_install-2.7 ./dist/PyMonitor-$(VERSION).tar.gz
+	$(VIRT_DIR)/$(SUB_DIR)/bin/deactivate
+
+
+virtual-run: SUB_DIR ?= test-build
+virtual-run: virtual-build
+	. $(VIRT_DIR)/$(SUB_DIR)/bin/activate
+	$(VIRT_DIR)/$(SUB_DIR)/bin/pymon
+
+
+clean-virt: clean
+	rm -rf $(VIRT_DIR)
+
+
+virtual-build-clean: clean-virt build virtual-build
+.PHONY: virtual-build-clean
+
 
 check-docs: files = "docs/USAGE.txt"
 check-docs:
@@ -98,6 +127,7 @@ check-votingdocs:
 	@python -c \
 	"from $(LIB).testing import suite;suite.runDocTests('$(files)');"
 
+
 check-dist:
 	@echo "Need to fill this in ..."
 
@@ -105,14 +135,18 @@ check-dist:
 check: build check-docs check-votingdocs
 	trial $(LIB)
 
+
 build-docs:
 	cd docs/sphinx; make html
+
 
 register:
 	python setup.py register
 
+
 upload: check
 	python setup.py sdist upload --show-response
+
 
 upload-docs: build-docs
 	python setup.py upload_docs --upload-dir=docs/html/

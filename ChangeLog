@@ -1,8 +1,13 @@
 2011.12.13
 
 * Changed the use of simplejson to json and updated the dep.
+* Added meta.requirements and updated setup.py to use them.
 * Added a target for pushing tags.
 * Added a .gitignore file.
+* Moved plugins back into pymon dir.
+* Fixed up setup.py to behave properly.
+* Added a pymon.scripts subpackage.
+* Added a manifest file for packaging etc up with the sdist.
 
 2011.12.12
 

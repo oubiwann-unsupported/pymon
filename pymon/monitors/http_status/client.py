@@ -1,8 +1,9 @@
 from twisted.web.client import HTTPPageGetter
 
 from pymon.clients import ClientMixin
-from pymon.workflow import rules
 from pymon.utils.logger import log
+from pymon.workflow import rules
+
 
 class HttpStatusClient(HTTPPageGetter, ClientMixin):
 

@@ -18,7 +18,6 @@ except:
     print msg
 
 
-plugins = glob.glob(os.path.join('plugins', '*'))
 schemas = glob.glob(os.path.join('etc', 'schema*.xml'))
 
 
@@ -30,20 +29,15 @@ setup(name="PyMonitor",
     url=meta.url,
     license="BSD",
     long_description=meta.long_description,
-    packages=find_packages('pymon'),
+    packages=find_packages('.'),
     install_requires=meta.requirements,
     include_package_data=True,
-    zip_safe=False,
-    package_dir = {
-        'pymon': 'pymon',
-    },
     zip_safe=False,
     data_files=[
         ('etc', ['etc/pymon.conf']),
         ('etc', schemas),
-        ('plugins', plugins),
     ],
-    scripts = ['bin/pymond', 'bin/pymon.tac'],
+    scripts = ['bin/pymond'],
     classifiers = [f.strip() for f in """
     License :: OSI-Approved Open Source :: BSD License
     Development Status :: 4 - Beta

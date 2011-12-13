@@ -2,16 +2,12 @@ import sys
 
 from twisted.internet import reactor
 
-from pymon import utils
-from pymon.utils.logger import log
-from pymon.interfaces import IState
 from pymon import application
-from pymon.application import MonitorState
-from pymon.application import globalRegistry
+from pymon import utils
+from pymon.application import MonitorState, globalRegistry
 from pymon.clients import NullClient
-
-
-sys.path.append('./plugins')
+from pymon.interfaces import IState
+from pymon.utils.logger import log
 
 
 class AbstractFactory(object):

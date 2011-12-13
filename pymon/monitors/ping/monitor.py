@@ -1,13 +1,14 @@
 from twisted.python import components
 
-from pymon.utils.logger import log
-from pymon.interfaces import IState
-from pymon.monitors import BaseMonitor
+from pymon.agents.local import LocalAgentMonitor
 from pymon.application import MonitorState
 from pymon.application import globalRegistry
-from pymon.agents.local import LocalAgentMonitor
+from pymon.interfaces import IState
+from pymon.monitors.base import BaseMonitor
+from pymon.utils.logger import log
 
 from client import LocalAgentPingClient
+
 
 class LocalAgentPingMonitor(LocalAgentMonitor, BaseMonitor):
 
@@ -40,5 +41,5 @@ class LocalAgentPingMonitor(LocalAgentMonitor, BaseMonitor):
         log.debug('Ping results: %s' % results)
         self.disconnect()
 
-components.registerAdapter(MonitorState, LocalAgentPingMonitor, IState)
 
+components.registerAdapter(MonitorState, LocalAgentPingMonitor, IState)

@@ -1,9 +1,9 @@
 from twisted.internet.protocol import Protocol
 
-from pymon.utils.logger import log
+from pymon.agents.local import LocalAgentClient
 from pymon.clients import ClientMixin
 from pymon.utils.pingparser import OutputParser
-from pymon.agents.local import LocalAgentClient
+from pymon.utils.logger import log
 
 
 class LocalAgentPingClient(LocalAgentClient, ClientMixin):
@@ -45,5 +45,3 @@ class LocalAgentPingClient(LocalAgentClient, ClientMixin):
         # final cleanup
         LocalAgentClient.connectionLost(self, reason)
         ClientMixin.teardown(self)
-
-

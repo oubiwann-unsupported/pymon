@@ -4,13 +4,14 @@ from twisted.internet import defer
 from twisted.internet import reactor
 from twisted.internet.protocol import ClientFactory
 
-from pymon.utils.logger import log
-from pymon.interfaces import IState
 from pymon.application import MonitorState
 from pymon.application import globalRegistry
-from pymon.monitors import BaseMonitor
+from pymon.interfaces import IState
+from pymon.monitors.base import BaseMonitor
+from pymon.utils.logger import log
 
 from client import TCPSinglePingClient, TCPPingClient
+
 
 class PingFactory(ClientFactory):
 
@@ -24,6 +25,7 @@ class PingFactory(ClientFactory):
 
     def clientConnectionLost(self, connector, reason):
         pass
+
 
 class TCPPingMonitor(BaseMonitor):
     """
@@ -104,4 +106,3 @@ class TCPPingMonitor(BaseMonitor):
         return results
 
 components.registerAdapter(MonitorState, TCPPingMonitor, IState)
-

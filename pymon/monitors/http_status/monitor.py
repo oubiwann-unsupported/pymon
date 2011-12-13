@@ -1,13 +1,13 @@
+from twisted.internet.defer import TimeoutError
 from twisted.python import components
 from twisted.web.client import HTTPClientFactory
 from twisted.web.client import PartialDownloadError
-from twisted.internet.defer import TimeoutError
 
-from pymon.utils.logger import log
-from pymon.interfaces import IState
 from pymon.application import MonitorState
 from pymon.clients import NullClient
-from pymon.monitors import BaseMonitor
+from pymon.interfaces import IState
+from pymon.monitors.base import BaseMonitor
+from pymon.utils.logger import log
 
 from client import HttpStatusClient
 
