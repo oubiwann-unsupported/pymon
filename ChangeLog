@@ -14,6 +14,7 @@ have been moved to other projects.
 * Removed the unnecessary dir depth in static.
 * Updated README and moved TODO to docs.
 * Further improvements to the README.
+* Fixed up the rst formatting of the INSTALL file.
 
 2008.04.23
 
