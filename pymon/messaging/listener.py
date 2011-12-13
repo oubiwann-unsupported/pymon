@@ -8,7 +8,9 @@ from pymon.messaging import email
 from pymon.messaging import message
 from pymon.messaging import formatters
 
+
 pb.setUnjellyableForClass(message.Message, message.ReceiverMessage)
+
 
 class Listener(pb.Root):
     '''
@@ -66,6 +68,7 @@ class Listener(pb.Root):
             msg, cfg.smtp_server, int(cfg.smtp_port))
         return (d, successMsg)
 
+
 class ListenerFactory(pb.PBServerFactory):
     '''
     This is a convenience wrapper for PBServerFactory with a defined root
@@ -77,6 +80,7 @@ class ListenerFactory(pb.PBServerFactory):
         self.root = IPBRoot(Listener())
         self.unsafeTracebacks = False
         self.security = globalSecurity
+
 
 class ListenerClient(pb.PBClientFactory):
 
@@ -100,4 +104,3 @@ class ListenerClient(pb.PBClientFactory):
             self._root = None
         else:
             self._failAll(reason)
-

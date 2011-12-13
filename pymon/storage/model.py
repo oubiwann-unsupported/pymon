@@ -1,7 +1,6 @@
 """
 pymon storage module for the Storm ORM
 """
-
 from datetime import datetime
 
 from storm.databases.sqlite import SQLite
@@ -10,6 +9,7 @@ from storm.properties import Int, Unicode, DateTime, RawStr
 from storm.twisted.store import DeferredStore
 
 from twisted.internet.defer import DeferredList
+
 
 class Service(object):
     """
@@ -27,6 +27,7 @@ class Service(object):
     factory = RawStr()
     config = RawStr()
 
+
 class Status(object):
     """
     Record for 'current status'
@@ -43,6 +44,7 @@ class Status(object):
     message = Unicode()
     data = Unicode()
 
+
 class Counts(object):
     """
     Record for total number of checks in each of the pymon states.
@@ -57,6 +59,7 @@ class Counts(object):
     maintenance = Int()
     disabled = Int()
 
+
 class LastTimes(object):
     """
     Record for tracking the last time a service was in any given state.
@@ -67,6 +70,7 @@ class LastTimes(object):
     warn = DateTime()
     error = DateTime()
     failed = DateTime()
+
 
 class Event(object):
     """

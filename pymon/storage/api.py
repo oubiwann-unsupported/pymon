@@ -10,8 +10,9 @@ from storm.twisted.store import DeferredStore
 
 from twisted.internet.defer import DeferredList
 
-from pymon.storage import sql
 from pymon.config import cfg
+from pymon.storage import sql
+
 
 def getDatabase(connectionString=''):
     if not connectionString:
@@ -29,6 +30,7 @@ def getDatabase(connectionString=''):
         klass = postgres.Postgres
     return klass(URI(connectionString))
 
+
 def createTables(conn):
     conn.execute(sql.createStatusTable)
     conn.execute(sql.createEventTable)
@@ -36,6 +38,7 @@ def createTables(conn):
     conn.execute(sql.createLastTimesTable)
     conn.execute(sql.createServiceTable)
     conn.commit()
+
 
 def isTables(conn):
     try:
@@ -46,6 +49,7 @@ def isTables(conn):
     except:
         return False
 
+
 def getStore(database=None, connectionString=''):
     if not database and connectionString:
         database = getDatabase(connectionString)
@@ -55,12 +59,14 @@ def getStore(database=None, connectionString=''):
         createTables(conn)
     return DeferredStore(database)
 
+
 def addHostStatus(host, service, data):
     pass
+
 
 def updateHostStatus(host, service, data):
     pass
 
+
 def addHostEvent(host, service, data):
     pass
-

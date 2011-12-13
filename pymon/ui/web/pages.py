@@ -14,6 +14,7 @@ from formless import webform
 from pymon.config import cfg
 from pymon.application import globalRegistry
 
+
 web = os.path.join(*cfg.web.doc_root.split('/'))
 
 staticPath = os.path.join(*cfg.web.doc_root.split('/'))
@@ -23,9 +24,11 @@ images = "%s/%s" % (staticPath, 'images')
 icons = "%s/%s" % (staticPath, 'icons')
 javascript = "%s/%s" % (staticPath, 'js')
 
+
 # convenience function
 def template(filename):
     return loaders.xmlfile(os.path.join(templates, filename))
+
 
 # slots
 class BaseSlot(rend.Fragment):
@@ -35,6 +38,7 @@ class BaseSlot(rend.Fragment):
 
     def render_copyright(self, context, data):
         return tags.xml("&copy;")
+
 
 class HTMLHeadSlot(BaseSlot):
 
@@ -46,14 +50,18 @@ class HTMLHeadSlot(BaseSlot):
     def data_getPageTitle(self, context, data):
         return self.title
 
+
 class PageHeaderSlot(BaseSlot):
     docFactory = template('pageheader.html')
+
 
 class NavMenuSlot(BaseSlot):
     docFactory = template('navmenu.html')
 
+
 class PageFooterSlot(BaseSlot):
     docFactory = template('pagefooter.html')
+
 
 # pages
 class TestPage(rend.Page):
@@ -63,6 +71,7 @@ class TestPage(rend.Page):
     child_styles = static.File(styles)
     child_images = static.File(images)
     child_webform_css = webform.defaultCSS
+
 
 class BasePage(rend.Page):
 
@@ -80,6 +89,7 @@ class BasePage(rend.Page):
         context.fillSlots('nav_menu', NavMenuSlot())
         context.fillSlots('page_footer', PageFooterSlot())
         return context.tag
+
 
 class Root(BasePage):
     """
@@ -108,6 +118,7 @@ class Root(BasePage):
             peers.append(peerData)
         return peers
 
+
 class StatesBasePage(BasePage):
 
     def __init__(self, pageType):
@@ -118,6 +129,7 @@ class StatesBasePage(BasePage):
 
     def child_statesdetail(self, context):
         return StatesDetailPage()
+
 
 class StatesPage(BasePage):
     """
@@ -133,8 +145,10 @@ class StatesPage(BasePage):
     def data_getStates(self, context, data):
         return self.getStates()
 
+
 class StatesDetailPage(StatesPage):
     docFactory = template('statesdetail.html')
+
 
 class JSONPublisher(StatesPage):
     docFactory = template('json.html')

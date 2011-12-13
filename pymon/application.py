@@ -11,14 +11,15 @@ from zope.interface import implements
 from twisted.persisted import sob
 from twisted.persisted.sob import Persistent
 
+from pymon import exceptions
 from pymon import utils
+from pymon.config import cfg
+from pymon.interfaces import IState
 from pymon.utils.logger import log
 from pymon.utils.registry import Registry
-from pymon.config import cfg
 from pymon.workflow.base import Workflow
 from pymon.workflow.service import ServiceState, stateWorkflow
-from pymon import exceptions
-from pymon.interfaces import IState
+
 
 initialCheckData = {
     'org': '',
@@ -46,12 +47,14 @@ initialCheckData = {
     'last failed': '',
     }
 
+
 class InitialCheckData(dict):
     '''
     The data structure for the data that monitors will set.
     '''
     def __init__(self):
         self.update(initialCheckData)
+
 
 class BaseState(Persistent):
     '''
@@ -150,6 +153,7 @@ class BaseState(Persistent):
     def items(self):
         return self.data.items()
 
+
 class MonitorState(BaseState):
     '''
     This is a state machine and adapter. It adapts a monitor instance to a
@@ -210,6 +214,7 @@ def setNonChangingState(state, stateNum, uid):
         state.set('org', org)
     return state
 
+
 class History(Queue, object):
     '''
     >>> h = History(3)
@@ -257,6 +262,7 @@ class History(Queue, object):
     def removeItem(self):
         self.setLastRemoved(self.get())
 
+
 # setup global registry
 globalRegistry = Registry()
 state       = BaseState()
@@ -266,6 +272,7 @@ factories   = {}
 app_state = os.path.join(cfg.admin.backups.state_dir,
     cfg.admin.backups.application_state)
 state.setFilename(app_state)
+
 
 # load previous app state data, if available
 try:
@@ -277,6 +284,7 @@ except IOError:
 globalRegistry.add('state', state)
 globalRegistry.add('history', history)
 globalRegistry.add('factories', factories)
+
 
 def _test():
     import doctest, application

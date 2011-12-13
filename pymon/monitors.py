@@ -10,7 +10,9 @@ from pymon.application import MonitorState
 from pymon.application import globalRegistry
 from pymon.clients import NullClient
 
+
 sys.path.append('./plugins')
+
 
 class AbstractFactory(object):
     '''
@@ -120,4 +122,3 @@ class BaseMonitor(object):
         return self._interval
 
     interval = property(getInterval, setInterval)
-

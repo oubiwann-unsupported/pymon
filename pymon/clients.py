@@ -3,11 +3,12 @@ from datetime import datetime
 from twisted.internet import protocol
 
 from pymon import utils
-from pymon.utils.logger import log
 from pymon.config import cfg
+from pymon.utils.logger import log
 from pymon.workflow.rules import ThresholdRules
 from pymon.workflow.service import states
 from pymon.workflow.service import ServiceState
+
 
 class ClientMixin(object):
 
@@ -54,6 +55,7 @@ class ClientMixin(object):
                 state.set(count_index, state.get(count_index) + 1)
             else:
                 state.set(count_index, 1)
+
 
 class NullClient(protocol.Protocol, ClientMixin):
     '''
@@ -106,4 +108,3 @@ class NullClient(protocol.Protocol, ClientMixin):
 
         # dump info to log file
         log.debug(self.factory.state)
-

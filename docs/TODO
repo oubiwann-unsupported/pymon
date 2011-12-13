@@ -10,11 +10,13 @@ REQUIREMENTS
 * Put workflow at the core of all event-based heuristics.
 * Support customization and subscriptions (requires user accounts).
 
+
 Scalability
 -----------
 
 In order for pymon to be so highly scalable, the following need to be
 satisfied:
+
  * No code must block (use deferreds!), including database code. Options:
    - use Axiom
    - use Storm with Twisted support
@@ -201,7 +203,7 @@ Workflow
 --------
  Currently:
  * Rules are 'built' when a monnitor client makes a connection (buildRules())
- * Rules are 'checked' when a monitor client connection is lost (sules.check())
+ * Rules are 'checked' when a monitor client connection is lost (rules.check())
 
  Needed:
  * Define an exact relationship between rules (x is WARN if status is between b

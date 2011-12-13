@@ -1,16 +1,20 @@
 from uri import Uri
 
+
 class LocalTools:
 
     def getPasswdFromFile(self, filename):
         return file(filename).readline()
 
+
 def getService(db_type):
     from pymon.api import storage
     return eval('storage.%s.Service' % db_type)
 
+
 def updateDatabase(data):
     pass
+
 
 def isInList(datum, values):
     '''
@@ -47,6 +51,7 @@ def isInList(datum, values):
         return True
     return False
 
+
 def _isInRange(datum, dataRange, delimiter, function):
     dataRange = [function(x) for x in dataRange.split(delimiter)]
     dataRange[1] += 1
@@ -54,6 +59,7 @@ def _isInRange(datum, dataRange, delimiter, function):
         return True
     else:
         return False
+
 
 def isInNumericRange(datum, threshold, delimiter='-'):
     """
@@ -72,6 +78,7 @@ def isInNumericRange(datum, threshold, delimiter='-'):
     False
     """
     return _isInRange(datum, threshold, delimiter, int)
+
 
 def isInCharacterRange(datum, threshold, delimiter='-'):
     """
@@ -96,6 +103,7 @@ def isInCharacterRange(datum, threshold, delimiter='-'):
     """
     return _isInRange(datum, threshold, delimiter, ord)
 
+
 def isInRange(datum, threshold, delimiter='-'):
     """
     >>> isInRange(1, '1-10')
@@ -115,6 +123,7 @@ def isInRange(datum, threshold, delimiter='-'):
         return isInNumericRange(datum, threshold, delimiter)
     except ValueError:
         return isInCharacterRange(datum, threshold, delimiter)
+
 
 def isExactly(datum, threshold):
     """
@@ -139,14 +148,17 @@ def isExactly(datum, threshold):
         return True
     return False
 
+
 def parseDate(yyyymmdd_hhmmss_string):
     date, time = yyyymmdd_hhmmss_string.strip().split()
     y, m, d = date.strip().split('.')
     h, min, s = time.strip().split(':')
     return tuple([ int(x) for x in (y,m,d,h,min,s) ])
 
+
 def makeUID(scheme, uri_remainder):
     return (('%s://%s') % (scheme, uri_remainder)).replace(' ', '+')
+
 
 def getTypeFromURI(uri):
     # parse URI
@@ -155,11 +167,14 @@ def getTypeFromURI(uri):
     scheme = uri.getScheme()
     return scheme.replace('+', ' ')
 
+
 def getFriendlyTypeFromURI(uri):
     return getTypeFromURI(uri).replace('_', ' ')
 
+
 def getHostFromURI(uri):
     return Uri(uri).getAuthority().getHost()
+
 
 def guessMonitorFactoryNameFromType(checkType):
     """
@@ -169,6 +184,7 @@ def guessMonitorFactoryNameFromType(checkType):
     """
     part = checkType.replace('_', ' ').title().replace(' ', '')
     return "%sMonitor" % part
+
 
 def getSimplePlural(word, count):
     """
@@ -181,9 +197,11 @@ def getSimplePlural(word, count):
         word += 's'
     return word
 
+
 def _test():
     import doctest
     return doctest.testmod()
+
 
 if __name__ == '__main__':
     _test()

@@ -1,5 +1,6 @@
 from twisted.spread import pb
 
+
 class RawMessage(object):
     '''
     A convenience object for general pymon messages representing human-readable
@@ -19,6 +20,7 @@ class RawMessage(object):
         #     email headers and content)
         self.kwds = kwds
 
+
 class Message(RawMessage, pb.Copyable):
     '''
     For messages to be eligible for transport through callRemote, we inherit
@@ -29,6 +31,7 @@ class Message(RawMessage, pb.Copyable):
     This class needs to be registered in the pymon.messaging.listener module.
     '''
 
+
 class ReceiverMessage(pb.RemoteCopy, RawMessage):
     '''
     To allow in-coming messages to act as local representatives for remote
@@ -38,6 +41,7 @@ class ReceiverMessage(pb.RemoteCopy, RawMessage):
 
     This class needs to be registered in the pymon.messaging.listener module.
     '''
+
 
 class MessageFactory(object):
     '''
@@ -74,5 +78,3 @@ class MessageFactory(object):
         elif type == 'twitter':
             pass
         self.msg = msg
-
-

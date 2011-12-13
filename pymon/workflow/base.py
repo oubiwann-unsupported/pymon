@@ -40,11 +40,14 @@ The development of a workflow system can be split in three steps:
 class WorkflowError(Exception):
     pass
 
+
 class WorkflowStateError(WorkflowError):
     pass
 
+
 class WorkflowTransitionError(WorkflowError):
     pass
+
 
 class WorkflowState(object):
     """
@@ -94,6 +97,7 @@ class WorkflowState(object):
         """
         self.transitions[transition.name] = transition
 
+
 class Transition(object):
     """
     This class is used to describe transitions. Transitions come from
@@ -130,6 +134,7 @@ class Transition(object):
         """
         return self.metadata.get(key)
 
+
 class StatesCollection(dict):
     """
     A customized dict to keep track of workflow states.
@@ -159,6 +164,7 @@ class StatesCollection(dict):
         if not item:
             raise WorkflowStateError, "Unknown state name '%s'" % stateName
         return item
+
 
 class Workflow(object):
     """
@@ -373,6 +379,7 @@ class Workflow(object):
         indexPart = self.getTransIndex(stateFrom, name, '')
         return [y for x,y in self.transitionRegistry.items()
                 if x.startswith(indexPart)][0]
+
 
 class WorkflowAware(object):
     """
@@ -704,6 +711,7 @@ class WorkflowAware(object):
 def _test():
     import doctest, base
     doctest.testmod(base)
+
 
 if __name__ == '__main__':
     _test()

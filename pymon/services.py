@@ -11,6 +11,7 @@ from pymon.config import refreshConfig
 from pymon.ui.web import pages
 from pymon.application import globalRegistry
 
+
 def publishJSON():
     '''
     This is a function for peering but the data is only for the local
@@ -23,6 +24,7 @@ def publishJSON():
     # copy the configuration file to a static location
     # enable this only if you don't have sensitive information in your
     # configuration file
+
 
 def checkPeers(cfg):
     '''
@@ -38,6 +40,7 @@ def checkPeers(cfg):
         # or just let JS do it in the web client?
         # to let the client do it, we'll need to use nevow to set a cookie
 
+
 def addWebServer(rootService):
     factories = globalRegistry.factories
     vResource = vhost.VHostMonsterResource()
@@ -48,11 +51,13 @@ def addWebServer(rootService):
     webserver = internet.TCPServer(port, site)
     webserver.setServiceParent(rootService)
 
+
 def addConfigServer(rootService):
     interval = int(rootService.cfg.admin.config_update.interval)
     #configCheck = internet.TimerService(interval, refreshConfig)
     configCheck = internet.TimerService(interval, lambda x: None, '')
     configCheck.setServiceParent(rootService)
+
 
 def addBackupServer(rootService):
     interval = int(rootService.cfg.admin.backups.interval)
@@ -60,11 +65,13 @@ def addBackupServer(rootService):
         globalRegistry.state.save)
     backups.setServiceParent(rootService)
 
+
 def addProcessServer(rootService):
     factory = local.ProcessServerFactory()
     port = int(rootService.cfg.agents.local_command.port)
     server = internet.TCPServer(port, factory)
     server.setServiceParent(rootService)
+
 
 def addMessagingServer(rootService):
     factory = listener.ListenerFactory()
@@ -72,14 +79,15 @@ def addMessagingServer(rootService):
     server = internet.TCPServer(port, factory)
     server.setServiceParent(rootService)
 
+
 def addJSONPublisher(rootService):
     interval = int(rootService.cfg.admin.peering.publish_interval)
     publisher = internet.TimerService(interval, publishJSON)
     publisher.setServiceParent(rootService)
+
 
 def addPeerChecker(rootService):
     interval = int(rootService.cfg.admin.peering.check_interval)
     peerChecker = internet.TimerService(interval, checkPeers,
         rootService.cfg)
     peerChecker.setServiceParent(rootService)
-

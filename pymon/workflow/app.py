@@ -8,12 +8,16 @@ multiple instances of workflow with different state information.
 '''
 from base import Workflow, WorkflowAware
 
+
 # Instantiate and setup workflow states
 appWf = Workflow()
-appWf.addState('Normal', description='pymon is in normal operation with no alerts')
+appWf.addState(
+    'Normal', 
+    description='pymon is in normal operation with no alerts')
 appWf.setInitState('Normal')
 
 # Setup workflow transitions
+
 
 # define a workflow-aware for mangaging state
 class AppState(WorkflowAware):
@@ -21,6 +25,7 @@ class AppState(WorkflowAware):
     '''
     def __init__(self, workflow=None):
         self.enterWorkflow(workflow, None, "Just Created")
+
 
 # this is what should get imported by the pymon application:
 appState = AppState(workflow=appWf)

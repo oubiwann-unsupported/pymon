@@ -7,6 +7,7 @@ URI_RE = re.compile(URI_REGEX)
 AUTH_REGEX = r'^(([^:/?#@]+):)?(([^:/?#]+)@)?([^/?#:]*)(:([0-9]+))?'
 AUTH_RE = re.compile(AUTH_REGEX)
 
+
 class Uri(object):
     '''
     A convenience class for access parts of a URI as defined by
@@ -82,6 +83,7 @@ class Uri(object):
 
     def getFragment(self):
         return self.matches.group(9)
+
 
 class Authority(object):
     '''
@@ -165,6 +167,7 @@ class Authority(object):
         if self.port:
             return int(self.port)
 
+
 class Query(dict):
     '''
     A custom URI Query section parser.
@@ -198,9 +201,11 @@ class Query(dict):
             for key, val in query_dict.items():
                 self.__setattr__(key, val)
 
+
 def _test():
     import doctest, utils
     return doctest.testmod(utils)
+
 
 if __name__ == '__main__':
     _test()

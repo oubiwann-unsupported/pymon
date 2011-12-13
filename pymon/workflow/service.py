@@ -9,13 +9,16 @@ from pymon.config import cfg
 
 from base import Workflow, WorkflowAware
 
+
 states = cfg.state_definitions
 # Create a workflow for managing states
 stateWorkflow = Workflow()
 
+
 for state, stateName in cfg.stateLookup.items():
     description = 'pymon is in %s state' % stateName.upper()
     stateWorkflow.addState(state, description=description, fullName=stateName)
+
 
 # Set up workflow transitions
 transitionNames = {
@@ -31,6 +34,7 @@ transitionNames = {
     states.unknown: 'Unknown',
 }
 
+
 # The parameter passed to addTrans are:
 #  * Transition name
 #  * Legal source states
@@ -41,25 +45,30 @@ stateWorkflow.addTrans(transitionNames[states.ok],
     states.ok,
     description='pymon has resumed normal operation')
 
+
 stateWorkflow.addTrans(transitionNames[states.warn],
     [states.ok, states.warn, states.error, states.unknown, states.failed],
     states.warn,
     description='pymon has gone from OK to WARN')
+
 
 stateWorkflow.addTrans(transitionNames[states.error],
     [states.ok, states.warn, states.error, states.unknown, states.failed],
     states.error,
     description='pymon has gone to state ERROR')
 
+
 stateWorkflow.addTrans(transitionNames[states.failed],
     [states.ok, states.warn, states.error, states.unknown, states.failed],
     states.failed,
     description='pymon has gone to state FAILED')
 
+
 stateWorkflow.addTrans(transitionNames[states.escalated],
     [states.warn, states.error, states.escalated],
     states.escalated,
     description='pymon has received too many counts of a certain kind')
+
 
 stateWorkflow.setInitState(states.unknown)
 
@@ -123,6 +132,6 @@ class ServiceState(WorkflowAware):
         """
         self.doTrans(transitionNames[status], status=status, rules=rules)
 
+
 # this is what should get imported by the pymon application:
 #serviceState = ServiceState(stateWorkflow)
-

@@ -1,8 +1,10 @@
 class Error(Exception):
     pass
 
+
 class RegistrationError(Error):
     pass
+
 
 class Registry(dict):
     '''
@@ -43,7 +45,7 @@ class Registry(dict):
     [{'apples': 'oranges'}]
 
     # test with old-style classes
-    >>> class Config: 
+    >>> class Config:
     ...   def __init__(self):
     ...     self.name = 'Alice'
     >>> cfg = Config()
@@ -124,6 +126,7 @@ class Registry(dict):
         else:
             raise RegistrationError, \
                 "An object with that name is already registered."
+
 
 def _test():
     import doctest, registry

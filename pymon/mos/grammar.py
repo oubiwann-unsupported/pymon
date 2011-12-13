@@ -5,16 +5,20 @@ from pyparsing import Literal, CaselessLiteral, Forward
 
 from pymon.zconfig import getDateRange
 
+
 legalPathChars = Word(alphanums + "~/_-().?,;")
+
 
 def getDateRange(orig, location, tokens):
     key = tokens.keys()[0]
     date = getDateRange(tokens[key])
     return [date]
 
+
 def makeInt(orig, location, tokens):
     key = tokens.keys()[0]
     return int(tokens[key])
+
 
 class Grammar(object):
     '''
@@ -258,9 +262,11 @@ class Grammar(object):
 
         self.bnf = command
 
+
 def _test():
     import doctest, grammar
     doctest.testmod(grammar)
+
 
 if __name__ == '__main__':
     _test()

@@ -1,5 +1,6 @@
 import re
 
+
 XMIT = 0
 XCVD = 1
 LOSS = 2
@@ -141,10 +142,7 @@ class OutputParser(object):
     >>> res.sort()
     >>> res
     []
-
-  
     '''
-
     def __init__(self, ping_data):
         self.data = ping_data
 
@@ -230,6 +228,7 @@ class OutputParser(object):
             return dict(zip(parts[WORDS].split('/'), parts[NUMS].split('/')))
         else:
             return {}
+
 
 def _test():
     import doctest, ping

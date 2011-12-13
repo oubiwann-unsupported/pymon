@@ -5,6 +5,7 @@ package.
 from datetime import datetime
 from sets import Set
 
+
 class ValidateCaseInsensitiveList(object):
     '''
     A class for defining legal list values.
@@ -21,6 +22,7 @@ class ValidateCaseInsensitiveList(object):
         raise ValueError, (
             "Value must be one of: %s" % self.formatted_list)
 
+
 def checkBy(value):
     '''
     Validator for the allowed values representing the manner
@@ -30,12 +32,14 @@ def checkBy(value):
     validator = ValidateCaseInsensitiveList(legal_values)
     return validator.validate(value)
 
+
 def _int(value):
     try:
         return int(value)
 
     except ValueError:
         raise ValueError, "Value must be coercable to an integer."
+
 
 def rangedValues(range_string):
     '''
@@ -65,6 +69,7 @@ def rangedValues(range_string):
 
     return values
 
+
 def logLevel(log_level):
     log_level = log_level.upper()
     legal_values = ['FATAL', 'CRITICAL', 'ERROR',
@@ -76,6 +81,7 @@ def logLevel(log_level):
         raise ValueError, ('Values for log level' + \
             'must be one of the following: %s' % lvls)
 
+
 def _parseDate(yyyymmdd_hhmmss_string):
     date, time = yyyymmdd_hhmmss_string.split()
     y, m, d = date.strip().split('.')
@@ -83,6 +89,7 @@ def _parseDate(yyyymmdd_hhmmss_string):
     date_tuple = [ int(x) for x in (y,m,d,h,min,s) ]
 
     return datetime(*date_tuple)
+
 
 def getDateRange(range_string):
     '''
@@ -102,4 +109,3 @@ def getDateRange(range_string):
         'start': date_start,
         'end': date_end,
     }
-

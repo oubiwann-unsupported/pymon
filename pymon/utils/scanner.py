@@ -19,6 +19,7 @@ except ImportError:
 
 from pymon.utils import getSimplePlural
 
+
 usage = '''%prog [options] netBlock[,netBlock2[,...]] startPort,endPort
 
 You need to pass the CIDR block(s) that define the network(s)
@@ -78,8 +79,6 @@ TCPPingServiceConfigTemplate = '''
 </ping-tcp-check>
 '''
 
-
-
 def printError(err):
     print '\nError:\n'
     if opts.debug:
@@ -88,11 +87,13 @@ def printError(err):
         print '\t%s' % err.getErrorMessage()
     print '\n'
 
+
 class ScanProtocol(Protocol):
 
     def connectionMade(self):
         self.factory.deferred.callback("success")
         self.transport.loseConnection()
+
 
 class ScanFactory(ClientFactory):
 
@@ -106,6 +107,7 @@ class ScanFactory(ClientFactory):
 
     def clientConnectionLost(self, connector, reason):
         pass
+
 
 class Scanner(object):
     '''
@@ -213,6 +215,7 @@ class Scanner(object):
     def getFailures(self):
         return self.data['failure']
 
+
 def main():
     nets = Networks([CIDR(x) for x in blocks])
     total = nets.getHostCount()
@@ -224,6 +227,7 @@ def main():
         print '\t%s' % net
     scanner = Scanner(nets.iterIPs(), ports, opts.batchSize, opts.timeout)
     scanner.run()
+
 
 if __name__ == '__main__':
     main()

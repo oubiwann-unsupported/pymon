@@ -2,8 +2,8 @@ from pymon.config import cfg
 from pymon.utils import isInList, isInRange, isExactly
 from pymon.utils.logger import log
 
-class ThresholdRules(object):
 
+class ThresholdRules(object):
     def __init__(self, factory):
         self.factory = factory
         self.setType(self.factory.cfg.defaults.threshold_type)
@@ -79,8 +79,8 @@ class ThresholdRules(object):
         log.debug("threshold type: %s" % type(threshold))
         return isInFunc(datum, threshold)
 
-class MessagingRules(object):
 
+class MessagingRules(object):
     def __init__(self, factory):
         self.factory = factory
         self.messages = []
@@ -122,4 +122,3 @@ class MessagingRules(object):
             # XXX uncomment this code and make it work
             #factory = MessageFactory(type, **kwds)
             #messages.append(factory.msg)
-

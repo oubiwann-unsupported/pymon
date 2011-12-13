@@ -7,6 +7,7 @@ from twisted.internet import utils
 
 from pymon.utils.logger import log
 
+
 class ProcessServer(pb.Root):
     '''
     This is the process agent for running processes, if you can believe
@@ -42,6 +43,7 @@ class ProcessServer(pb.Root):
         d.addErrback(_eb)
         return 'Check process server logs for output.'
 
+
 class ProcessServerFactory(pb.PBServerFactory):
     '''
     This is just a convenience wrapper for PBServerFactory.
@@ -52,6 +54,7 @@ class ProcessServerFactory(pb.PBServerFactory):
         self.root = IPBRoot(ProcessServer())
         self.unsafeTracebacks = False
         self.security = globalSecurity
+
 
 class ProcessClient(pb.PBClientFactory):
 
@@ -67,10 +70,12 @@ class ProcessClient(pb.PBClientFactory):
         d.addCallback(log.info)
         return d
 
+
 class LocalAgentClient(pb.Broker):
 
     def connectionMade(self):
         pb.Broker.connectionMade(self)
+
 
 class LocalAgentMonitor(pb.PBClientFactory):
 
@@ -90,4 +95,3 @@ class LocalAgentMonitor(pb.PBClientFactory):
             self._root = None
         else:
             self._failAll(reason)
-

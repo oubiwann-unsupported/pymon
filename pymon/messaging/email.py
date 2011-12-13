@@ -12,6 +12,7 @@ from pymon.config import cfg
 from pymon.utils import isInList, isInRange, isExactly
 from pymon.utils.logger import log
 
+
 def sendmail(username, password, fromAddress, toAddress, message, smtpHost,
              smtpPort=25):
     """
@@ -42,6 +43,7 @@ def sendmail(username, password, fromAddress, toAddress, message, smtpHost,
     reactor.connectTCP(smtpHost, smtpPort, senderFactory)
     return d
 
+
 class LocalMail(object):
 
     def setSendmailBinary(self, bin='/usr/sbin/sendmail'):
@@ -56,6 +58,7 @@ class LocalMail(object):
         #return sts
         #if sts != 0:
         #    print "Sendmail exit status", sts
+
 
 class AsYetUndterminedClassName(object):
     # XXX define me!
@@ -125,4 +128,3 @@ class AsYetUndterminedClassName(object):
             email.setData(self.msg)
             email.send()
             log.info(self.factory.cfg.defaults.sent_message % address)
-

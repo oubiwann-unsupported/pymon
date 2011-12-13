@@ -8,6 +8,7 @@ from ZConfig.schemaless import loadConfigFile
 
 from pymon.utils import getTypeFromURI, parseDate
 
+
 def getConfigFiles():
     confs = chain(os.walk('etc/services'), os.walk('plugins'))
     for base, dirs, files in confs:
@@ -23,6 +24,7 @@ def getBaseName(name):
     for end in legalEndings:
         if name.endswith(end):
             return name.split(end)[0]
+
 
 # we need to iterate through the files and keep track of their opening tags so
 # that we can group services together under their own tags
@@ -56,7 +58,9 @@ def assembleConfig():
     configFile = StringIO(conf)
     return configFile
 
+
 config = loadConfigFile(assembleConfig())
+
 
 def refreshConfig():
     conf_file = utils.getResource(['etc', 'pymon.conf'])
@@ -185,6 +189,7 @@ class BaseConfig(object):
     def getStateNumberFromName(self, name):
         return getattr(self.state_definitions, name.lower())
 
+
 class Config(BaseConfig):
     """
     A ZConfig wrapper.
@@ -195,6 +200,7 @@ class Config(BaseConfig):
         self.stateLookup = dict([
             (getattr(config.state_definitions, x), x)
             for x in config.state_definitions.getSectionAttributes()])
+
 
 class SchemalessSection(object):
     """
@@ -265,6 +271,7 @@ class SchemalessSection(object):
         name = "%s-defaults" % self.config.type
         return self._getSections(name)[0]
     default = property(default)
+
 
 class SchemalessConfig(BaseConfig, SchemalessSection):
     """
@@ -372,4 +379,3 @@ class CheckConfig(object):
             self.app.checkForDisabledService(self.check) == True):
             return True
         return False
-
