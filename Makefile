@@ -18,9 +18,9 @@ clean:
 
 
 push:
+	git push --all git@$(GITHUB_REPO)
 	git push --all https://$(GOOGLE_REPO)
 	git push --all ssh://$(AUTHOR)@$(SF_REPO)
-	git push --all git@$(GITHUB_REPO)
 
 
 pull:
