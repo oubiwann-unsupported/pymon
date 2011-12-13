@@ -8,7 +8,7 @@ The following locations currently mirror the source for pymon:
 * https://github.com/oubiwann/pymon
 * https://sourceforge.net/projects/pymon/develop
 
-For further instructions on installation, please see the docs/INSTALL file.
+For further instructions on installation, please see the docs/INSTALL.rst file.
 
 =============
 running pymon
