@@ -88,24 +88,26 @@ todo:
 
 
 build:
-	python setup.py build
-	python setup.py sdist
+	@python setup.py build
+	@python setup.py sdist
 
 virtual-build: SUB_DIR ?= test-build
+virtual-build: DIR ?= $(VIRT_DIR)/$(SUB_DIR)
 virtual-build: clean build
 	mkdir -p $(VIRT_DIR)
-	virtualenv $(VIRT_DIR)/$(SUB_DIR)
-	. $(VIRT_DIR)/$(SUB_DIR)/bin/activate
-	$(VIRT_DIR)/$(SUB_DIR)/bin/pip install twisted
-	$(VIRT_DIR)/$(SUB_DIR)/bin/pip install nevow
-	$(VIRT_DIR)/$(SUB_DIR)/bin/easy_install-2.7 ./dist/PyMonitor-$(VERSION).tar.gz
-	$(VIRT_DIR)/$(SUB_DIR)/bin/deactivate
+	-test -d $(DIR) || virtualenv $(DIR)
+	@. $(DIR)/bin/activate
+	-test -e $(DIR)/bin/twistd || $(DIR)/bin/pip install twisted
+	-test -d $(DIR)/lib/python2.7/site-packages/nevow || $(DIR)/bin/pip install nevow
+	$(DIR)/bin/easy_install-2.7 ./dist/PyMonitor-$(VERSION).tar.gz
+	-@deactivate
 
 
 virtual-run: SUB_DIR ?= test-build
+virtual-run: DIR ?= $(VIRT_DIR)/$(SUB_DIR)
 virtual-run: virtual-build
-	. $(VIRT_DIR)/$(SUB_DIR)/bin/activate
-	$(VIRT_DIR)/$(SUB_DIR)/bin/pymon
+	. $(DIR)/bin/activate
+	$(DIR)/bin/pymond
 
 
 clean-virt: clean
