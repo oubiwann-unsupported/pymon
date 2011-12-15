@@ -22,7 +22,7 @@ class DatabaseSetupTestCase(TestCase):
 
     def setUp(self):
         """
-        Create a test sqlite database, and insert some data.
+        Create a test database, and insert some data.
         """
         self.filename = self.mktemp()
 
