@@ -2,24 +2,17 @@
 # See LICENSE for details.
 
 """
-Test for twistorm.
+Test cases for storage API.
 """
 
 import os
 from datetime import datetime
 
-import pysqlite2
-
-from storm.databases.sqlite import SQLite
-from storm.uri import URI
-from storm.twisted.store import DeferredStore
-
 from twisted.trial.unittest import TestCase
 from twisted.internet.defer import DeferredList
 
-from pymon.storage import sql
 from pymon.storage import api
-from pymon.storage.model import Status, Event
+
 
 class DatabaseSetupTestCase(TestCase):
     """
@@ -34,49 +27,23 @@ class DatabaseSetupTestCase(TestCase):
         self.filename = self.mktemp()
 
     def test_connectionSchema(self):
-        db = api.getDatabase("sqlite:")
-        self.assertEqual(db.__class__.__name__, 'SQLite')
-        db = api.getDatabase("mysql:")
-        self.assertEqual(db.__class__.__name__, 'MySQL')
-        db = api.getDatabase("postgres:")
-        self.assertEqual(db.__class__.__name__, 'Postgres')
+        db = api.getDatabase("mongo:")
 
-    def test_isTables(self):
-        database = api.getDatabase("sqlite:" + self.filename)
-        conn = database.connect()
-        self.assertEqual(api.isTables(conn), False)
-        api.createTables(conn)
-        self.assertEqual(api.isTables(conn), True)
-
-    def test_createTables(self):
-        database = api.getDatabase("sqlite:" + self.filename)
-        conn = database.connect()
-        api.createTables(conn)
-        r = conn.execute('SELECT * FROM status')
-        self.assertNotEqual(r, None)
-        r = conn.execute('SELECT * FROM event')
-        self.assertNotEqual(r, None)
-        sql = 'SELECT * FROM bogus_table'
-        self.assertRaises(pysqlite2.dbapi2.OperationalError, conn.execute, sql)
 
 class DatabaseAPITestCase(TestCase):
     """
 
     """
-
     def setUp(self):
         """
-        Create a test sqlite database, and insert some data.
+        Create a test "database", and insert some data.
         """
         self.filename = self.mktemp()
-        self.database = api.getDatabase("sqlite:" + self.filename)
+        self.database = api.getDatabase("mongo:" + self.filename)
         self.host = u'www.adytum.us'
         self.service = u'ping'
         self.events = [u'warning', u'recovering', u'ok', u'error']
-        conn = self.database.connect()
-        api.createTables(conn)
-        self.store = api.getStore(self.database)
-        return self.store.start()
+        self.conn = self.database.connect()
 
     def createHostStatus(self):
         stat = Status()

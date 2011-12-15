@@ -8,6 +8,7 @@
 * Commented out code in model and started replacing it with JSON data
 structures.
 * Added placeholder subpackage for storage backends.
+* Cleaned out old SQL references from storage api test case module.
 
 2011.12.13
 
