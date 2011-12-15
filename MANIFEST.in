@@ -1,1 +1,1 @@
-recursive-include etc *.conf *.xml
+graft etc

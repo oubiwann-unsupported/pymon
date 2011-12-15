@@ -6,11 +6,27 @@ from datetime import datetime
 
 from ZConfig.schemaless import loadConfigFile
 
+import pymon
 from pymon.utils import getTypeFromURI, parseDate
 
 
+# XXX this should probably be moved into utils
+def getPyMonDir():
+    return os.path.dirname(pymon.__file__)
+
+
+def getBaseDir():
+    return os.path.dirname(getPyMonDir())
+
+
+def getEtcDir():
+    return os.path.join(getBaseDir(), 'etc')
+
+
 def getConfigFiles():
-    confs = chain(os.walk('etc/services'), os.walk('plugins'))
+    etcServices = os.path.join(getEtcDir(), 'services')
+    plugins = os.path.join(getPyMonDir(), 'plugins')
+    confs = chain(os.walk(etcServices), os.walk(plugins))
     for base, dirs, files in confs:
         if not files:
             continue
@@ -54,7 +70,7 @@ def assembleConfig():
                     sections += entry
         sections += '</%s>\n' % container
     # now let's assemble the thing
-    fh = open("etc/pymon.conf")
+    fh = open(os.path.join(getEtcDir(), "pymon.conf"))
     conf = fh.read() + '<services>\n%s</services>\n' % sections
     fh.close()
     configFile = StringIO(conf)

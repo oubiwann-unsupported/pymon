@@ -1,3 +1,14 @@
+2011.12.14
+
+* Added txmongo in third-party directory.
+* Added a make target for installing txmongo.
+* Removed storm, postgres, mysql, and sqlite from pymon.storage.api.
+* Removed pymon.storage.sql module.
+* Added txmongo to pymon.storage.api.
+* Commented out code in model and started replacing it with JSON data
+structures.
+* Added placeholder subpackage for storage backends.
+
 2011.12.13
 
 * Changed the use of simplejson to json and updated the dep.
@@ -9,6 +20,9 @@
 * Added a pymon.scripts subpackage.
 * Added a manifest file for packaging etc up with the sdist.
 * Added a testing subpackage and updated the check target to use it.
+* Updated the deps.
+* Added utility functions to pymon.config.
+* Updated getConfigFiles to be .egg-friendly.
 
 2011.12.12
 

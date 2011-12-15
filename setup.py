@@ -18,9 +18,6 @@ except:
     print msg
 
 
-schemas = glob.glob(os.path.join('etc', 'schema*.xml'))
-
-
 setup(name="PyMonitor",
     version=meta.version,
     description=meta.description,
@@ -34,8 +31,14 @@ setup(name="PyMonitor",
     include_package_data=True,
     zip_safe=False,
     data_files=[
-        ('etc', ['etc/pymon.conf']),
-        ('etc', schemas),
+        ('etc', ['etc/pymon.conf', 'etc/schema.xml']),
+        ('etc/services/http_status', [
+                 'etc/services/http_status/www.adytum.us.conf',
+                 'etc/services/http_status/www2.adytum.us.conf']),
+        ('etc/services/ping', [
+                 'etc/services/ping/shell1.adytum.us.conf',
+                 'etc/services/ping/shell2.adytum.us.conf',
+                 'etc/services/ping/svn.adytum.us.conf'])
     ],
     scripts = ['bin/pymond'],
     classifiers = [f.strip() for f in """

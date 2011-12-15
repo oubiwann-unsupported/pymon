@@ -1,11 +1,24 @@
-Python2.4+ (http://python.org)
-zope.interface (http://www.zope.org/Products/ZopeInterface)
-Twisted (http://twistedmatrix.com/trac/wiki/Downloads)
-Nevow (http://divmod.org/trac/wiki/DivmodNevow)
-SQLite3 (http://www.sqlite.org/download.html)
-pysqlite 2.3.5 (http://www.initd.org/tracker/pysqlite/wiki/pysqlite)
-Storm ORM (https://launchpad.net/storm/+download)
-ZConfig 2.5+ (http://www.zope.org/Members/fdrake/zconfig)
-pyparsing (http://sourceforge.net/project/showfiles.php?group_id=97203)
-ElementTree/cElementTree 1.3+ (http://effbot.org/zone/elementtree-13-intro.htm)
-NetCIDR (http://pypi.python.org/pypi/NetCIDR)
+pymon core:
+
+ * Python2.7 (http://python.org)
+ * setuptools (http://pypi.python.org/pypi/setuptools)
+ * ZConfig 2.5+ (http://www.zope.org/Members/fdrake/zconfig)
+ * zope.interface (http://www.zope.org/Products/ZopeInterface)
+ * Twisted (http://twistedmatrix.com/trac/wiki/Downloads)
+
+pymon web:
+
+ * Nevow (http://divmod.org/trac/wiki/DivmodNevow)
+
+pymon storage:
+
+ * MongoDB (http://www.mongodb.org/downloads)
+ * txmongo (https://github.com/fiorix/mongo-async-python-driver)
+
+pymon shell:
+
+ * pyparsing (http://sourceforge.net/project/showfiles.php?group_id=97203)
+
+pymon scanner:
+
+ * NetCIDR (http://pypi.python.org/pypi/NetCIDR)

@@ -1,63 +1,55 @@
 """
-pymon storage module for the Storm ORM
+pymon storage API.
 """
 
 from datetime import datetime
 
-from storm.uri import URI
-from storm.properties import Int, Unicode, DateTime
-from storm.twisted.store import DeferredStore
-
-from twisted.internet.defer import DeferredList
+import txmongo
 
 from pymon.config import cfg
-from pymon.storage import sql
 
 
-def getDatabase(connectionString=''):
+def getConnection(connectionString=''):
     if not connectionString:
         connectionString = cfg.database.connectionString
     parts = connectionString.split(':')
     scheme = parts[0]
-    if scheme == 'sqlite':
-        from storm.databases import sqlite
-        klass = sqlite.SQLite
-    elif scheme == 'mysql':
-        from storm.databases import mysql
-        klass = mysql.MySQL
-    elif scheme == 'postgres':
-        from storm.databases import postgres
-        klass = postgres.Postgres
-    return klass(URI(connectionString))
+    if scheme == 'mongo':
+        # XXX take all these parameters from the connection string + query
+        # params
+        deferred = txmongo.MongoConnectionPool(
+            host="localhost", port=27017, reconnect=True, pool_size=5)
+    return deferred
 
 
-def createTables(conn):
-    conn.execute(sql.createStatusTable)
-    conn.execute(sql.createEventTable)
-    conn.execute(sql.createCountsTable)
-    conn.execute(sql.createLastTimesTable)
-    conn.execute(sql.createServiceTable)
-    conn.commit()
+# XXX this is experimental/propositional... and untested so far!
+def updateConfigSection(sectionName, newData):
+    
+    def _eb(failure):
+        # XXX do something better here!
+        print failure
+
+    # XXX the code in these callbacks should go in a
+    # pymon.storage.backend.mongo module ... once we've done a few more and the
+    # patterns have properly emerged.
+    def _cb(connection):
+        # XXX get database name from the connection string + query params
+        db = getattr(connection, "pymon")
+        collection = getattr(db, "config")
+        # XXX get data by section name
+        deferred = collection.update({"section": sectionName}, newData)
+        # XXX add a callback? maybe writing to the log?
+        #deferred.addCalback(logit)
+        deferred.addErrback(_eb)
+        return deferred
+
+    deferred = getConnection()
+    deferred.addCallback(_cb)
+    return deferred
 
 
-def isTables(conn):
-    try:
-        conn.execute('SELECT * FROM status')
-        return True
-    # XXX this raw except needs to instead check for sqlite, mysql and postgres
-    # table-not-found errors
-    except:
-        return False
-
-
-def getStore(database=None, connectionString=''):
-    if not database and connectionString:
-        database = getDatabase(connectionString)
-    # check to see if tables exist; if not, create them
-    conn = database.connect()
-    if not isTables(conn):
-        createTables(conn)
-    return DeferredStore(database)
+def updateConfigSubSection(sectionName, subSectionName, newdata):
+    pass
 
 
 def addHostStatus(host, service, data):

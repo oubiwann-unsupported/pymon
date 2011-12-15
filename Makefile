@@ -13,6 +13,10 @@ version:
 	@echo $(VERSION)
 
 
+install-txmongo:
+	sudo easy_install-2.7 third-party/mongo-async-python-driver/
+
+
 clean:
 	find ./ -name "*~" -exec rm {} \;
 	find ./ -name "*.pyc" -exec rm {} \;
@@ -99,7 +103,9 @@ virtual-build: clean build
 	@. $(DIR)/bin/activate
 	-test -e $(DIR)/bin/twistd || $(DIR)/bin/pip install twisted
 	-test -d $(DIR)/lib/python2.7/site-packages/nevow || $(DIR)/bin/pip install nevow
-	$(DIR)/bin/easy_install-2.7 ./dist/PyMonitor-$(VERSION).tar.gz
+	$(DIR)/bin/pip uninstall -vy PyMonitor
+	rm -rf $(DIR)/lib/python2.7/site-packages/PyMonitor-*
+	$(DIR)/bin/easy_install-2.7 ./dist/PyMonitor-*
 	-@deactivate
 
 
@@ -120,12 +126,6 @@ virtual-build-clean: clean-virt build virtual-build
 
 check-docs: files = "docs/USAGE.txt"
 check-docs:
-	@python -c \
-	"from $(LIB).testing import suite;suite.runDocTests('$(files)');"
-
-
-check-votingdocs: files = "docs/methods/*/*.txt"
-check-votingdocs:
 	@python -c \
 	"from $(LIB).testing import suite;suite.runDocTests('$(files)');"
 
