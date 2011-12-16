@@ -1,3 +1,9 @@
+2011.12.15
+
+* Added PyYAML as a dependency.
+* Added .yaml files that will serve as the basis for the new configuration
+system.
+
 2011.12.14
 
 * Added txmongo in third-party directory.

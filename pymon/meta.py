@@ -16,6 +16,6 @@ requirements = [
     "nevow",
     "twisted",
     "pyOpenSSL",
-    "ZConfig==2.5",
+    "PyYAML",
     "zope.interface",
     ]

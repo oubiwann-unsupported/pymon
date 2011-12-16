@@ -1,0 +1,17 @@
+system user: pymon
+system group: pymon
+install prefix: /usr/local/pymon
+daemon name: pymond
+instance name: PyMonitor
+# checks can be by services, hosts, or organization
+check by: services
+user agent string: pymon Cloud Monitoring (http://pymon.sf.net)
+daemontools enabled: False
+daemontools service: /service/pymond
+log level: INFO
+sendmail: /usr/sbin/sendmail
+mail from: pymon@adytum.us
+smtp username: ausername
+smtp password: asecret
+smtp server: smtp.gmail.com
+smtp port: 25
