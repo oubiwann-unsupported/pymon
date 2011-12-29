@@ -22,7 +22,7 @@ clean:
 	find ./ -name "*.pyc" -exec rm {} \;
 	find ./ -name "*.pyo" -exec rm {} \;
 	find . -name "*.sw[op]" -exec rm {} \;
-	rm -rf $(MSG_FILE).backup _trial_temp/ build/ dist/ MANIFEST \
+	rm -rf $(MSG_FILE) $(MSG_FILE).backup _trial_temp/ build/ dist/ MANIFEST \
 		CHECK_THIS_BEFORE_UPLOAD.txt *.egg-info
 
 
@@ -53,7 +53,7 @@ commit-raw:
 
 
 msg:
-	@rm $(MSG_FILE)
+	-@rm $(MSG_FILE)
 	@echo '!!! REMOVE THIS LINE !!!' >> $(MSG_FILE)
 	@git diff ChangeLog |egrep -v '^\+\+\+'|egrep '^\+.*'|sed -e 's/^+//' >> $(MSG_FILE)
 .PHONY: msg
