@@ -19,3 +19,13 @@ services:
     enabled: true
     escalation enabled: false
     scheduled downtime: 2001.01.01 00:00:00 - 2038.01.01 00:00:00
+
+  - monitor type: ping
+    uri: git.adytum.us
+    enabled: false
+    escalation enabled:  false
+    notifications:
+        combine action: replace
+        list:
+          - email: thick@candy-shell.com
+          - email: bull@butchers-ass.com

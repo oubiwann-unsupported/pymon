@@ -10,6 +10,7 @@ implementations to use the loaded YAML data.
 * Stubbed out some test cases for other classes.
 * Removed the old ZConfig files from etc (kept the schema.xml file for
 references).
+* Added missing config example.
 
 2012.01.04
 
