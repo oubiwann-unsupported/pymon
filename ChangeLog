@@ -2,6 +2,7 @@
 
 * Added app config info to .yaml file.
 * Added service monitoring config info to the services .yaml file.
+* Added testing utility module and associated unit tests.
 
 2011.12.15
 
