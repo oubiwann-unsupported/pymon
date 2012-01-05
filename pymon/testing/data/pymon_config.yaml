@@ -1,5 +1,5 @@
-system user: pymon
-system group: pymon
+system user: nobody
+system group: nobody
 install prefix: /usr/local/pymon
 daemon name: pymond
 instance name: PyMonitor

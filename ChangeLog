@@ -1,8 +1,21 @@
+2012.01.05
+
+* Started removing ZConfig code.
+* Added new config classes and started working on a new config API.
+* Started organizing config API methods by "main" and "monitors" (service
+check).
+* Moved some methods into the new ConfigMain class and changed their
+implementations to use the loaded YAML data.
+* Added unit tests for the first few methods that got moved into ConfigMain.
+* Stubbed out some test cases for other classes.
+
 2012.01.04
 
 * Added app config info to .yaml file.
 * Added service monitoring config info to the services .yaml file.
 * Added testing utility module and associated unit tests.
+* Renamed pymon.utils.__init__ to pymon.utils.base.
+* Converted utils.base doc tests to unit tests.
 
 2011.12.15
 
