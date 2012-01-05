@@ -8,6 +8,8 @@ check).
 implementations to use the loaded YAML data.
 * Added unit tests for the first few methods that got moved into ConfigMain.
 * Stubbed out some test cases for other classes.
+* Removed the old ZConfig files from etc (kept the schema.xml file for
+references).
 
 2012.01.04
 
