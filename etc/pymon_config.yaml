@@ -3,15 +3,85 @@ system group: pymon
 install prefix: /usr/local/pymon
 daemon name: pymond
 instance name: PyMonitor
-# checks can be by services, hosts, or organization
+
+# checks can be by 'services', 'hosts', or 'organization'
 check by: services
 user agent string: pymon Cloud Monitoring (http://pymon.sf.net)
 daemontools enabled: False
 daemontools service: /service/pymond
 log level: INFO
+
+# for notifications
 sendmail: /usr/sbin/sendmail
 mail from: pymon@adytum.us
 smtp username: ausername
 smtp password: asecret
 smtp server: smtp.gmail.com
 smtp port: 25
+
+monitor status:
+    ping: enable
+    http status: disable
+    http content: disable
+    local process: disable
+    dns dig: disable
+
+database:
+    connectionString: mongo://pymon
+
+admin:
+    config update:
+        interval: 60
+
+    backups:
+        interval: 60
+        base directory: data
+        state directory: state
+        application state:
+
+    peering:
+        publish interval: 120
+        check interval: 120
+
+state definitions:
+    unknown: -1
+    failed: 10
+    error: 20
+    warn: 30
+    acknowledged: 40
+    recovering: 50
+    maintenance: 60
+    ok: 70
+    disabled: 80
+    escalated: 90
+
+notifications:
+    cut off: 3
+    types:
+        smtp: enable
+        irc: disable
+        im: disable
+        rss: disable
+        snmp: disable
+        mud: disable
+        twitter: disable
+    list:
+      - email: jojo.idiot@circus_boy.com
+      - email: pretty@new_pet.com
+
+web service:
+    port: 8080
+    doc root: static/web
+    vhost root: vhost
+
+agents:
+    local command:
+        port: 10998
+    messaging:
+        port: 10999
+
+peers:
+  - url: http://shell1.adytum.us:10001/json/localStates
+  - url: http://shell2.adytum.us:10001/json/localStates
+  - url: http://shell3.adytum.us:10001/json/localStates
+  - url: http://shell5.adytum.us:10001/json/localStates

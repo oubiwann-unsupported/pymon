@@ -1,3 +1,8 @@
+2012.01.04
+
+* Added app config info to .yaml file.
+* Added service monitoring config info to the services .yaml file.
+
 2011.12.15
 
 * Added PyYAML as a dependency.

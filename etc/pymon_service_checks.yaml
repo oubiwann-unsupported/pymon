@@ -1,0 +1,21 @@
+services:
+  - monitor type: http status
+    uri: www.adytum.us
+    enabled: true
+
+  - monitor type: ping
+    uri: shell1.adytum.us
+    enabled: true
+    escalation enabled: false
+
+  - monitor type: http status
+    uri: www2.adytum.us
+    enabled: true
+    ok threshold: 200
+    warn threshold: 100-101, 201-206, 300-305, 401-403, 405-407, 411-416
+
+  - monitor type: ping
+    uri: shell2.adytum.us
+    enabled: true
+    escalation enabled: false
+    scheduled downtime: 2001.01.01 00:00:00 - 2038.01.01 00:00:00
